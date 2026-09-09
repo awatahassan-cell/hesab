@@ -122,3 +122,20 @@ export async function deleteShoppingTrip(tripId: string): Promise<void> {
   const db = await getDatabase();
   await db.runAsync('DELETE FROM shopping_trips WHERE id = ?', [tripId]);
 }
+
+/**
+ * Sets or clears a shopping list's reminder.
+ *
+ * Stored as an ISO string; null clears it. Scheduling the notification is the
+ * caller's job, so this stays a plain data write.
+ */
+export async function setShoppingTripReminder(
+  tripId: string,
+  reminderAt: string | null
+): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync('UPDATE shopping_trips SET reminder_at = ? WHERE id = ?', [
+    reminderAt,
+    tripId
+  ]);
+}

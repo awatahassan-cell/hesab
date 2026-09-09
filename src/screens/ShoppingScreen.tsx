@@ -24,7 +24,8 @@ import {
   toggleShoppingItem,
   deleteShoppingItem,
   convertShoppingListToExpense,
-  deleteShoppingTrip
+  deleteShoppingTrip,
+  setShoppingTripReminder
 } from '../db/queries/shopping';
 import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
@@ -32,10 +33,14 @@ import { Button } from '../components/common/Button';
 import { SegmentedControl } from '../components/common/SegmentedControl';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
+import { ShoppingReminderSheet } from '../components/shopping/ShoppingReminderSheet';
+import { scheduleShoppingReminder, cancelShoppingReminder } from '../services/notifications';
+import { Icon } from '../components/icons/Icon';
+import { getKurdishFormattedDate } from '../utils/dates';
 
 export const ShoppingScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
   const { accounts, refreshAll } = useFinanceStore();
@@ -47,6 +52,7 @@ export const ShoppingScreen: React.FC = () => {
   const [firstTripName, setFirstTripName] = useState('');
   const [selectedAccountId, setSelectedAccountId] = useState(accounts[0]?.id || 'acc_savings');
   const [selectedTrip, setSelectedTrip] = useState<ShoppingTrip | null>(null);
+  const [reminderFor, setReminderFor] = useState<ShoppingTrip | null>(null);
 
   // New item inputs
   const [newItemName, setNewItemName] = useState('');
@@ -155,6 +161,59 @@ export const ShoppingScreen: React.FC = () => {
     }
   };
 
+
+  const handleSaveReminder = async (when: Date) => {
+    const trip = reminderFor;
+    if (!trip) return;
+    setReminderFor(null);
+
+    const ok = await scheduleShoppingReminder(
+      trip.id,
+      trip.store_name,
+      t('shopping.reminder_body'),
+      when
+    );
+
+    if (!ok) {
+      AppDialog.alert(t('common.error_short'), t('shopping.reminder_failed'), undefined, {
+        tone: 'danger'
+      });
+      return;
+    }
+
+    // Only recorded once the notification is actually scheduled, so the badge
+    // never claims a reminder the system did not accept.
+    await setShoppingTripReminder(trip.id, when.toISOString());
+    await loadTrips(trip.id);
+
+    AppDialog.alert(
+      t('shopping.reminder_set'),
+      t('shopping.reminder_set_for', {
+        when: `${
+          i18n.language === 'ku'
+            ? getKurdishFormattedDate(when)
+            : when.toLocaleDateString(i18n.language === 'ar' ? 'ar' : 'en-GB')
+        } · ${when.toLocaleTimeString(i18n.language === 'ar' ? 'ar' : 'en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        })}`
+      }),
+      undefined,
+      { tone: 'success', icon: 'bell' }
+    );
+  };
+
+  const handleDeleteReminder = async () => {
+    const trip = reminderFor;
+    if (!trip) return;
+    setReminderFor(null);
+    await cancelShoppingReminder(trip.id);
+    await setShoppingTripReminder(trip.id, null);
+    await loadTrips(trip.id);
+    AppDialog.alert(t('shopping.reminder_cleared'), undefined, undefined, { tone: 'success' });
+  };
+
   const handleDeleteTrip = async (tripId: string) => {
     AppDialog.alert(
       t('common.confirm'),
@@ -166,6 +225,7 @@ export const ShoppingScreen: React.FC = () => {
           style: 'destructive',
           onPress: async () => {
             await deleteShoppingTrip(tripId);
+      await cancelShoppingReminder(tripId);
             setSelectedTrip(null);
             await loadTrips();
           }
@@ -354,6 +414,32 @@ export const ShoppingScreen: React.FC = () => {
                 </View>
 
                 <View style={[styles.tripHeaderActions, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                  {activeTab === 'list' && (
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('shopping.reminder_title')}
+                      onPress={() => setReminderFor(selectedTrip)}
+                      style={[
+                        styles.reminderBtn,
+                        {
+                          backgroundColor: selectedTrip.reminder_at
+                            ? colors.accentMuted
+                            : colors.surfaceSecondary,
+                          borderColor: selectedTrip.reminder_at ? colors.accent : colors.cardBorder,
+                          borderRadius: 8
+                        }
+                      ]}
+                    >
+                      <Icon
+                        name="bell"
+                        size={16}
+                        color={selectedTrip.reminder_at ? colors.accent : colors.textMuted}
+                        filled={!!selectedTrip.reminder_at}
+                      />
+                    </TouchableOpacity>
+                  )}
+
                   {activeTab === 'list' && selectedTrip.total_amount > 0 && (
                     <TouchableOpacity
                       activeOpacity={0.8}
@@ -565,6 +651,15 @@ export const ShoppingScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
+
+      <ShoppingReminderSheet
+        visible={!!reminderFor}
+        listName={reminderFor?.store_name ?? ''}
+        currentIso={reminderFor?.reminder_at ?? null}
+        onClose={() => setReminderFor(null)}
+        onSave={handleSaveReminder}
+        onDelete={handleDeleteReminder}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -664,6 +759,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.04,
     shadowRadius: 5,
     elevation: 2
+  },
+  reminderBtn: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1
   },
   tripHeaderActions: {
     alignItems: 'center',

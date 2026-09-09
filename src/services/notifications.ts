@@ -118,3 +118,49 @@ export async function rescheduleAll(
     await scheduleReminder(reminder, bodyFor(reminder));
   }
 }
+
+/** Prefix for shopping-list reminders, kept apart from payment reminders. */
+const SHOPPING_PREFIX = 'shopping:';
+
+export async function cancelShoppingReminder(tripId: string): Promise<void> {
+  try {
+    await Notifications.cancelScheduledNotificationAsync(`${SHOPPING_PREFIX}${tripId}`);
+  } catch {
+    // Nothing scheduled under that id.
+  }
+}
+
+/**
+ * Schedules a one-off reminder for a shopping list at an exact moment.
+ *
+ * Returns false when the time has already passed or permission was declined,
+ * so the caller can say why nothing was set instead of silently doing nothing.
+ */
+export async function scheduleShoppingReminder(
+  tripId: string,
+  title: string,
+  body: string,
+  when: Date
+): Promise<boolean> {
+  if (when.getTime() <= Date.now()) return false;
+
+  const granted = await ensureNotificationPermission();
+  if (!granted) return false;
+
+  await cancelShoppingReminder(tripId);
+
+  try {
+    await Notifications.scheduleNotificationAsync({
+      identifier: `${SHOPPING_PREFIX}${tripId}`,
+      content: { title, body, data: { tripId } },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: when,
+        channelId: Platform.OS === 'android' ? ANDROID_CHANNEL : undefined
+      }
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}

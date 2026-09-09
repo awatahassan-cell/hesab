@@ -275,7 +275,18 @@
     "list_name_placeholder": "List name (e.g. supermarket, vegetables...)",
     "item_placeholder": "(milk, eggs, bread...)",
     "list_name_placeholder2": "List name (e.g. corner shop, vegetables...)",
-    "create_list": "Create a shopping list"
+    "create_list": "Create a shopping list",
+    "reminder_title": "Shopping reminder",
+    "reminder_time": "Time",
+    "set_reminder": "Set reminder",
+    "delete_reminder": "Delete reminder",
+    "reminder_in_past": "That time has passed — pick a future one",
+    "reminder_set": "Reminder set",
+    "reminder_set_for": "We will remind you at {{when}}",
+    "reminder_cleared": "Reminder removed",
+    "reminder_failed": "The reminder could not be set. Notification permission may be off.",
+    "reminder_body": "Your shopping list is ready",
+    "reminder_badge": "Reminder"
   },
   "debts": {
     "title": "Debts",

@@ -14,7 +14,7 @@ import { roundMoney } from '../utils/money';
  *   - Bump LATEST_SCHEMA_VERSION to match.
  *   - Assume the database may be several versions behind; they run in order.
  */
-export const LATEST_SCHEMA_VERSION = 3;
+export const LATEST_SCHEMA_VERSION = 4;
 
 interface Migration {
   version: number;
@@ -43,6 +43,9 @@ const EXPECTED_COLUMNS: Record<string, Record<string, string>> = {
   savings_goals: {
     target_date: 'TEXT',
     is_completed: 'INTEGER NOT NULL DEFAULT 0'
+  },
+  shopping_trips: {
+    reminder_at: 'TEXT'
   }
 };
 
@@ -130,6 +133,17 @@ const MIGRATIONS: Migration[] = [
             );
           }
         }
+      }
+    }
+  },
+  {
+    version: 4,
+    name: 'shopping list reminders',
+    up: async (db) => {
+      if (!(await tableExists(db, 'shopping_trips'))) return;
+      const existing = await columnNames(db, 'shopping_trips');
+      if (!existing.includes('reminder_at')) {
+        await db.execAsync('ALTER TABLE shopping_trips ADD COLUMN reminder_at TEXT;');
       }
     }
   }

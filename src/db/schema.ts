@@ -99,6 +99,8 @@ export interface ShoppingTrip {
   status: 'list' | 'completed';
   receipt_uri?: string;
   transaction_id?: string;
+  /** ISO datetime for a one-off shopping reminder, or null for none. */
+  reminder_at?: string | null;
   created_at: string;
   
   account_name?: string;
@@ -228,6 +230,7 @@ export const CREATE_TABLES_SQL = `
     status TEXT NOT NULL DEFAULT 'list',
     receipt_uri TEXT,
     transaction_id TEXT,
+    reminder_at TEXT,
     created_at TEXT NOT NULL,
     FOREIGN KEY (account_id) REFERENCES accounts(id)
   );

@@ -275,7 +275,18 @@
     "list_name_placeholder": "اسم القائمة (مثال: السوبرماركت، الخضار...)",
     "item_placeholder": "(حليب، بيض، خبز...)",
     "list_name_placeholder2": "اسم القائمة (مثال: سوبرماركت الحي، الخضار...)",
-    "create_list": "إنشاء قائمة تسوق"
+    "create_list": "إنشاء قائمة تسوق",
+    "reminder_title": "تذكير التسوق",
+    "reminder_time": "الوقت",
+    "set_reminder": "ضبط التذكير",
+    "delete_reminder": "حذف التذكير",
+    "reminder_in_past": "هذا الوقت مضى — اختر وقتًا في المستقبل",
+    "reminder_set": "تم ضبط التذكير",
+    "reminder_set_for": "سنذكّرك في {{when}}",
+    "reminder_cleared": "تم حذف التذكير",
+    "reminder_failed": "تعذّر ضبط التذكير. قد يكون إذن الإشعارات غير ممنوح.",
+    "reminder_body": "قائمة تسوقك جاهزة",
+    "reminder_badge": "تذكير"
   },
   "debts": {
     "title": "الديون",
