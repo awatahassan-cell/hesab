@@ -7,7 +7,7 @@ import { useTheme } from '../../theme';
 import { elevation } from '../../theme/spacing';
 import { Icon } from '../icons/Icon';
 import { useAppStore } from '../../store/useAppStore';
-import { getKurdishFormattedDate } from '../../utils/dates';
+import { formatLocalDate, formatLocalTime } from '../../utils/dates';
 import { FONT_FAMILY, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_BOLD } from '../../theme/typography';
 
 interface Props {
@@ -64,24 +64,8 @@ export const ShoppingReminderSheet: React.FC<Props> = ({
 
   const inPast = when.getTime() <= Date.now();
 
-  // JavaScript has no Kurdish locale, so Kurdish uses the app's own month
-  // names — the same ones the home screen shows — rather than falling back to
-  // an English date inside a Kurdish screen.
-  const locale = i18n.language === 'ar' ? 'ar' : 'en-GB';
-  const dateLabel =
-    i18n.language === 'ku'
-      ? getKurdishFormattedDate(when)
-      : when.toLocaleDateString(locale, {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric'
-        });
-  const timeLabel = when.toLocaleTimeString(locale, {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  });
+  const dateLabel = formatLocalDate(when, i18n.language);
+  const timeLabel = formatLocalTime(when);
 
   const onDateChange = (_e: DateTimePickerEvent, picked?: Date) => {
     setShowDate(Platform.OS === 'ios');

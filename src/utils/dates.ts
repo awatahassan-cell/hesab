@@ -14,6 +14,8 @@ import {
   addDays
 } from 'date-fns';
 
+import { getNumberLocale } from './currency';
+
 export type DatePeriod = 'day' | 'week' | 'month' | 'year' | 'custom';
 
 export function getPeriodRange(
@@ -98,4 +100,31 @@ export function getKurdishFormattedDate(date: Date = new Date()): string {
   const monthName = KURDISH_MONTHS[date.getMonth()];
   const year = date.getFullYear();
   return `${day}ی ${monthName} ${year}`;
+}
+
+/**
+ * A date the user reads, in their own language.
+ *
+ * JavaScript has no Kurdish locale, so Kurdish uses the app's own month names
+ * rather than falling back to an English date inside a Kurdish screen. Every
+ * other language goes through Intl with the locale the number formatter is
+ * already using, so a Turkish or Russian user does not get English dates.
+ */
+export function formatLocalDate(date: Date, language: string): string {
+  if (language === 'ku') return getKurdishFormattedDate(date);
+  return date.toLocaleDateString(getNumberLocale(), {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+}
+
+/** A 24-hour clock time in the user's locale. */
+export function formatLocalTime(date: Date): string {
+  return date.toLocaleTimeString(getNumberLocale(), {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
 }

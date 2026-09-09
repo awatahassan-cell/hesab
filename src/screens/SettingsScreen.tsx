@@ -17,6 +17,7 @@ import { PinSetupModal } from '../components/security/PinSetupModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
 import { rescheduleAll } from '../services/notifications';
+import { LANGUAGES } from '../i18n';
 
 export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, isDark } = useTheme();
@@ -250,20 +251,28 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
           {t('settings.language')}
         </Text>
         <Card style={{ backgroundColor: colors.surface, marginBottom: 16 }}>
-          {[
-            { code: 'ku', label: 'کوردی (سۆرانی)' },
-            { code: 'ar', label: 'العربية' },
-            { code: 'en', label: 'English' }
-          ].map((lang) => (
-            <TouchableOpacity
-              key={lang.code}
-              onPress={() => handleLanguageChange(lang.code)}
-              style={[styles.row, { borderBottomColor: colors.divider, flexDirection: isRTL ? 'row-reverse' : 'row' }]}
-            >
-              <Text style={[typography.body, { color: colors.textPrimary }]}>{lang.label}</Text>
-              {language === lang.code && <Ionicons name="checkmark" size={20} color={colors.accent} />}
-            </TouchableOpacity>
-          ))}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingVertical: 4 }}>
+            {LANGUAGES.map((lang) => {
+              const isSelected = language === lang.code;
+              return (
+                <TouchableOpacity
+                  key={lang.code}
+                  onPress={() => handleLanguageChange(lang.code)}
+                  style={[
+                    styles.currencyChip,
+                    {
+                      backgroundColor: isSelected ? colors.accent : colors.surfaceSecondary,
+                      borderColor: isSelected ? colors.accent : colors.cardBorder
+                    }
+                  ]}
+                >
+                  <Text style={{ color: isSelected ? colors.textInverse : colors.textPrimary, fontWeight: '600' }}>
+                    {lang.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         </Card>
 
         {/* Categories Manager Link */}

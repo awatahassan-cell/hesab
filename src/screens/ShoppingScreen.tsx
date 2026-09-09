@@ -36,7 +36,7 @@ import { AppDialog } from '../components/common/AppDialog';
 import { ShoppingReminderSheet } from '../components/shopping/ShoppingReminderSheet';
 import { scheduleShoppingReminder, cancelShoppingReminder } from '../services/notifications';
 import { Icon } from '../components/icons/Icon';
-import { getKurdishFormattedDate } from '../utils/dates';
+import { formatLocalDate, formatLocalTime } from '../utils/dates';
 
 export const ShoppingScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -189,15 +189,7 @@ export const ShoppingScreen: React.FC = () => {
     AppDialog.alert(
       t('shopping.reminder_set'),
       t('shopping.reminder_set_for', {
-        when: `${
-          i18n.language === 'ku'
-            ? getKurdishFormattedDate(when)
-            : when.toLocaleDateString(i18n.language === 'ar' ? 'ar' : 'en-GB')
-        } · ${when.toLocaleTimeString(i18n.language === 'ar' ? 'ar' : 'en-GB', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        })}`
+        when: `${formatLocalDate(when, i18n.language)} · ${formatLocalTime(when)}`
       }),
       undefined,
       { tone: 'success', icon: 'bell' }

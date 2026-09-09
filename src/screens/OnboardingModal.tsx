@@ -98,11 +98,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
     ]).start();
   }, [index, fade, rise]);
 
-  const countryName = (c: CountryCurrency) => {
-    if (i18n.language === 'ku') return c.countryNameKu;
-    if (i18n.language === 'ar') return c.countryNameAr;
-    return c.countryNameEn;
-  };
+  // Names come from the translation files, keyed by country code, with the
+  // English name as the fallback. A name field per language stopped scaling
+  // once the app went past three languages.
+  const countryName = (c: CountryCurrency) =>
+    t(`countries.${c.countryCode}`, { defaultValue: c.countryNameEn });
 
   const parsedRate = parseFloat(rate);
   const rateValid = !Number.isNaN(parsedRate) && parsedRate > 0;

@@ -17,7 +17,7 @@ import { useTheme } from '../theme';
 import { useFinanceStore } from '../store/useFinanceStore';
 import { useAppStore } from '../store/useAppStore';
 import { formatCurrency, convertCurrency } from '../utils/currency';
-import { getKurdishFormattedDate } from '../utils/dates';
+import { formatLocalDate } from '../utils/dates';
 import { TransactionItem } from '../components/transactions/TransactionItem';
 import { EmptyState } from '../components/common/EmptyState';
 import { Button } from '../components/common/Button';
@@ -35,7 +35,7 @@ interface HomeScreenProps {
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { colors, typography, radius } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
   const displayCurrency = useAppStore((state) => state.displayCurrency);
@@ -183,7 +183,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           <View style={styles.dateBadge}>
             <Ionicons name="calendar-outline" size={13} color={colors.textMuted} style={{ marginHorizontal: 4 }} />
             <Text style={[styles.dateText, { color: colors.textPrimary }]}>
-              {getKurdishFormattedDate()}
+              {formatLocalDate(new Date(), i18n.language)}
             </Text>
           </View>
 
@@ -231,7 +231,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.actionTileIconWrap, { backgroundColor: colors.incomeMuted }]}>
               <Ionicons name="add" size={22} color={colors.income} />
             </View>
-            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.income')}</Text>
+            <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.income')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -242,7 +242,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.actionTileIconWrap, { backgroundColor: colors.expenseMuted }]}>
               <Ionicons name="remove" size={22} color={colors.expense} />
             </View>
-            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.expense')}</Text>
+            <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.expense')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -253,7 +253,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.actionTileIconWrap, { backgroundColor: colors.accentMuted }]}>
               <Ionicons name="people-outline" size={20} color={colors.accent} />
             </View>
-            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('debts.title')}</Text>
+            <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('debts.title')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -264,7 +264,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.actionTileIconWrap, { backgroundColor: colors.warningMuted }]}>
               <Ionicons name="time-outline" size={20} color={colors.warning} />
             </View>
-            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('home.instalments')}</Text>
+            <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('home.instalments')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -289,7 +289,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.shortcutIconWrap, { backgroundColor: '#F59E0B18' }]}>
               <Ionicons name="time" size={18} color="#F59E0B" />
             </View>
-            <Text style={[styles.shortcutText, { color: colors.textPrimary }]}>
+            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
               {t('home.reminders')}
             </Text>
           </TouchableOpacity>
@@ -302,7 +302,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.shortcutIconWrap, { backgroundColor: '#3A86FF18' }]}>
               <Ionicons name="flag" size={18} color="#3A86FF" />
             </View>
-            <Text style={[styles.shortcutText, { color: colors.textPrimary }]}>
+            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
               {t('home.goal_fund')}
             </Text>
           </TouchableOpacity>
@@ -315,7 +315,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.shortcutIconWrap, { backgroundColor: '#10B98118' }]}>
               <Ionicons name="pie-chart" size={18} color="#10B981" />
             </View>
-            <Text style={[styles.shortcutText, { color: colors.textPrimary }]}>
+            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
               {t('home.budgeting')}
             </Text>
           </TouchableOpacity>
@@ -328,7 +328,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.shortcutIconWrap, { backgroundColor: '#FB850018' }]}>
               <Ionicons name="cart" size={18} color="#FB8500" />
             </View>
-            <Text style={[styles.shortcutText, { color: colors.textPrimary }]}>
+            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
               {t('home.shopping_list')}
             </Text>
           </TouchableOpacity>

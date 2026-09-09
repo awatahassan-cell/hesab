@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18n, { isRTLLanguage } from '../i18n';
+import i18n, { isRTLLanguage, isSupportedLanguage } from '../i18n';
 import { getPin, setPin as setSecurePin } from '../utils/secureStorage';
+import { DEFAULT_RATES, buildRates, rateFromPer100Usd, setNumberLocale } from '../utils/currency';
 
 interface AppState {
   language: string;
@@ -11,6 +12,8 @@ interface AppState {
   themeMode: 'system' | 'light' | 'dark';
   monthStartDay: number;
   exchangeRates: Record<string, number>;
+  /** When a rate was last set by hand, so the UI can show how stale it is. */
+  ratesUpdatedAt: string | null;
   pinCode: string | null;
   isBiometricsEnabled: boolean;
   isLocked: boolean;
@@ -41,17 +44,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   primaryCurrency: 'IQD',
   themeMode: 'system',
   monthStartDay: 1,
-  exchangeRates: {
-    IQD: 1500,
-    USD: 1,
-    TRY: 34,
-    EUR: 0.92,
-    IRR: 600000,
-    SAR: 3.75,
-    AED: 3.67,
-    GBP: 0.77,
-    KWD: 0.31
-  },
+  exchangeRates: { ...DEFAULT_RATES },
+  ratesUpdatedAt: null,
   pinCode: null,
   isBiometricsEnabled: false,
   isLocked: false,
@@ -64,11 +58,21 @@ export const useAppStore = create<AppState>((set, get) => ({
     await AsyncStorage.setItem('app_display_currency', curr);
   },
 
+  /**
+   * Units of the primary currency per 100 USD, as quoted on the street.
+   *
+   * This used to write to IQD unconditionally. It now follows whichever
+   * currency the person picked, so an Egyptian setting 4,850 gets an EGP rate
+   * rather than silently repricing the dinar.
+   */
   setMarketRate100USD: async (rate: number) => {
-    const ratePerDollar = rate / 100;
-    const updated = { ...get().exchangeRates, IQD: ratePerDollar };
-    set({ marketRate100USD: rate, exchangeRates: updated });
+    const currency = get().primaryCurrency || 'IQD';
+    const ratePerDollar = rateFromPer100Usd(currency, rate);
+    const updated = { ...get().exchangeRates, [currency]: ratePerDollar, USD: 1 };
+    const now = new Date().toISOString();
+    set({ marketRate100USD: rate, exchangeRates: updated, ratesUpdatedAt: now });
     await AsyncStorage.setItem('app_market_rate_100usd', rate.toString());
+    await AsyncStorage.setItem('app_rates_updated_at', now);
     await AsyncStorage.setItem('app_exchange_rates', JSON.stringify(updated));
   },
 
@@ -78,6 +82,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   setLanguage: async (lang: string) => {
+    // The locale must land before i18next re-renders every screen: date and
+    // number helpers read it as module state, so a language switch that does
+    // not also flip isRTL would otherwise leave them a language behind.
+    setNumberLocale(lang);
     await i18n.changeLanguage(lang);
     const rtl = isRTLLanguage(lang);
     set({ language: lang, isRTL: rtl });
@@ -102,8 +110,10 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setExchangeRate: async (currency: string, rateToUSD: number) => {
     const updated = { ...get().exchangeRates, [currency]: rateToUSD };
-    set({ exchangeRates: updated });
+    const now = new Date().toISOString();
+    set({ exchangeRates: updated, ratesUpdatedAt: now });
     await AsyncStorage.setItem('app_exchange_rates', JSON.stringify(updated));
+    await AsyncStorage.setItem('app_rates_updated_at', now);
   },
 
   setPinCode: async (pin: string | null) => {
@@ -128,7 +138,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   loadInitialSettings: async () => {
     try {
-      const [lang, country, curr, theme, startDay, rates, pin, bio, onboard, dispCurr, mktRate] = await Promise.all([
+      const [lang, country, curr, theme, startDay, rates, pin, bio, onboard, dispCurr, mktRate, ratesAt] = await Promise.all([
         AsyncStorage.getItem('app_language'),
         AsyncStorage.getItem('app_country'),
         AsyncStorage.getItem('app_primary_currency'),
@@ -139,16 +149,24 @@ export const useAppStore = create<AppState>((set, get) => ({
         AsyncStorage.getItem('app_biometrics_enabled'),
         AsyncStorage.getItem('app_onboarding_completed'),
         AsyncStorage.getItem('app_display_currency'),
-        AsyncStorage.getItem('app_market_rate_100usd')
+        AsyncStorage.getItem('app_market_rate_100usd'),
+        AsyncStorage.getItem('app_rates_updated_at')
       ]);
 
-      const selectedLang = lang || 'ku';
+      // A stored language the app no longer ships would leave every screen
+      // silently falling back, so an unknown code resets to the default.
+      const selectedLang = lang && isSupportedLanguage(lang) ? lang : 'ku';
+      setNumberLocale(selectedLang);
       await i18n.changeLanguage(selectedLang);
 
       const parsedMktRate = mktRate ? parseFloat(mktRate) : 150000;
-      const baseRates = rates ? JSON.parse(rates) : get().exchangeRates;
+      // Defaults first, stored values over the top: an update that adds
+      // currencies must not be hidden by an older stored table.
+      const storedRates = rates ? JSON.parse(rates) : {};
+      const baseRates = buildRates(storedRates, DEFAULT_RATES);
+      const activeCurrency = curr || 'IQD';
       if (parsedMktRate) {
-        baseRates.IQD = parsedMktRate / 100;
+        baseRates[activeCurrency] = rateFromPer100Usd(activeCurrency, parsedMktRate);
       }
 
       set({
@@ -161,6 +179,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         themeMode: (theme as any) || 'system',
         monthStartDay: startDay ? parseInt(startDay, 10) : 1,
         exchangeRates: baseRates,
+        ratesUpdatedAt: ratesAt || null,
         pinCode: pin || null,
         isBiometricsEnabled: bio === 'true',
         isLocked: !!(pin || bio === 'true'),
