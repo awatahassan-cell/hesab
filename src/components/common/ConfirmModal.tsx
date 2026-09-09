@@ -85,7 +85,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               ]}
             >
               <Text style={[styles.cancelBtnText, { color: colors.textPrimary }]}>
-                {cancelText || t('common.cancel', 'پەشیمانبوونەوە')}
+                {cancelText || t('common.cancel', t('common.cancel'))}
               </Text>
             </TouchableOpacity>
 
@@ -101,7 +101,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               ]}
             >
               <Text style={styles.confirmBtnText}>
-                {confirmText || (isDanger ? t('common.delete', 'سڕینەوە') : t('common.confirm', 'دڵنیابوونەوە'))}
+                {confirmText || (isDanger ? t('common.delete', t('common.reset')) : t('common.confirm', t('common.confirm')))}
               </Text>
             </TouchableOpacity>
           </View>

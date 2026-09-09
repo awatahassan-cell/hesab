@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert,
   Platform,
   StatusBar as RNStatusBar
 } from 'react-native';
@@ -28,6 +27,7 @@ import { DonutChart, DonutSlice } from '../components/charts/DonutChart';
 import { HeroDonutCard } from '../components/home/HeroDonutCard';
 import { FONT_FAMILY, FONT_FAMILY_MEDIUM, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_BOLD } from '../theme/typography';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 interface HomeScreenProps {
   navigation: any;
@@ -75,7 +75,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const handleSaveRate = async () => {
     const rate = parseFloat(tempRate);
     if (!rate || rate <= 0) {
-      Alert.alert(t('common.error'), 'تکایە نرخی دروست بنووسە');
+      AppDialog.alert(t('common.error'), t('home.enter_valid_rate'));
       return;
     }
     await setMarketRate100USD(rate);
@@ -123,7 +123,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     expenseTx.forEach((tx) => {
       const catId = tx.category_id || 'other';
       const cat = (categories || []).find((c) => c.id === catId);
-      const name = tx.category_custom_name || (tx.category_name_key ? t(`categories.names.${tx.category_name_key}`, tx.category_name_key) : 'خەرجی');
+      const name = tx.category_custom_name || (tx.category_name_key ? t(`categories.names.${tx.category_name_key}`, tx.category_name_key) : t('types.expense'));
       const color = tx.category_color || cat?.color || '#00A896';
       const amt = convertCurrency(tx.amount, tx.currency || primaryCurrency, activeCurrency, exchangeRates);
 
@@ -231,7 +231,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.actionTileIconWrap, { backgroundColor: colors.incomeMuted }]}>
               <Ionicons name="add" size={22} color={colors.income} />
             </View>
-            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>داهات</Text>
+            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.income')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -242,7 +242,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.actionTileIconWrap, { backgroundColor: colors.expenseMuted }]}>
               <Ionicons name="remove" size={22} color={colors.expense} />
             </View>
-            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>خەرجی</Text>
+            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.expense')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -253,7 +253,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.actionTileIconWrap, { backgroundColor: colors.accentMuted }]}>
               <Ionicons name="people-outline" size={20} color={colors.accent} />
             </View>
-            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>قەرزەکان</Text>
+            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('debts.title')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -264,7 +264,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.actionTileIconWrap, { backgroundColor: colors.warningMuted }]}>
               <Ionicons name="time-outline" size={20} color={colors.warning} />
             </View>
-            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>قیستەکان</Text>
+            <Text style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('home.instalments')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -274,7 +274,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             slices={donutSlices}
             totalAmount={displayExpense}
             currency={activeCurrency}
-            title="دابەشبوونی خەرجییەکان (مانگانە)"
+            title={t('home.spend_breakdown_monthly')}
             onSlicePress={() => navigation.navigate('Reports')}
           />
         )}
@@ -290,7 +290,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <Ionicons name="time" size={18} color="#F59E0B" />
             </View>
             <Text style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              وەبیرهێنەرەوە
+              {t('home.reminders')}
             </Text>
           </TouchableOpacity>
 
@@ -303,7 +303,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <Ionicons name="flag" size={18} color="#3A86FF" />
             </View>
             <Text style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              سندووقی ئامانج
+              {t('home.goal_fund')}
             </Text>
           </TouchableOpacity>
 
@@ -316,7 +316,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <Ionicons name="pie-chart" size={18} color="#10B981" />
             </View>
             <Text style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              بودجەدانان
+              {t('home.budgeting')}
             </Text>
           </TouchableOpacity>
 
@@ -329,7 +329,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <Ionicons name="cart" size={18} color="#FB8500" />
             </View>
             <Text style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              لیستی بازاڕ
+              {t('home.shopping_list')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -339,18 +339,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}>
             <View style={[styles.sectionCardHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
               <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-                دۆخی بودجەکان
+                {t('home.budget_status')}
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate('BudgetsScreen')}>
                 <Text style={[styles.seeAllText, { color: colors.accent }]}>
-                  ڕێکخستن &gt;
+                  {t('home.budget_settings_link')}
                 </Text>
               </TouchableOpacity>
             </View>
 
             {categoryBudgets.slice(0, 3).map((item) => {
               const catName = item.budget.category_custom_name ||
-                (item.budget.category_name_key ? t(`categories.names.${item.budget.category_name_key}`) : 'بەش');
+                (item.budget.category_name_key ? t(`categories.names.${item.budget.category_name_key}`) : t('common.category'));
               const pct = Math.min(100, item.percentage);
               const barColor = item.isOverBudget ? colors.danger : item.isWarning ? colors.warning : colors.income;
 
@@ -430,10 +430,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <Ionicons name="sparkles" size={32} color={colors.accent} />
             </View>
             <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
-              هێشتا هیچ تۆمارێک نییە!
+              {t('home.empty_title')}
             </Text>
             <Text style={[styles.emptyDesc, { color: colors.textMuted }]}>
-              بۆ دەستپێکردن و تۆمارکردنی خەرجی و داهاتەکان، کلیک لەسەر دوگمەی خەرجی یان (+) بکە
+              {t('home.empty_body')}
             </Text>
             <TouchableOpacity
               activeOpacity={0.8}
@@ -441,7 +441,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               style={[styles.emptyActionBtn, { backgroundColor: colors.accent, borderRadius: 8 }]}
             >
               <Ionicons name="add" size={18} color="#FFFFFF" />
-              <Text style={styles.emptyActionBtnText}>تۆمارکردنی یەکەم خەرجی</Text>
+              <Text style={styles.emptyActionBtnText}>{t('home.record_first_expense')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -456,10 +456,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 14 }]}>
             <Text style={[typography.titleSmall, { color: colors.textPrimary, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
-              دەستکاریکردنی نرخی دۆلاری بازاڕ
+              {t('home.edit_market_rate')}
             </Text>
             <Text style={[typography.caption, { color: colors.textMuted, marginBottom: 14, textAlign: isRTL ? 'right' : 'left' }]}>
-              بۆ نموونە: ١٠٠ دۆلار بە چەند هەزار دینارە؟
+              {t('home.rate_hint')}
             </Text>
 
             <View style={[styles.rateInputRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
@@ -473,7 +473,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 style={[styles.modalInput, { flex: 1, backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder, color: colors.textPrimary, borderRadius: 8 }]}
                 autoFocus
               />
-              <Text style={[styles.rateLabel, { color: colors.textPrimary, marginHorizontal: 6 }]}>د.ع</Text>
+              <Text style={[styles.rateLabel, { color: colors.textPrimary, marginHorizontal: 6 }]}>{t('currency.iqd_symbol')}</Text>
             </View>
 
             <View style={[styles.modalActions, { flexDirection: isRTL ? 'row-reverse' : 'row', marginTop: 18 }]}>

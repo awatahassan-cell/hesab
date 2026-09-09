@@ -33,9 +33,9 @@ export const PinLockScreen: React.FC<PinLockScreenProps> = ({ onSuccess }) => {
 
       if (hasHardware && isEnrolled) {
         const result = await LocalAuthentication.authenticateAsync({
-          promptMessage: 'پەنجەمۆرت دابنێ بۆ کردنەوەی ئەپ',
-          cancelLabel: 'پەشیمانبوونەوە',
-          fallbackLabel: pinCode ? 'کۆدی PIN' : undefined
+          promptMessage: t('security.unlock_with_biometrics'),
+          cancelLabel: t('common.cancel'),
+          fallbackLabel: pinCode ? t('security.pin_code') : undefined
         });
 
         if (result.success) {
@@ -86,10 +86,10 @@ export const PinLockScreen: React.FC<PinLockScreenProps> = ({ onSuccess }) => {
           <Ionicons name="lock-closed" size={32} color={colors.accent} />
         </View>
         <Text style={[styles.titleText, { color: colors.textPrimary }]}>
-          {pinCode ? 'کۆدی تێپەڕبوون بنووسە' : 'پارێزراوە بە پەنجەمۆر'}
+          {pinCode ? t('security.enter_pin') : t('security.protected_by_biometrics')}
         </Text>
         <Text style={[styles.subtitleText, { color: colors.textSecondary }]}>
-          {pinCode ? 'تکایە ٤ ژمارەکەت داخڵ بکە بۆ چوونەژوورەوە' : 'پەنجەمۆرت دابنێ بۆ کردنەوەی ئەپ'}
+          {pinCode ? t('security.enter_4_digits') : t('security.unlock_with_biometrics')}
         </Text>
       </View>
 
@@ -124,7 +124,7 @@ export const PinLockScreen: React.FC<PinLockScreenProps> = ({ onSuccess }) => {
         >
           <Ionicons name="finger-print-outline" size={54} color={colors.accent} />
           <Text style={[styles.bioOnlyText, { color: colors.textPrimary }]}>
-            دەست لە پەنجەمۆر بدە
+            {t('security.touch_sensor')}
           </Text>
         </TouchableOpacity>
       )}

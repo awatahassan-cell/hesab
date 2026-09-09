@@ -5,6 +5,7 @@ import { useTheme } from '../../theme';
 import { useAppStore } from '../../store/useAppStore';
 import { Reminder } from '../../db/schema';
 import { formatCurrency } from '../../utils/currency';
+import { useTranslation } from 'react-i18next';
 
 interface UpcomingBillBannerProps {
   reminders: Reminder[];
@@ -15,6 +16,7 @@ export const UpcomingBillBanner: React.FC<UpcomingBillBannerProps> = ({
   reminders,
   onPress
 }) => {
+  const { t } = useTranslation();
   const { colors, typography, radius } = useTheme();
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
@@ -46,9 +48,9 @@ export const UpcomingBillBanner: React.FC<UpcomingBillBannerProps> = ({
     isOverdue = true;
     timeText = `${Math.abs(diffDays)} ڕۆژە بەسەرچووە!`;
   } else if (diffDays === 0) {
-    timeText = 'ئەمڕۆ دەبێت بدرێت!';
+    timeText = t('reminders.due_today_bang');
   } else if (diffDays === 1) {
-    timeText = 'بەیانی دەبێت بدرێت!';
+    timeText = t('reminders.due_tomorrow_bang');
   } else {
     timeText = `${diffDays} ڕۆژی ماوە!`;
   }

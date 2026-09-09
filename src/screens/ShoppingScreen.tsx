@@ -6,7 +6,6 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
-  Alert,
   Modal,
   ScrollView,
   KeyboardAvoidingView,
@@ -32,6 +31,7 @@ import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { SegmentedControl } from '../components/common/SegmentedControl';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 export const ShoppingScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -90,7 +90,7 @@ export const ShoppingScreen: React.FC = () => {
   const handleCreateTrip = async (nameToUse?: string) => {
     const finalName = (nameToUse || storeName).trim();
     if (!finalName) {
-      Alert.alert(t('common.error'), t('shopping.store_name'));
+      AppDialog.alert(t('common.error'), t('shopping.store_name'));
       return;
     }
 
@@ -109,13 +109,13 @@ export const ShoppingScreen: React.FC = () => {
       await loadTrips(newId);
     } catch (err) {
       console.error('Failed to create trip', err);
-      Alert.alert(t('common.error'), 'Could not create shopping list');
+      AppDialog.alert(t('common.error'), 'Could not create shopping list');
     }
   };
 
   const handleAddItem = async () => {
     if (!selectedTrip) {
-      Alert.alert(t('common.error'), 'تکایە سەرەتا لیستێک دروستبکە');
+      AppDialog.alert(t('common.error'), t('shopping.create_list_first'));
       return;
     }
     if (!newItemName.trim()) {
@@ -130,7 +130,7 @@ export const ShoppingScreen: React.FC = () => {
       await loadTrips(selectedTrip.id);
     } catch (err) {
       console.error('Failed to add shopping item', err);
-      Alert.alert(t('common.error'), 'Could not add item');
+      AppDialog.alert(t('common.error'), 'Could not add item');
     }
   };
 
@@ -156,9 +156,9 @@ export const ShoppingScreen: React.FC = () => {
   };
 
   const handleDeleteTrip = async (tripId: string) => {
-    Alert.alert(
+    AppDialog.alert(
       t('common.confirm'),
-      'ئایا دڵنیایت لە سڕینەوەی ئەم لیستە بە هەموو کەلوپەلەکانیەوە؟',
+      t('shopping.delete_list_confirm'),
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
@@ -175,7 +175,7 @@ export const ShoppingScreen: React.FC = () => {
   };
 
   const handleConvertTrip = async (trip: ShoppingTrip) => {
-    Alert.alert(
+    AppDialog.alert(
       t('shopping.convert_to_expense'),
       t('shopping.convert_confirm', { amount: formatCurrency(trip.total_amount, trip.currency) }),
       [
@@ -223,18 +223,18 @@ export const ShoppingScreen: React.FC = () => {
               <Ionicons name="cart-outline" size={36} color={colors.accent} />
             </View>
             <Text style={[typography.titleSmall, { color: colors.textPrimary, marginTop: 12, textAlign: 'center' }]}>
-              {activeTab === 'list' ? 'هیچ لیستی کڕینێکت نییە' : 'هیچ سەردانێکی تەواوکراو نییە'}
+              {activeTab === 'list' ? t('shopping.empty_title') : t('shopping.no_trips')}
             </Text>
             <Text style={[typography.caption, { color: colors.textMuted, marginTop: 4, marginBottom: 16, textAlign: 'center' }]}>
               {activeTab === 'list'
-                ? 'ناوێک بۆ لیستی کڕینەکەت بنووسە بۆ ئەوەی کەلوپەلەکانت تۆمار بکەیت.'
-                : 'کاتێک کڕینەکانت وەک خەرجی تۆمار دەکەیت، لێرەدا ئەرشیڤ دەکرێن.'}
+                ? t('shopping.empty_body')
+                : t('shopping.trips_body')}
             </Text>
 
             {activeTab === 'list' && (
               <View style={styles.quickCreateBox}>
                 <TextInput
-                  placeholder="ناوی لیست (بۆ نموونە: مارکێت، سەوزەوات...)"
+                  placeholder={t('shopping.list_name_placeholder')}
                   placeholderTextColor={colors.textMuted}
                   value={firstTripName}
                   onChangeText={setFirstTripName}
@@ -256,7 +256,7 @@ export const ShoppingScreen: React.FC = () => {
                   style={[styles.quickCreateBtn, { backgroundColor: colors.accent, borderRadius: 8 }]}
                 >
                   <Ionicons name="add-circle-outline" size={18} color="#FFFFFF" />
-                  <Text style={styles.quickCreateBtnText}>دروستکردنی لیستی کڕین</Text>
+                  <Text style={styles.quickCreateBtnText}>{t('shopping.create_list')}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -278,7 +278,7 @@ export const ShoppingScreen: React.FC = () => {
                 >
                   <Ionicons name="add" size={16} color={colors.accent} />
                   <Text style={[typography.captionSmall, { color: colors.accent, fontWeight: '700', marginHorizontal: 4 }]}>
-                    لیستی نوێ
+                    {t('shopping.new_list')}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -361,7 +361,7 @@ export const ShoppingScreen: React.FC = () => {
                       style={[styles.convertBtn, { backgroundColor: colors.income, borderRadius: 8 }]}
                     >
                       <Ionicons name="checkmark-circle-outline" size={16} color="#FFFFFF" />
-                      <Text style={styles.convertBtnText}>گۆڕین بۆ خەرجی</Text>
+                      <Text style={styles.convertBtnText}>{t('shopping.convert_to_expense')}</Text>
                     </TouchableOpacity>
                   )}
 
@@ -389,7 +389,7 @@ export const ShoppingScreen: React.FC = () => {
                   ]}
                 >
                   <TextInput
-                    placeholder={t('shopping.item_name') + ' (شیر، هێلکە، نان...)'}
+                    placeholder={`${t('shopping.item_name')} ${t('shopping.item_placeholder')}`}
                     placeholderTextColor={colors.textMuted}
                     value={newItemName}
                     onChangeText={setNewItemName}
@@ -407,7 +407,7 @@ export const ShoppingScreen: React.FC = () => {
                   />
 
                   <TextInput
-                    placeholder={t('shopping.item_price') + ' (د.ع)'}
+                    placeholder={`${t('shopping.item_price')} (${t('currency.iqd_symbol')})`}
                     placeholderTextColor={colors.textMuted}
                     value={newItemPrice}
                     onChangeText={(txt) => setNewItemPrice(txt.replace(/[^0-9.]/g, ''))}
@@ -531,7 +531,7 @@ export const ShoppingScreen: React.FC = () => {
             </Text>
 
             <TextInput
-              placeholder="ناوی لیست (بۆ نموونە: مارکێتی گەڕەک، سەوزەوات...)"
+              placeholder={t('shopping.list_name_placeholder2')}
               placeholderTextColor={colors.textMuted}
               value={storeName}
               onChangeText={setStoreName}

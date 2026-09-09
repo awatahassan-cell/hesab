@@ -11,6 +11,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
 import { lightColors, darkColors } from '../theme/colors';
+import { useTranslation } from 'react-i18next';
 
 /**
  * The first frame of the app.
@@ -21,6 +22,7 @@ import { lightColors, darkColors } from '../theme/colors';
  * which are not loaded yet.
  */
 export const SplashScreen: React.FC = () => {
+  const { t } = useTranslation();
   const scheme = useColorScheme();
   const colors = scheme === 'dark' ? darkColors : lightColors;
   const { width, height } = useWindowDimensions();
@@ -112,7 +114,7 @@ export const SplashScreen: React.FC = () => {
         >
           <Text style={[styles.name, { color: colors.textPrimary }]}>حساب</Text>
           <Text style={[styles.tag, { color: colors.textSecondary }]}>
-            ڕێکخەری داراییی تایبەتی
+            {t('app.tagline')}
           </Text>
         </Animated.View>
       </View>

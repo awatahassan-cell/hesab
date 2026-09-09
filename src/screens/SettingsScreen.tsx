@@ -68,9 +68,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
     } catch (e) {
       setConfirmConfig({
         visible: true,
-        title: t('common.error', 'هەڵە'),
-        message: 'نەتوانرا فایلی پشتیوانی (Backup) هەناردە بکرێت.',
-        confirmText: 'باشە',
+        title: t('common.error', t('common.error_short')),
+        message: t('settings.backup_export_failed'),
+        confirmText: t('common.ok'),
         isDanger: false,
         onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
       });
@@ -88,9 +88,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
           await refreshAll();
           setConfirmConfig({
             visible: true,
-            title: t('common.success', 'سەرکەوتوو بوو'),
-            message: 'داتاکان بە سەرکەوتوویی لە فایلی پشتیوانی گەڕێندرانەوە!',
-            confirmText: 'تەواو',
+            title: t('common.success', t('common.success')),
+            message: t('settings.restore_ok'),
+            confirmText: t('common.done'),
             isDanger: false,
             icon: 'checkmark-circle-outline',
             onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
@@ -98,9 +98,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
         } else {
           setConfirmConfig({
             visible: true,
-            title: t('common.error', 'هەڵە'),
-            message: 'فایلی پشتیوانی نادروستە یان لەکارکەوتووە.',
-            confirmText: 'باشە',
+            title: t('common.error', t('common.error_short')),
+            message: t('settings.backup_invalid'),
+            confirmText: t('common.ok'),
             isDanger: false,
             onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
           });
@@ -109,9 +109,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
     } catch (e) {
       setConfirmConfig({
         visible: true,
-        title: t('common.error', 'هەڵە'),
-        message: 'نەتوانرا فایلەکە بخوێندرێتەوە.',
-        confirmText: 'باشە',
+        title: t('common.error', t('common.error_short')),
+        message: t('settings.file_unreadable'),
+        confirmText: t('common.ok'),
         isDanger: false,
         onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
       });
@@ -129,9 +129,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
       if (!hasHardware) {
         setConfirmConfig({
           visible: true,
-          title: 'ئاگاداری',
-          message: 'ئەم مۆبایلە پەنجەمۆر یان ناسینەوەی ڕووخساری نییە.',
-          confirmText: 'باشە',
+          title: t('common.notice'),
+          message: t('settings.no_biometric_hardware'),
+          confirmText: t('common.ok'),
           isDanger: false,
           icon: 'information-circle-outline',
           onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
@@ -143,9 +143,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
       if (!isEnrolled) {
         setConfirmConfig({
           visible: true,
-          title: 'پەنجەمۆر نەدۆزرایەوە',
-          message: 'هیچ پەنجەمۆرێک لە ڕێکخستنی مۆبایلەکەتدا تۆمار نەکراوە. تکایە سەرەتا لە مۆبایلەکەت پەنجەمۆر زیادبکە.',
-          confirmText: 'باشە',
+          title: t('settings.no_biometrics_enrolled_title'),
+          message: t('settings.no_biometrics_enrolled_body'),
+          confirmText: t('common.ok'),
           isDanger: false,
           icon: 'finger-print-outline',
           onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
@@ -154,9 +154,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
       }
 
       const authResult = await LocalAuthentication.authenticateAsync({
-        promptMessage: 'پەنجەمۆرت دابنێ بۆ چالاککردن',
-        cancelLabel: 'پەشیمانبوونەوە',
-        fallbackLabel: 'کۆد'
+        promptMessage: t('settings.biometrics_prompt'),
+        cancelLabel: t('common.cancel'),
+        fallbackLabel: t('security.code')
       });
 
       if (authResult.success) {
@@ -173,10 +173,10 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
     } else {
       setConfirmConfig({
         visible: true,
-        title: 'کۆدی تێپەڕبوون (PIN)',
-        message: 'دەتەوێت چی بکەیت لە کۆدی ئێستات؟ دەتوانیت کۆدە نوێ بکەیتەوە یان بیسڕیتەوە.',
-        confirmText: 'گۆڕینی کۆد',
-        cancelText: 'سڕینەوەی کۆد',
+        title: t('settings.pin_lock'),
+        message: t('settings.pin_options_body'),
+        confirmText: t('settings.change_pin'),
+        cancelText: t('settings.remove_pin'),
         isDanger: false,
         icon: 'lock-closed-outline',
         onConfirm: () => {
@@ -190,9 +190,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
   const handleRemovePin = () => {
     setConfirmConfig({
       visible: true,
-      title: 'سڕینەوەی کۆد',
-      message: 'ئایا دڵنیایت دەتەوێت کۆدی تێپەڕبوون (PIN) لاببەیت؟',
-      confirmText: 'سڕینەوە',
+      title: t('settings.remove_pin'),
+      message: t('settings.remove_pin_confirm'),
+      confirmText: t('common.reset'),
       isDanger: true,
       icon: 'lock-open-outline',
       onConfirm: async () => {
@@ -205,10 +205,10 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
   const handleResetData = () => {
     setConfirmConfig({
       visible: true,
-      title: t('settings.danger_zone', 'ناوچەی هەستیار'),
-      message: 'ئایا دڵنیایت؟ هەموو مامەڵە، قەرز، بودجە و داتاکان دەسڕدرێنەوە، بەڵام بەشە سەرەکییەکان پارێزراو دەبن.',
-      confirmText: 'سڕینەوەی گشتی',
-      cancelText: t('common.cancel', 'پەشیمانبوونەوە'),
+      title: t('settings.danger_zone', t('settings.danger_zone')),
+      message: t('settings.wipe_confirm'),
+      confirmText: t('settings.wipe_all'),
+      cancelText: t('common.cancel', t('common.cancel')),
       isDanger: true,
       icon: 'warning-outline',
       onConfirm: async () => {
@@ -216,9 +216,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
         await refreshAll();
         setConfirmConfig({
           visible: true,
-          title: t('common.success', 'سەرکەوتوو بوو'),
-          message: 'هەموو داتاکان سڕدرانەوە و بەشە سەرەکییەکان گەڕێنرانەوە.',
-          confirmText: 'باشە',
+          title: t('common.success', t('common.success')),
+          message: t('settings.wipe_done'),
+          confirmText: t('common.ok'),
           isDanger: false,
           icon: 'checkmark-circle-outline',
           onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
@@ -254,14 +254,14 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
 
         {/* Categories Manager Link */}
         <Text style={[typography.captionSmall, { color: colors.textMuted, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
-          {t('categories.title', 'بەشەکان')}
+          {t('categories.title', t('categories.title'))}
         </Text>
         <Card style={{ backgroundColor: colors.surface, marginBottom: 16 }}>
           <TouchableOpacity
             onPress={() => navigation?.navigate('CategoriesScreen')}
             style={[styles.row, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}
           >
-            <Text style={[typography.body, { color: colors.textPrimary }]}>{t('categories.title', 'بەشە سەرەکی و لاوەکییەکان')}</Text>
+            <Text style={[typography.body, { color: colors.textPrimary }]}>{t('categories.title', t('menu.categories_title'))}</Text>
             <Ionicons name={isRTL ? 'chevron-back' : 'chevron-forward'} size={18} color={colors.textMuted} />
           </TouchableOpacity>
         </Card>
@@ -341,7 +341,7 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
             <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: 'center', gap: 8 }}>
               <Ionicons name={pinCode ? 'lock-closed' : 'keypad-outline'} size={20} color={pinCode ? colors.accent : colors.textMuted} />
               <Text style={[typography.body, { color: colors.textPrimary }]}>
-                {pinCode ? 'کۆدی تێپەڕبوون (چالاکە)' : t('settings.set_pin', 'دانانی کۆدی نوێ')}
+                {pinCode ? t('security.pin_enabled') : t('settings.set_pin', t('settings.set_pin'))}
               </Text>
             </View>
             <Ionicons name={isRTL ? 'chevron-back' : 'chevron-forward'} size={18} color={colors.textMuted} />
@@ -352,7 +352,7 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
               onPress={handleRemovePin}
               style={[styles.row, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}
             >
-              <Text style={[typography.body, { color: colors.danger }]}>{t('settings.remove_pin', 'لابردنی کۆد')}</Text>
+              <Text style={[typography.body, { color: colors.danger }]}>{t('settings.remove_pin', t('settings.remove_pin_short'))}</Text>
               <Ionicons name="trash-outline" size={18} color={colors.danger} />
             </TouchableOpacity>
           )}
@@ -403,9 +403,9 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
           await setPinCode(newPin);
           setConfirmConfig({
             visible: true,
-            title: t('common.success', 'سەرکەوتوو بوو'),
-            message: 'کۆدی تێپەڕبوون بە سەرکەوتوویی دانرا.',
-            confirmText: 'باشە',
+            title: t('common.success', t('common.success')),
+            message: t('security.pin_set_ok'),
+            confirmText: t('common.ok'),
             isDanger: false,
             icon: 'shield-checkmark-outline',
             onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))

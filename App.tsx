@@ -34,6 +34,7 @@ import { OnboardingModal } from './src/screens/OnboardingModal';
 import { PinLockScreen } from './src/components/security/PinLockScreen';
 import { GlassTabBar } from './src/components/navigation/GlassTabBar';
 import { SplashScreen } from './src/screens/SplashScreen';
+import { DialogHost } from './src/components/common/AppDialog';
 
 // Hold the native splash until our own one is on screen, so the handoff
 // never flashes a blank frame.
@@ -53,12 +54,12 @@ function BottomTabs() {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: t('tabs.home', 'سەرەکی') }}
+        options={{ title: t('tabs.home', t('tabs.home')) }}
       />
       <Tab.Screen
         name="GoalsAndBudgets"
         component={GoalsAndBudgetsScreen}
-        options={{ title: 'ئامانج و بودجە' }}
+        options={{ title: t('tabs.goals_budgets') }}
       />
       <Tab.Screen
         name="Add"
@@ -68,12 +69,12 @@ function BottomTabs() {
       <Tab.Screen
         name="Reports"
         component={ReportsScreen}
-        options={{ title: t('tabs.reports', 'ڕاپۆرتەکان') }}
+        options={{ title: t('tabs.reports', t('tabs.reports')) }}
       />
       <Tab.Screen
         name="Menu"
         component={MenuScreen}
-        options={{ title: 'زیاتر' }}
+        options={{ title: t('tabs.more') }}
       />
     </Tab.Navigator>
   );
@@ -140,12 +141,12 @@ function MainNavigation() {
       <Stack.Screen
         name="RemindersScreen"
         component={RemindersScreen}
-        options={{ title: 'وەبیرهێنەرەوەی پارەدانەکان' }}
+        options={{ title: t('reminders.screen_title') }}
       />
       <Stack.Screen
         name="SavingsGoalsScreen"
         component={SavingsGoalsScreen}
-        options={{ title: 'سندووقی ئامانجەکانی پاشەکەوت' }}
+        options={{ title: t('savings.screen_title') }}
       />
       <Stack.Screen
         name="Transactions"
@@ -307,7 +308,12 @@ function AppContent({
   }, []);
 
   if (isLocked) {
-    return <PinLockScreen onSuccess={() => setIsLocked(false)} />;
+    return (
+      <>
+        <PinLockScreen onSuccess={() => setIsLocked(false)} />
+        <DialogHost />
+      </>
+    );
   }
 
   return (
@@ -318,15 +324,10 @@ function AppContent({
         visible={showOnboarding}
         onComplete={() => setShowOnboarding(false)}
       />
+      {/* Mounted last so app dialogs sit above the navigator and onboarding. */}
+      <DialogHost />
     </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF'
-  }
-});
+const styles = StyleSheet.create({});

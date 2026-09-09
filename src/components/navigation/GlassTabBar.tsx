@@ -16,6 +16,7 @@ import { useTheme } from '../../theme';
 import { useAppStore } from '../../store/useAppStore';
 import { Icon, IconName } from '../icons/Icon';
 import { FONT_FAMILY_MEDIUM, FONT_FAMILY_SEMIBOLD } from '../../theme/typography';
+import { useTranslation } from 'react-i18next';
 
 /** Height of the bar itself, above the device's bottom inset. */
 export const TAB_BAR_HEIGHT = 62;
@@ -28,12 +29,13 @@ const ICONS: Record<string, IconName> = {
   Menu: 'grid'
 };
 
-const LABELS: Record<string, string> = {
-  Home: 'سەرەکی',
-  GoalsAndBudgets: 'ئامانج',
+// Keys, not text: the map is module scope, so translation happens at render.
+const LABEL_KEYS: Record<string, string> = {
+  Home: 'tabs.home',
+  GoalsAndBudgets: 'tabs.goals_short',
   Add: '',
-  Reports: 'ڕاپۆرت',
-  Menu: 'زیاتر'
+  Reports: 'tabs.reports_short',
+  Menu: 'tabs.more'
 };
 
 /**
@@ -50,6 +52,7 @@ export const GlassTabBar: React.FC<BottomTabBarProps> = ({
   navigation
 }) => {
   const { colors, radius } = useTheme();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const isRTL = useAppStore((s) => s.isRTL);
 
@@ -121,10 +124,10 @@ export const GlassTabBar: React.FC<BottomTabBarProps> = ({
           const focused = state.index === index;
           const isAdd = route.name === 'Add';
           const iconName = ICONS[route.name] ?? 'home';
-          const label =
-            LABELS[route.name] ??
-            (descriptors[route.key]?.options.title as string) ??
-            route.name;
+          const labelKey = LABEL_KEYS[route.name];
+          const label = labelKey
+            ? t(labelKey)
+            : ((descriptors[route.key]?.options.title as string) ?? route.name);
 
           const onPress = () => {
             const event = navigation.emit({
@@ -142,7 +145,7 @@ export const GlassTabBar: React.FC<BottomTabBarProps> = ({
               <Pressable
                 key={route.key}
                 accessibilityRole="button"
-                accessibilityLabel="زیادکردنی مامەڵەی نوێ"
+                accessibilityLabel={t('tabs.add_transaction_a11y')}
                 onPress={onPress}
                 style={({ pressed }) => [
                   styles.tab,

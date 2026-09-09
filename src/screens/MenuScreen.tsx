@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
   ActivityIndicator,
   Platform,
   StatusBar as RNStatusBar
@@ -19,6 +18,7 @@ import { getTransactions } from '../db/queries/transactions';
 import { exportTransactionsToCSV, generatePDFReport } from '../utils/export';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 interface MenuScreenProps {
   navigation: any;
@@ -38,7 +38,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       setExporting(true);
       const allTx = await getTransactions({ limit: 100 });
       await generatePDFReport({
-        periodLabel: 'ڕاپۆرتی گشتی',
+        periodLabel: t('menu.general_report'),
         totalIncome: monthIncome,
         totalExpense: monthExpense,
         currency: primaryCurrency,
@@ -49,7 +49,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       setExporting(false);
     } catch (e) {
       setExporting(false);
-      Alert.alert(t('common.error'), 'هەڵە لە دروستکردنی فایلی PDF');
+      AppDialog.alert(t('common.error'), t('menu.pdf_error'));
     }
   };
 
@@ -58,7 +58,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       setExporting(true);
       const allTx = await getTransactions({ limit: 500 });
       if (!allTx || allTx.length === 0) {
-        Alert.alert('زانیاری', 'هیچ مامەڵەیەک نییە بۆ هەناردەکردن');
+        AppDialog.alert(t('common.info'), t('menu.nothing_to_export'));
         setExporting(false);
         return;
       }
@@ -66,55 +66,55 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       setExporting(false);
     } catch (e) {
       setExporting(false);
-      Alert.alert(t('common.error'), 'هەڵە لە هەناردەکردنی فایلی Excel');
+      AppDialog.alert(t('common.error'), t('menu.excel_error'));
     }
   };
 
   const services = [
     {
       id: 'shopping',
-      title: 'لیستی بازاڕکردن',
-      desc: 'نووسینی پێداویستی و حیسابکردنی کۆی پارە',
+      title: t('menu.shopping_title'),
+      desc: t('menu.shopping_desc'),
       icon: 'cart-outline',
       color: '#FB8500',
       action: () => navigation.navigate('ShoppingScreen')
     },
     {
       id: 'accounts',
-      title: 'هەژمار و کارتەکان',
-      desc: 'FIB، FastPay، کاش و بانکەکان',
+      title: t('menu.accounts_title'),
+      desc: t('menu.accounts_desc'),
       icon: 'card-outline',
       color: '#00A896',
       action: () => navigation.navigate('AccountsScreen')
     },
     {
       id: 'categories',
-      title: 'بەشە سەرەکی و لاوەکییەکان',
-      desc: 'دەستکاریکردنی بەشەکانی خەرجی و داهات',
+      title: t('menu.categories_title'),
+      desc: t('menu.categories_desc'),
       icon: 'pricetags-outline',
       color: '#8B5CF6',
       action: () => navigation.navigate('CategoriesScreen')
     },
     {
       id: 'debts',
-      title: 'قەرز و داواکارییەکان',
-      desc: 'ئەو پارەیەی دەتەوێت و قەرزارەکانت',
+      title: t('menu.debts_title'),
+      desc: t('menu.debts_desc'),
       icon: 'swap-horizontal-outline',
       color: '#3B82F6',
       action: () => navigation.navigate('DebtsScreen')
     },
     {
       id: 'reminders',
-      title: 'وەبیرهێنەرەوەی قیست',
-      desc: 'پڕۆژەی ڕووناکی، کرێی خانوو، قیستەکان',
+      title: t('menu.reminders_title'),
+      desc: t('menu.reminders_desc'),
       icon: 'time-outline',
       color: '#F59E0B',
       action: () => navigation.navigate('RemindersScreen')
     },
     {
       id: 'goals',
-      title: 'سندووقی پاشەکەوت',
-      desc: 'ئامانجە داراییەکان و پاشەکەوت',
+      title: t('menu.savings_title'),
+      desc: t('menu.savings_desc'),
       icon: 'flag-outline',
       color: '#10B981',
       action: () => navigation.navigate('SavingsGoalsScreen')
@@ -149,9 +149,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
               <Ionicons name="person" size={24} color={colors.accent} />
             </View>
             <View style={{ flex: 1, marginHorizontal: 12, alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
-              <Text style={[styles.userName, { color: colors.textPrimary }]}>بەڕێوەبەری دارایی کەسی</Text>
+              <Text style={[styles.userName, { color: colors.textPrimary }]}>{t('menu.header_title')}</Text>
               <Text style={[styles.userBadge, { color: colors.accent }]}>
-                داتابەیسی سەربەخۆ • ١٠٠٪ پارێزراو
+                {t('menu.header_sub')}
               </Text>
             </View>
             <TouchableOpacity
@@ -165,7 +165,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
 
         {/* Section 1: Financial Services Grid */}
         <Text style={[styles.sectionHeading, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left' }]}>
-          خزمەتگوزارییە سەرەکییەکان
+          {t('menu.main_services')}
         </Text>
 
         <View style={styles.gridContainer}>
@@ -198,7 +198,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
 
         {/* Section 2: Reports & Export Banner */}
         <Text style={[styles.sectionHeading, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left', marginTop: 16 }]}>
-          هەناردەکردن و ڕاپۆرت
+          {t('menu.export_and_reports')}
         </Text>
 
         <View style={styles.exportRow}>
@@ -221,7 +221,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
               <>
                 <Ionicons name="document-text" size={20} color="#EF4444" />
                 <Text style={[styles.exportBtnText, { color: colors.textPrimary }]}>
-                  ڕاپۆرتی PDF
+                  {t('menu.pdf_report')}
                 </Text>
               </>
             )}
@@ -246,7 +246,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
               <>
                 <Ionicons name="grid" size={20} color="#10B981" />
                 <Text style={[styles.exportBtnText, { color: colors.textPrimary }]}>
-                  فایلی Excel / CSV
+                  {t('menu.excel_file')}
                 </Text>
               </>
             )}
@@ -275,7 +275,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
               {t('settings.title')}
             </Text>
             <Text style={[styles.serviceDesc, { color: colors.textMuted }]}>
-              زمان، دراوی سەرەکی، کۆدی نهێنی PIN و کۆپی یەدەگ
+              {t('menu.settings_desc')}
             </Text>
           </View>
           <Ionicons name={isRTL ? 'chevron-back' : 'chevron-forward'} size={18} color={colors.textMuted} />
@@ -283,7 +283,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
 
         <View style={styles.footerInfo}>
           <Text style={[styles.footerText, { color: colors.textMuted }]}>
-            Kurd Finance v1.0 • دیزاین بە ئیلهامی Sekkeh UI
+            {t('app.credit')}
           </Text>
         </View>
       </ScrollView>

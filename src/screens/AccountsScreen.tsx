@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
@@ -11,6 +11,7 @@ import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 export const AccountsScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -45,7 +46,7 @@ export const AccountsScreen: React.FC = () => {
   };
 
   const handleArchive = async (account: Account) => {
-    Alert.alert(
+    AppDialog.alert(
       t('accounts.archive'),
       t('accounts.archive_confirm'),
       [

@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert,
   ScrollView
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,6 +25,7 @@ import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { colors, typography, radius } = useTheme();
@@ -45,7 +45,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
 
   const handleCreateReminder = async () => {
     if (!title.trim()) {
-      Alert.alert(t('common.error'), 'تکایە ناوی وەبیرهێنەرەوە بنووسە');
+      AppDialog.alert(t('common.error'), t('reminders.enter_title_err'));
       return;
     }
     const parsedAmount = parseFloat(amount) || 0;
@@ -67,13 +67,13 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
   };
 
   const handlePay = async (item: Reminder) => {
-    Alert.alert(
-      'دان و تۆمارکردن',
+    AppDialog.alert(
+      t('reminders.pay_and_record'),
       `ئایا دەتەوێت بڕی ${formatCurrency(item.amount, item.currency)} بۆ "${item.title}" تۆمار بکەیت وەک خەرجی؟`,
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'تۆمارکردن',
+          text: t('tabs.add'),
           onPress: async () => {
             await payReminderAndLogExpense(item);
             await refreshAll();
@@ -89,7 +89,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
   };
 
   const handleDelete = (item: Reminder) => {
-    Alert.alert(
+    AppDialog.alert(
       t('common.delete'),
       `ئایا دڵنیایت لە سڕینەوەی "${item.title}"؟`,
       [
@@ -130,7 +130,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
               <View style={[styles.statsRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                 <View style={[styles.statCol, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
                   <Text style={[typography.caption, { color: colors.textMuted }]}>
-                    کۆی پارەدانەکان
+                    {t('reminders.total_payments')}
                   </Text>
                   <Text style={[styles.statValue, { color: colors.textPrimary }]}>
                     {formatCurrency(totalMonthlyIQD, 'IQD', { isRTL })}
@@ -146,7 +146,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
 
                 <View style={[styles.statCol, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
                   <Text style={[typography.caption, { color: colors.textMuted }]}>
-                    دۆخی ئەم مانگە
+                    {t('reminders.month_status')}
                   </Text>
                   <Text style={[styles.statValue, { color: colors.income }]}>
                     {paidCount} / {reminders.length} دراوە
@@ -160,7 +160,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
 
             {/* Add New Reminder Button */}
             <Button
-              title="+ زیادکردنی وەبیرهێنەرەوەی نوێ"
+              title={t('reminders.add_new_plus')}
               onPress={() => setShowAddModal(true)}
               variant="primary"
             />
@@ -172,10 +172,10 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
           let statusColor = colors.textMuted;
 
           if (item.is_paid) {
-            statusText = 'دراوە ✅';
+            statusText = t('reminders.paid_badge');
             statusColor = colors.income;
           } else if (daysLeft === 0) {
-            statusText = 'ئەمڕۆ کاتیەتی! ⚠️';
+            statusText = t('reminders.due_today_badge');
             statusColor = colors.warning;
           } else if (daysLeft > 0) {
             statusText = `${daysLeft} ڕۆژی ماوە`;
@@ -233,7 +233,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
                     style={[styles.payBtn, { backgroundColor: colors.income, borderRadius: radius.md }]}
                   >
                     <Ionicons name="card-outline" size={16} color="#FFFFFF" style={{ marginHorizontal: 4 }} />
-                    <Text style={styles.payBtnText}>دان (تۆمار وەک خەرجی)</Text>
+                    <Text style={styles.payBtnText}>{t('reminders.pay_as_expense')}</Text>
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
@@ -242,7 +242,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
                     style={[styles.undoBtn, { borderColor: colors.cardBorder, borderRadius: radius.md }]}
                   >
                     <Ionicons name="arrow-undo-outline" size={14} color={colors.textSecondary} style={{ marginHorizontal: 4 }} />
-                    <Text style={[typography.captionSmall, { color: colors.textSecondary }]}>پاشگەزبوونەوە</Text>
+                    <Text style={[typography.captionSmall, { color: colors.textSecondary }]}>{t('common.undo')}</Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -256,12 +256,12 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
         <View style={styles.modalOverlay}>
           <View style={[styles.modalBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg }]}>
             <Text style={[typography.titleSmall, { color: colors.textPrimary, marginBottom: 14, textAlign: isRTL ? 'right' : 'left' }]}>
-              زیادکردنی وەبیرهێنەرەوەی نوێ
+              {t('reminders.add_new')}
             </Text>
 
             {/* Title */}
             <TextInput
-              placeholder="ناوی خەرجی (بۆ نموونە: پڕۆژەی ڕووناکی، موەلیدە، ئینتەرنێت...)"
+              placeholder={t('reminders.name_placeholder_long')}
               placeholderTextColor={colors.textMuted}
               value={title}
               onChangeText={setTitle}
@@ -272,7 +272,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
             {/* Amount & Currency */}
             <View style={[styles.amountRow, { flexDirection: isRTL ? 'row-reverse' : 'row', marginTop: 10 }]}>
               <TextInput
-                placeholder="بڕی پارە (بۆ نموونە: 45000)"
+                placeholder={t('common.amount_placeholder')}
                 placeholderTextColor={colors.textMuted}
                 value={amount}
                 onChangeText={setAmount}
@@ -299,7 +299,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
 
             {/* Due Day of Month */}
             <Text style={[typography.caption, { color: colors.textMuted, marginTop: 12, marginBottom: 4, textAlign: isRTL ? 'right' : 'left' }]}>
-              ڕۆژی مانگ بۆ پارەدان (1 تا 31):
+              {t('reminders.day_of_month')}
             </Text>
             <TextInput
               placeholder="1"

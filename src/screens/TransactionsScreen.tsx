@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
@@ -13,6 +13,7 @@ import { formatTransactionDate } from '../utils/dates';
 import { exportTransactionsToCSV } from '../utils/export';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 interface TransactionsScreenProps {
   navigation: any;
@@ -54,7 +55,7 @@ export const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ navigati
   }, [filteredTransactions]);
 
   const handleTransactionAction = (tx: Transaction) => {
-    Alert.alert(
+    AppDialog.alert(
       t('common.actions'),
       `${tx.amount} ${tx.currency}`,
       [
@@ -91,7 +92,7 @@ export const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ navigati
     try {
       await exportTransactionsToCSV(filteredTransactions);
     } catch (e) {
-      Alert.alert(t('common.error'), 'Could not export CSV');
+      AppDialog.alert(t('common.error'), 'Could not export CSV');
     }
   };
 
@@ -199,9 +200,9 @@ export const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ navigati
       {/* Custom Transaction Deletion Modal */}
       <ConfirmModal
         visible={!!deleteTxTarget}
-        title={t('transactions.delete_confirm_title', 'سڕینەوەی مامەڵە')}
-        message={t('transactions.delete_confirm_desc', 'ئایا دڵنیایت دەتەوێت ئەم مامەڵەیە بسڕیتەوە؟ باڵانسی هەژمارەکە ڕاستدەکرێتەوە.')}
-        confirmText={t('common.delete', 'سڕینەوە')}
+        title={t('transactions.delete_confirm_title', t('transactions.delete_confirm_title'))}
+        message={t('transactions.delete_confirm_desc', t('transactions.delete_confirm_desc'))}
+        confirmText={t('common.delete', t('common.reset'))}
         isDanger={true}
         icon="trash-outline"
         onConfirm={async () => {

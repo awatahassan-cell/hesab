@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
@@ -226,9 +226,9 @@ export const DebtsScreen: React.FC = () => {
       {/* Custom Debt Settlement Modal */}
       <ConfirmModal
         visible={!!settleTarget}
-        title={t('debts.mark_settled', 'تەواوکردنی قەرز')}
-        message={t('debts.settle_confirm', 'ئایا ئەم قەرزە یەکلاکرایەوە؟ باڵانسی هەژمارەکەت نوێ دەکرێتەوە.')}
-        confirmText={t('common.confirm', 'دڵنیابوونەوە')}
+        title={t('debts.mark_settled', t('debts.settle_debt'))}
+        message={t('debts.settle_confirm', t('debts.settle_confirm'))}
+        confirmText={t('common.confirm', t('common.confirm'))}
         isDanger={false}
         icon="checkmark-circle-outline"
         onConfirm={confirmSettle}

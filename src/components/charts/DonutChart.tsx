@@ -4,6 +4,7 @@ import { useTheme } from '../../theme';
 import { formatCurrency } from '../../utils/currency';
 import { useAppStore } from '../../store/useAppStore';
 import { FONT_FAMILY, FONT_FAMILY_BOLD, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_MEDIUM } from '../../theme/typography';
+import { useTranslation } from 'react-i18next';
 
 export interface DonutSlice {
   id: string;
@@ -26,10 +27,13 @@ export const DonutChart: React.FC<DonutChartProps> = ({
   slices,
   totalAmount,
   currency,
-  title = 'خەرجییەکان بەپێی بەش',
+  title,
   onSlicePress
 }) => {
+  const { t } = useTranslation();
   const { colors, typography, radius } = useTheme();
+  // Resolved here, not as a default parameter: t() is not in scope up there.
+  const heading = title ?? t('reports.category_breakdown');
   const isRTL = useAppStore((state) => state.isRTL);
 
   if (!slices || slices.length === 0 || totalAmount <= 0) {
@@ -47,7 +51,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
     const restPct = restSlices.reduce((sum, s) => sum + s.percentage, 0);
     finalSlices.push({
       id: 'other',
-      name: 'بەشەکانی تر',
+      name: t('charts.other_slices'),
       amount: restTotal,
       percentage: Math.round(restPct),
       color: '#94A3B8'
@@ -61,7 +65,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
       {/* Title Header */}
       <View style={[styles.headerRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <Text style={[styles.title, { color: colors.textPrimary }]}>
-          {title}
+          {heading}
         </Text>
         <Text style={[styles.totalPill, { backgroundColor: colors.accentMuted, color: colors.accent }]}>
           {formatCurrency(totalAmount, currency, { isRTL })}
@@ -88,7 +92,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
       {topSlice && (
         <View style={[styles.topHighlightRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
           <Text style={[styles.topHighlightText, { color: colors.textMuted }]}>
-            {isRTL ? 'زۆرترین خەرجی:' : 'Top expense:'}{' '}
+            {isRTL ? t('charts.top_spend') : 'Top expense:'}{' '}
             <Text style={{ color: topSlice.color, fontWeight: '700' }}>
               {topSlice.name} ({topSlice.percentage}%)
             </Text>

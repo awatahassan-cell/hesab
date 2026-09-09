@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   TextInput,
   Modal,
-  Alert,
   Platform,
   StatusBar as RNStatusBar
 } from 'react-native';
@@ -24,6 +23,7 @@ import { createReminder, toggleReminderPaidStatus, deleteReminder } from '../db/
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 export const GoalsAndBudgetsScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -73,7 +73,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
   const handleSaveBudget = async () => {
     const val = parseFloat(budgetAmount);
     if (!val || val <= 0) {
-      Alert.alert(t('common.error'), 'تکایە بڕی بودجە بنووسە');
+      AppDialog.alert(t('common.error'), t('budgets.enter_amount_err'));
       return;
     }
     await setBudget(val, selectedCatId);
@@ -86,13 +86,13 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
   // Save Goal
   const handleSaveGoal = async () => {
     if (!goalTitle.trim()) {
-      Alert.alert(t('common.error'), 'تکایە ناوی ئامانج بنووسە');
+      AppDialog.alert(t('common.error'), t('goals.enter_name_err'));
       return;
     }
     const target = parseFloat(goalTargetAmount) || 0;
     const current = parseFloat(goalCurrentAmount) || 0;
     if (target <= 0) {
-      Alert.alert(t('common.error'), 'تکایە بڕی ئامانج دیاریبکە');
+      AppDialog.alert(t('common.error'), t('goals.enter_target_err'));
       return;
     }
 
@@ -115,12 +115,12 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
   // Save Reminder
   const handleSaveReminder = async () => {
     if (!reminderTitle.trim()) {
-      Alert.alert(t('common.error'), 'تکایە ناوی پارەدان یان قیستەکە بنووسە');
+      AppDialog.alert(t('common.error'), t('reminders.enter_name_err'));
       return;
     }
     const amount = parseFloat(reminderAmount) || 0;
     if (amount <= 0) {
-      Alert.alert(t('common.error'), 'تکایە بڕی پارە دیاریبکە');
+      AppDialog.alert(t('common.error'), t('common.enter_amount_err'));
       return;
     }
 
@@ -169,7 +169,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
               { color: activeTab === 'budgets' ? '#FFFFFF' : colors.textMuted }
             ]}
           >
-            بودجەکان
+            {t('budgets.title')}
           </Text>
         </TouchableOpacity>
 
@@ -187,7 +187,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
               { color: activeTab === 'goals' ? '#FFFFFF' : colors.textMuted }
             ]}
           >
-            ئامانجی پاشەکەوت
+            {t('goals.savings_goal')}
           </Text>
         </TouchableOpacity>
 
@@ -205,7 +205,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
               { color: activeTab === 'reminders' ? '#FFFFFF' : colors.textMuted }
             ]}
           >
-            قیست و پارەدانەکان
+            {t('reminders.instalments')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -223,10 +223,10 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
             <View style={[styles.subHeaderRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
               <View>
                 <Text style={[styles.subHeaderTitle, { color: colors.textPrimary }]}>
-                  بودجەی دیاریکراوی بەشەکان
+                  {t('budgets.category_budgets')}
                 </Text>
                 <Text style={[styles.subHeaderDesc, { color: colors.textMuted }]}>
-                  دیاریکردنی سنوری خەرجی بۆ کۆنترۆڵکردنی تێچووەکان
+                  {t('budgets.set_limits_desc')}
                 </Text>
               </View>
 
@@ -236,7 +236,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                 style={[styles.addNewBtn, { backgroundColor: colors.accent, borderRadius: 8 }]}
               >
                 <Ionicons name="add" size={16} color="#FFFFFF" />
-                <Text style={styles.addNewBtnText}>بودجەی نوێ</Text>
+                <Text style={styles.addNewBtnText}>{t('budgets.new_budget')}</Text>
               </TouchableOpacity>
             </View>
 
@@ -244,16 +244,16 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
               <View style={[styles.emptyBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}>
                 <Ionicons name="pie-chart-outline" size={36} color={colors.textMuted} />
                 <Text style={[styles.emptyBoxTitle, { color: colors.textPrimary }]}>
-                  هێشتا هیچ بودجەیەک دانەنراوە
+                  {t('budgets.empty_title')}
                 </Text>
                 <Text style={[styles.emptyBoxDesc, { color: colors.textMuted }]}>
-                  کلیک لەسەر دوگمەی + بودجەی نوێ بکە بۆ دیاریکردنی سنوری خەرجی بەشەکان
+                  {t('budgets.empty_body')}
                 </Text>
               </View>
             ) : (
               budgetProgressList.map((item) => {
                 const catName = item.budget.category_custom_name ||
-                  (item.budget.category_name_key ? t(`categories.names.${item.budget.category_name_key}`) : 'بودجەی گشتی مانگانە');
+                  (item.budget.category_name_key ? t(`categories.names.${item.budget.category_name_key}`) : t('budgets.overall_monthly'));
                 const pct = Math.min(100, item.percentage);
                 const barColor = item.isOverBudget ? colors.danger : item.isWarning ? colors.warning : colors.income;
 
@@ -283,7 +283,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                         onPress={() => {
                           setDeleteConfirm({
                             visible: true,
-                            title: 'سڕینەوەی بودجە',
+                            title: t('budgets.delete_budget'),
                             message: `ئایا دڵنیایت لە سڕینەوەی بودجەی (${catName})؟`,
                             onConfirm: async () => {
                               await deleteBudget(item.budget.id);
@@ -307,7 +307,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                       <View style={[styles.warningRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                         <Ionicons name="alert-circle" size={14} color={colors.danger} />
                         <Text style={[styles.warningText, { color: colors.danger, marginHorizontal: 4 }]}>
-                          ئاگاداری: بودجەی ئەم بەشە تێپەڕیوە!
+                          {t('budgets.over_budget_warning')}
                         </Text>
                       </View>
                     )}
@@ -324,10 +324,10 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
             <View style={[styles.subHeaderRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
               <View>
                 <Text style={[styles.subHeaderTitle, { color: colors.textPrimary }]}>
-                  ئامانجەکانی پاشەکەوت
+                  {t('goals.savings_goals')}
                 </Text>
                 <Text style={[styles.subHeaderDesc, { color: colors.textMuted }]}>
-                  هاندەری پاشەکەوت بۆ کڕینی خانوو، ئۆتۆمبێل، سەفەر
+                  {t('goals.savings_desc')}
                 </Text>
               </View>
 
@@ -337,7 +337,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                 style={[styles.addNewBtn, { backgroundColor: colors.accent, borderRadius: 8 }]}
               >
                 <Ionicons name="add" size={16} color="#FFFFFF" />
-                <Text style={styles.addNewBtnText}>ئامانجی نوێ</Text>
+                <Text style={styles.addNewBtnText}>{t('goals.new_goal')}</Text>
               </TouchableOpacity>
             </View>
 
@@ -345,10 +345,10 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
               <View style={[styles.emptyBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}>
                 <Ionicons name="flag-outline" size={36} color={colors.textMuted} />
                 <Text style={[styles.emptyBoxTitle, { color: colors.textPrimary }]}>
-                  هیچ ئامانجێکی پاشەکەوت نییە
+                  {t('goals.empty_title')}
                 </Text>
                 <Text style={[styles.emptyBoxDesc, { color: colors.textMuted }]}>
-                  بۆ دانانی ئامانجی نوێ، کلیک لەسەر دوگمەی + ئامانجی نوێ بکە
+                  {t('goals.empty_body')}
                 </Text>
               </View>
             ) : (
@@ -389,25 +389,25 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                       <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={() => {
-                          Alert.prompt
-                            ? Alert.prompt('زیادکردنی پارە بۆ ئامانج', 'چەند پارەت پاشەکەوت کرد؟', async (amt) => {
-                                const num = parseFloat(amt || '0');
-                                if (num > 0) {
-                                  await updateSavingsGoal(g.id, { current_amount: (g.current_amount || 0) + num });
-                                  await refreshAll();
-                                }
-                              })
-                            : (async () => {
-                                const addAmount = 50000;
-                                await updateSavingsGoal(g.id, { current_amount: (g.current_amount || 0) + addAmount });
-                                await refreshAll();
-                              })();
+                          AppDialog.prompt(
+                            t('goals.add_to_goal', t('goals.add_to_goal')),
+                            t('goals.how_much_saved', t('goals.how_much_saved')),
+                            async (amt) => {
+                              const num = parseFloat(amt || '0');
+                              if (!(num > 0)) return;
+                              await updateSavingsGoal(g.id, {
+                                current_amount: (g.current_amount || 0) + num
+                              });
+                              await refreshAll();
+                            },
+                            { numeric: true, icon: 'target', submitText: t('common.add') }
+                          );
                         }}
                         style={[styles.smallActionBtn, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder, borderRadius: 6 }]}
                       >
                         <Ionicons name="add-circle-outline" size={14} color={colors.accent} />
                         <Text style={[styles.smallActionBtnText, { color: colors.accent, marginHorizontal: 4 }]}>
-                          زیادکردنی بڕ
+                          {t('goals.add_amount')}
                         </Text>
                       </TouchableOpacity>
 
@@ -415,7 +415,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                         onPress={() => {
                           setDeleteConfirm({
                             visible: true,
-                            title: 'سڕینەوەی ئامانج',
+                            title: t('goals.delete_goal'),
                             message: `ئایا دڵنیایت لە سڕینەوەی ئامانجی پاشەکەوتی (${g.title})؟`,
                             onConfirm: async () => {
                               await deleteSavingsGoal(g.id);
@@ -442,10 +442,10 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
             <View style={[styles.subHeaderRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
               <View>
                 <Text style={[styles.subHeaderTitle, { color: colors.textPrimary }]}>
-                  قیست و پارەدانە مانگانەکان
+                  {t('reminders.monthly_payments')}
                 </Text>
                 <Text style={[styles.subHeaderDesc, { color: colors.textMuted }]}>
-                  پڕۆژەی ڕووناکی، کرێی خانوو، قیستی ئۆتۆمبێل...
+                  {t('reminders.examples')}
                 </Text>
               </View>
 
@@ -455,7 +455,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                 style={[styles.addNewBtn, { backgroundColor: colors.accent, borderRadius: 8 }]}
               >
                 <Ionicons name="add" size={16} color="#FFFFFF" />
-                <Text style={styles.addNewBtnText}>قیستی نوێ</Text>
+                <Text style={styles.addNewBtnText}>{t('reminders.new_instalment')}</Text>
               </TouchableOpacity>
             </View>
 
@@ -463,10 +463,10 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
               <View style={[styles.emptyBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}>
                 <Ionicons name="time-outline" size={36} color={colors.textMuted} />
                 <Text style={[styles.emptyBoxTitle, { color: colors.textPrimary }]}>
-                  هیچ قیست و پارەدانێک تۆمار نەکراوە
+                  {t('reminders.empty_title')}
                 </Text>
                 <Text style={[styles.emptyBoxDesc, { color: colors.textMuted }]}>
-                  بۆ زیادکردنی قیست یان پارەدانی مانگانە، کلیک لەسەر دوگمەی + قیستی نوێ بکە
+                  {t('reminders.empty_body')}
                 </Text>
               </View>
             ) : (
@@ -518,7 +518,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                       onPress={() => {
                         setDeleteConfirm({
                           visible: true,
-                          title: 'سڕینەوەی وەبیرهێنەرەوە',
+                          title: t('reminders.delete_reminder'),
                           message: `ئایا دڵنیایت لە سڕینەوەی (${r.title})؟`,
                           onConfirm: async () => {
                             await deleteReminder(r.id);
@@ -544,11 +544,11 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 14 }]}>
             <Text style={[typography.titleSmall, { color: colors.textPrimary, marginBottom: 12, textAlign: isRTL ? 'right' : 'left' }]}>
-              دانانی سنوری بودجە
+              {t('budgets.set_limit')}
             </Text>
 
             <Text style={[typography.caption, { color: colors.textMuted, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
-              بەش هەڵبژێرە:
+              {t('common.choose_category')}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 14 }}>
               <TouchableOpacity
@@ -563,7 +563,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                 ]}
               >
                 <Text style={{ color: selectedCatId === undefined ? '#FFFFFF' : colors.textPrimary, fontWeight: '700', fontSize: 11 }}>
-                  بودجەی گشتی
+                  {t('budgets.overall')}
                 </Text>
               </TouchableOpacity>
               {safeCategories.map((c) => (
@@ -590,7 +590,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
               بڕی بودجەی مانگانە ({primaryCurrency}):
             </Text>
             <TextInput
-              placeholder="بۆ نموونە: 300000"
+              placeholder={t('budgets.amount_placeholder')}
               placeholderTextColor={colors.textMuted}
               value={budgetAmount}
               onChangeText={setBudgetAmount}
@@ -622,11 +622,11 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 14 }]}>
             <Text style={[typography.titleSmall, { color: colors.textPrimary, marginBottom: 12, textAlign: isRTL ? 'right' : 'left' }]}>
-              ئامانجی نوێی پاشەکەوت
+              {t('goals.new_savings_goal')}
             </Text>
 
             <TextInput
-              placeholder="ناوی ئامانج (بۆ نموونە: کڕینی ئۆتۆمبێل)"
+              placeholder={t('goals.name_placeholder')}
               placeholderTextColor={colors.textMuted}
               value={goalTitle}
               onChangeText={setGoalTitle}
@@ -634,7 +634,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
             />
 
             <TextInput
-              placeholder="بڕی پێویست (Target Amount)"
+              placeholder={t('goals.target_amount')}
               placeholderTextColor={colors.textMuted}
               value={goalTargetAmount}
               onChangeText={setGoalTargetAmount}
@@ -643,7 +643,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
             />
 
             <TextInput
-              placeholder="بڕی پاشەکەوتکراوی سەرەتایی (ئارەزوومەندانە)"
+              placeholder={t('goals.initial_amount')}
               placeholderTextColor={colors.textMuted}
               value={goalCurrentAmount}
               onChangeText={setGoalCurrentAmount}
@@ -674,11 +674,11 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 14 }]}>
             <Text style={[typography.titleSmall, { color: colors.textPrimary, marginBottom: 12, textAlign: isRTL ? 'right' : 'left' }]}>
-              زیادکردنی قیست یان پارەدانی مانگانە
+              {t('reminders.add_monthly')}
             </Text>
 
             <TextInput
-              placeholder="ناوی پارەدان (بۆ نموونە: پڕۆژەی ڕووناکی، قیستی خانوو)"
+              placeholder={t('reminders.name_placeholder')}
               placeholderTextColor={colors.textMuted}
               value={reminderTitle}
               onChangeText={setReminderTitle}
@@ -686,7 +686,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
             />
 
             <TextInput
-              placeholder="بڕی پارە (Amount)"
+              placeholder={t('common.amount_label')}
               placeholderTextColor={colors.textMuted}
               value={reminderAmount}
               onChangeText={setReminderAmount}
@@ -695,7 +695,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
             />
 
             <TextInput
-              placeholder="بەرواری دان (YYYY-MM-DD)"
+              placeholder={t('reminders.due_date_format')}
               placeholderTextColor={colors.textMuted}
               value={reminderDueDate}
               onChangeText={setReminderDueDate}

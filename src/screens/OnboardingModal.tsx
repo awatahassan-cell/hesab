@@ -30,21 +30,22 @@ interface OnboardingModalProps {
 /** Steps are derived, not fixed: the rate step only exists for dinar users. */
 type StepId = 'welcome' | 'country' | 'rate' | 'ready';
 
-const FEATURES: { icon: IconName; title: string; body: string }[] = [
+// Keys, not text: this array is module scope, so it cannot call t() here.
+const FEATURES: { icon: IconName; titleKey: string; bodyKey: string }[] = [
   {
     icon: 'wallet',
-    title: 'خەرجی و داهات',
-    body: 'هەر مامەڵەیەک لە چەند چرکەیەکدا تۆمار بکە'
+    titleKey: 'onboarding.feature_tx_title',
+    bodyKey: 'onboarding.feature_tx_body'
   },
   {
     icon: 'target',
-    title: 'بودجە و ئامانج',
-    body: 'سنوور بۆ خەرجی دابنێ و بۆ ئامانجەکانت پاشەکەوت بکە'
+    titleKey: 'onboarding.feature_budget_title',
+    bodyKey: 'onboarding.feature_budget_body'
   },
   {
     icon: 'users',
-    title: 'قەرز و قیست',
-    body: 'بزانە چەندت لای خەڵکە و کەی قیستەکانت دەگاتە کات'
+    titleKey: 'onboarding.feature_debt_title',
+    bodyKey: 'onboarding.feature_debt_body'
   }
 ];
 
@@ -128,7 +129,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
   const back = () => setIndex((i) => Math.max(0, i - 1));
 
   const cta =
-    step === 'welcome' ? 'دەستپێبکە' : step === 'ready' ? 'بڕۆ ناو ئەپەکە' : 'بەردەوام بە';
+    step === 'welcome' ? t('onboarding.get_started') : step === 'ready' ? t('onboarding.enter_app') : t('common.continue');
 
   return (
     <Modal visible={visible} animationType="fade" statusBarTranslucent>
@@ -141,7 +142,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
         <View style={[styles.top, { paddingTop: Math.max(insets.top, 20) + 12 }]}>
           {index > 0 ? (
             <TouchableOpacity onPress={back} hitSlop={12} style={styles.backBtn}>
-              <Text style={[styles.backTxt, { color: colors.textSecondary }]}>‹ گەڕانەوە</Text>
+              <Text style={[styles.backTxt, { color: colors.textSecondary }]}>{`‹ ${t('common.back')}`}</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.backBtn} />
@@ -179,15 +180,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                 <Text style={styles.markLetter}>ح</Text>
               </LinearGradient>
 
-              <Text style={[styles.h1, { color: colors.textPrimary }]}>بەخێربێیت بۆ حساب</Text>
+              <Text style={[styles.h1, { color: colors.textPrimary }]}>{t('onboarding.welcome')}</Text>
               <Text style={[styles.sub, { color: colors.textSecondary }]}>
-                ڕێکخەری داراییی تایبەت و خێزانی — تەواو ئۆفلاین و پارێزراو
+                {t('onboarding.welcome_sub')}
               </Text>
 
               <View style={styles.features}>
                 {FEATURES.map((f) => (
                   <View
-                    key={f.title}
+                    key={f.titleKey}
                     style={[
                       styles.feature,
                       {
@@ -208,10 +209,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                     </View>
                     <View style={styles.featureText}>
                       <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>
-                        {f.title}
+                        {t(f.titleKey)}
                       </Text>
                       <Text style={[styles.featureBody, { color: colors.textSecondary }]}>
-                        {f.body}
+                        {t(f.bodyKey)}
                       </Text>
                     </View>
                   </View>
@@ -223,10 +224,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
           {step === 'country' && (
             <View style={styles.fill}>
               <Text style={[styles.h2, { color: colors.textPrimary }]}>
-                {t('onboarding.select_country', 'وڵاتەکەت هەڵبژێرە')}
+                {t('onboarding.select_country', t('onboarding.select_country'))}
               </Text>
               <Text style={[styles.sub2, { color: colors.textSecondary }]}>
-                دراوی سەرەکی و شێوازی ژمارەکان بەپێی ئەمە دادەنرێن
+                {t('onboarding.country_hint')}
               </Text>
 
               <FlatList
@@ -272,9 +273,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
 
           {step === 'rate' && (
             <View style={styles.centeredTop}>
-              <Text style={[styles.h2, { color: colors.textPrimary }]}>نرخی دۆلار</Text>
+              <Text style={[styles.h2, { color: colors.textPrimary }]}>{t('onboarding.dollar_rate')}</Text>
               <Text style={[styles.sub2, { color: colors.textSecondary }]}>
-                100 دۆلار بە چەند دینارە لە بازاڕدا؟ دواتر دەتوانیت لە ڕووی سەرەکییەوە بیگۆڕیت.
+                {t('onboarding.rate_hint')}
               </Text>
 
               <View
@@ -299,12 +300,12 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                   placeholder="150000"
                   placeholderTextColor={colors.textMuted}
                 />
-                <Text style={[styles.rateLabel, { color: colors.textSecondary }]}>د.ع</Text>
+                <Text style={[styles.rateLabel, { color: colors.textSecondary }]}>{t('currency.iqd_symbol')}</Text>
               </View>
 
               {!rateValid && (
                 <Text style={[styles.err, { color: colors.danger }]}>
-                  ژمارەیەکی گەورەتر لە سفر بنووسە
+                  {t('common.enter_positive_number')}
                 </Text>
               )}
             </View>
@@ -315,9 +316,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
               <View style={[styles.tick, { backgroundColor: colors.accentMuted }]}>
                 <Text style={[styles.tickTxt, { color: colors.accent }]}>✓</Text>
               </View>
-              <Text style={[styles.h1, { color: colors.textPrimary }]}>ئامادەیت</Text>
+              <Text style={[styles.h1, { color: colors.textPrimary }]}>{t('onboarding.ready')}</Text>
               <Text style={[styles.sub, { color: colors.textSecondary }]}>
-                هەموو داتاکانت تەنها لەسەر ئەم مۆبایلە دەمێننەوە.
+                {t('onboarding.privacy_note')}
               </Text>
 
               <View
@@ -332,14 +333,14 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                 ]}
               >
                 <View style={styles.summaryRow}>
-                  <Text style={[styles.summaryKey, { color: colors.textSecondary }]}>وڵات</Text>
+                  <Text style={[styles.summaryKey, { color: colors.textSecondary }]}>{t('settings.country')}</Text>
                   <Text style={[styles.summaryVal, { color: colors.textPrimary }]}>
                     {country.flag}  {countryName(country)}
                   </Text>
                 </View>
                 <View style={[styles.divider, { backgroundColor: colors.hairline }]} />
                 <View style={styles.summaryRow}>
-                  <Text style={[styles.summaryKey, { color: colors.textSecondary }]}>دراو</Text>
+                  <Text style={[styles.summaryKey, { color: colors.textSecondary }]}>{t('common.currency')}</Text>
                   <Text style={[styles.summaryVal, { color: colors.textPrimary }]}>
                     {country.currencyCode} ({country.currencySymbol})
                   </Text>
@@ -349,10 +350,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                     <View style={[styles.divider, { backgroundColor: colors.hairline }]} />
                     <View style={styles.summaryRow}>
                       <Text style={[styles.summaryKey, { color: colors.textSecondary }]}>
-                        نرخی بازاڕ
+                        {t('common.market_rate')}
                       </Text>
                       <Text style={[styles.summaryVal, { color: colors.textPrimary }]}>
-                        100$ = {parsedRate.toLocaleString('en-US')} د.ع
+                        100$ = {parsedRate.toLocaleString('en-US')}{' '}
+                        {t('currency.iqd_symbol')}
                       </Text>
                     </View>
                   </>
@@ -375,7 +377,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
               end={{ x: 1, y: 0 }}
               style={[styles.cta, { borderRadius: radius.lg, shadowColor: colors.accent }]}
             >
-              <Text style={styles.ctaTxt}>{saving ? 'چاوەڕێ بە…' : cta}</Text>
+              <Text style={styles.ctaTxt}>{saving ? t('common.please_wait') : cta}</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>

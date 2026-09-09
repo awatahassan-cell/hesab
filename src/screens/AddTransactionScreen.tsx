@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Alert,
   Image,
   Modal,
   Platform,
@@ -24,6 +23,7 @@ import { SegmentedControl } from '../components/common/SegmentedControl';
 import { Button } from '../components/common/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 interface AddTransactionScreenProps {
   navigation: any;
@@ -126,7 +126,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
   // Create custom category inline
   const handleSaveNewCategory = async () => {
     if (!newCatName.trim()) {
-      Alert.alert(t('common.error'), t('categories.category_name'));
+      AppDialog.alert(t('common.error'), t('categories.category_name'));
       return;
     }
 
@@ -146,14 +146,14 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
       setShowAddCatModal(false);
     } catch (e) {
       console.error('Failed to create custom category', e);
-      Alert.alert(t('common.error'), 'Failed to create category');
+      AppDialog.alert(t('common.error'), 'Failed to create category');
     }
   };
 
   // Create custom subcategory inline
   const handleSaveNewSubcategory = async () => {
     if (!activeCategory || !newSubName.trim()) {
-      Alert.alert(t('common.error'), t('common.subcategory'));
+      AppDialog.alert(t('common.error'), t('common.subcategory'));
       return;
     }
 
@@ -165,24 +165,24 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
       setShowAddSubModal(false);
     } catch (e) {
       console.error('Failed to create custom subcategory', e);
-      Alert.alert(t('common.error'), 'Failed to create subcategory');
+      AppDialog.alert(t('common.error'), 'Failed to create subcategory');
     }
   };
 
   const handleSave = async () => {
     const finalAmount = parseFloat(amountStr);
     if (!finalAmount || finalAmount <= 0) {
-      Alert.alert(t('common.error'), t('add.enter_valid_amount'));
+      AppDialog.alert(t('common.error'), t('add.enter_valid_amount'));
       return;
     }
 
     if (!selectedAccountId) {
-      Alert.alert(t('common.error'), t('add.select_account'));
+      AppDialog.alert(t('common.error'), t('add.select_account'));
       return;
     }
 
     if (type === 'transfer' && selectedAccountId === toAccountId) {
-      Alert.alert(t('common.error'), t('add.select_different_accounts'));
+      AppDialog.alert(t('common.error'), t('add.select_different_accounts'));
       return;
     }
 
@@ -216,7 +216,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
     } catch (err) {
       console.error('Failed to create transaction', err);
       setSaving(false);
-      Alert.alert(t('common.error'), 'Failed to save transaction');
+      AppDialog.alert(t('common.error'), 'Failed to save transaction');
     }
   };
 
@@ -278,10 +278,10 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
           <View style={[styles.amountCardHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
             <Text style={[typography.caption, { color: colors.textMuted, fontWeight: '600' }]}>
               {type === 'expense'
-                ? t('types.expense_amount', 'بڕی خەرجی')
+                ? t('types.expense_amount', t('types.expense_amount'))
                 : type === 'income'
-                ? t('types.income_amount', 'بڕی داهات')
-                : t('types.transfer_amount', 'بڕی گواستنەوە')}
+                ? t('types.income_amount', t('types.income_amount'))
+                : t('types.transfer_amount', t('types.transfer_amount'))}
             </Text>
             <View
               style={[
@@ -293,7 +293,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
               ]}
             >
               <Text style={[styles.currencyBadgeText, { color: colors.textSecondary }]}>
-                {primaryCurrency === 'USD' ? 'USD ($)' : 'IQD (د.ع)'}
+                {primaryCurrency === 'USD' ? 'USD ($)' : `IQD (${t('currency.iqd_symbol')})`}
               </Text>
             </View>
           </View>
@@ -335,7 +335,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
         {safeAccounts.length > 1 && (
           <View style={styles.sectionWrapper}>
             <Text style={[typography.caption, { color: colors.textMuted, textAlign: isRTL ? 'right' : 'left', marginBottom: 6 }]}>
-              {type === 'transfer' ? t('add.from_account') : t('add.select_account', 'هەژمار')}
+              {type === 'transfer' ? t('add.from_account') : t('add.select_account', t('common.account'))}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalChips}>
               {safeAccounts.map((acc) => {

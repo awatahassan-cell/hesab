@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Account } from '../../db/schema';
 import { formatCurrency } from '../../utils/currency';
 import { useAppStore } from '../../store/useAppStore';
+import { useTranslation } from 'react-i18next';
 
 interface BankCardProps {
   account: Account;
@@ -26,6 +27,7 @@ export const BankCard: React.FC<BankCardProps> = ({
   onPress,
   width
 }) => {
+  const { t } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
 
   const themeKey = account.type in CARD_THEMES ? account.type : 'bank';
@@ -102,7 +104,7 @@ export const BankCard: React.FC<BankCardProps> = ({
       {/* Balance & Subtitle */}
       <View style={[styles.balanceRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <View style={{ alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
-          <Text style={styles.balanceLabel}>مەوجودی کۆل (باڵانس)</Text>
+          <Text style={styles.balanceLabel}>{t('accounts.total_balance')}</Text>
           <Text style={styles.balanceAmount}>
             {formatCurrency(account.current_balance, account.currency, { isRTL })}
           </Text>
@@ -111,10 +113,10 @@ export const BankCard: React.FC<BankCardProps> = ({
         <View style={styles.cardTypePill}>
           <Text style={styles.cardTypeText}>
             {account.type === 'cash'
-              ? 'کاش / نەختینە'
+              ? t('accounts.type_cash')
               : account.type === 'ewallet'
-              ? 'جزدانی ئەلیکترۆنی'
-              : 'هەژماری بانکی'}
+              ? t('accounts.type_wallet')
+              : t('accounts.type_bank')}
           </Text>
         </View>
       </View>

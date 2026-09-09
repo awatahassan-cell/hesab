@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert,
   ScrollView
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,6 +25,7 @@ import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 const GOAL_ICONS = [
   'car-outline', 'shield-checkmark-outline', 'home-outline', 'airplane-outline',
@@ -59,12 +59,12 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
 
   const handleCreateGoal = async () => {
     if (!newTitle.trim()) {
-      Alert.alert(t('common.error'), 'تکایە ناوی ئامانجەکە بنووسە');
+      AppDialog.alert(t('common.error'), t('savings.enter_name_err'));
       return;
     }
     const target = parseFloat(newTarget);
     if (!target || target <= 0) {
-      Alert.alert(t('common.error'), 'بڕی ئامانج دیاری بکە');
+      AppDialog.alert(t('common.error'), t('savings.set_target_err'));
       return;
     }
 
@@ -86,7 +86,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
     if (!activeGoal) return;
     const amount = parseFloat(actionAmount);
     if (!amount || amount <= 0) {
-      Alert.alert(t('common.error'), 'بڕی دروست بنووسە');
+      AppDialog.alert(t('common.error'), t('common.enter_valid_amount'));
       return;
     }
 
@@ -102,7 +102,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
   };
 
   const handleDeleteGoal = (goal: SavingsGoal) => {
-    Alert.alert(
+    AppDialog.alert(
       t('common.delete'),
       `ئایا دڵنیایت لە سڕینەوەی سندووقی "${goal.title}"؟`,
       [
@@ -139,7 +139,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
             {/* Overview Stats Card */}
             <Card style={[styles.overviewCard, { backgroundColor: colors.surface }]}>
               <Text style={[typography.caption, { color: colors.textMuted, textAlign: isRTL ? 'right' : 'left' }]}>
-                کۆی گشتی پاشەکەوت لە سندووقەکان
+                {t('savings.total_in_funds')}
               </Text>
               <View style={[styles.balanceRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                 <Text style={[styles.mainBalance, { color: colors.textPrimary }]}>
@@ -158,7 +158,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
 
             {/* Add Goal Button */}
             <Button
-              title="+ دروستکردنی سندووقی ئامانجی نوێ"
+              title={t('savings.create_fund_plus')}
               onPress={() => setShowAddModal(true)}
               variant="primary"
             />
@@ -228,7 +228,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
                   style={[styles.actionPill, { backgroundColor: colors.income + '18', borderColor: colors.income }]}
                 >
                   <Ionicons name="add-circle-outline" size={16} color={colors.income} style={{ marginHorizontal: 4 }} />
-                  <Text style={[styles.actionPillText, { color: colors.income }]}>خستنەسەر (Deposit)</Text>
+                  <Text style={[styles.actionPillText, { color: colors.income }]}>{t('savings.deposit')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -240,7 +240,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
                   style={[styles.actionPill, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder }]}
                 >
                   <Ionicons name="remove-circle-outline" size={16} color={colors.textSecondary} style={{ marginHorizontal: 4 }} />
-                  <Text style={[styles.actionPillText, { color: colors.textSecondary }]}>کێشانەوە</Text>
+                  <Text style={[styles.actionPillText, { color: colors.textSecondary }]}>{t('savings.withdraw')}</Text>
                 </TouchableOpacity>
               </View>
             </Card>
@@ -253,11 +253,11 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
         <View style={styles.modalOverlay}>
           <View style={[styles.modalBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg }]}>
             <Text style={[typography.titleSmall, { color: colors.textPrimary, marginBottom: 14, textAlign: isRTL ? 'right' : 'left' }]}>
-              دروستکردنی سندووقی پاشەکەوت
+              {t('savings.create_fund')}
             </Text>
 
             <TextInput
-              placeholder="ناوی ئامانج (بۆ نموونە: کڕینی ئۆتۆمبێل، زێڕ، گەشت...)"
+              placeholder={t('savings.name_placeholder')}
               placeholderTextColor={colors.textMuted}
               value={newTitle}
               onChangeText={setNewTitle}
@@ -268,7 +268,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
             {/* Target Amount & Currency */}
             <View style={[styles.amountRow, { flexDirection: isRTL ? 'row-reverse' : 'row', marginTop: 10 }]}>
               <TextInput
-                placeholder="بڕی ئامانج (بۆ نموونە: 8000)"
+                placeholder={t('savings.target_placeholder')}
                 placeholderTextColor={colors.textMuted}
                 value={newTarget}
                 onChangeText={setNewTarget}
@@ -295,7 +295,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
 
             {/* Colors */}
             <Text style={[typography.caption, { color: colors.textMuted, marginTop: 12, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
-              ڕەنگی سندووق:
+              {t('savings.fund_color')}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
               {GOAL_COLORS.map((col) => (
@@ -316,7 +316,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
 
             {/* Icons */}
             <Text style={[typography.caption, { color: colors.textMuted, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
-              ئایکۆنی سندووق:
+              {t('savings.fund_icon')}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
               {GOAL_ICONS.map((ic) => (
@@ -365,14 +365,14 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
         <View style={styles.modalOverlay}>
           <View style={[styles.modalBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg }]}>
             <Text style={[typography.titleSmall, { color: colors.textPrimary, marginBottom: 8, textAlign: isRTL ? 'right' : 'left' }]}>
-              {modalActionType === 'deposit' ? 'خستنەسەری پارە بۆ سندووق' : 'کێشانەوەی پارە لە سندووق'}
+              {modalActionType === 'deposit' ? t('savings.deposit_title') : t('savings.withdraw_title')}
             </Text>
             <Text style={[typography.caption, { color: colors.textMuted, marginBottom: 12, textAlign: isRTL ? 'right' : 'left' }]}>
               {activeGoal?.title} ({activeGoal?.currency})
             </Text>
 
             <TextInput
-              placeholder="بڕی پارە بنووسە..."
+              placeholder={t('common.enter_amount')}
               placeholderTextColor={colors.textMuted}
               value={actionAmount}
               onChangeText={setActionAmount}
@@ -390,7 +390,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
                 style={{ flex: 1 }}
               />
               <Button
-                title={modalActionType === 'deposit' ? 'خستنەسەر' : 'کێشانەوە'}
+                title={modalActionType === 'deposit' ? t('savings.deposit') : t('savings.withdraw')}
                 onPress={handlePerformAction}
                 variant="primary"
                 style={{ flex: 1 }}

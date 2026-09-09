@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../theme';
 import { formatCurrency, convertCurrency } from '../../utils/currency';
 import { FONT_FAMILY, FONT_FAMILY_BOLD, FONT_FAMILY_MEDIUM, FONT_FAMILY_SEMIBOLD } from '../../theme/typography';
+import { useTranslation } from 'react-i18next';
 
 interface HeroDonutCardProps {
   monthNetBalance: number;
@@ -32,6 +33,7 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
   onToggleCurrency,
   onOpenRateModal
 }) => {
+  const { t } = useTranslation();
   const { colors } = useTheme();
 
   // Alternative currency balance estimation
@@ -69,8 +71,8 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
             <Ionicons name="sparkles" size={14} color="#FDE047" />
           </View>
           <View style={{ marginHorizontal: 8 }}>
-            <Text style={styles.cardSuperTitle}>باڵانسی پاکژی ئەم مانگە</Text>
-            <Text style={styles.cardSubTitle}>ئەپی دارایی حساب</Text>
+            <Text style={styles.cardSuperTitle}>{t('home.net_balance_month')}</Text>
+            <Text style={styles.cardSubTitle}>{t('app.tagline_short')}</Text>
           </View>
         </View>
 
@@ -82,7 +84,7 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
         >
           <View style={[styles.currencyItem, activeCurrency === 'IQD' && styles.currencyItemActive]}>
             <Text style={[styles.currencyText, activeCurrency === 'IQD' && styles.currencyTextActive]}>
-              د.ع
+              {t('currency.iqd_symbol')}
             </Text>
           </View>
           <View style={[styles.currencyItem, activeCurrency === 'USD' && styles.currencyItemActive]}>
@@ -135,7 +137,7 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
 
           {/* Center Info inside Donut */}
           <View style={styles.donutInnerContent}>
-            <Text style={styles.centerNetLabel}>باڵانسی خاوێن</Text>
+            <Text style={styles.centerNetLabel}>{t('home.net_balance')}</Text>
             <Text
               style={styles.centerAmountText}
               numberOfLines={1}
@@ -157,7 +159,7 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
         <View style={styles.cashflowItem}>
           <View style={styles.flowLabelRow}>
             <View style={[styles.dotIndicator, { backgroundColor: '#34D399' }]} />
-            <Text style={styles.flowLabel}>داهاتی مانگ</Text>
+            <Text style={styles.flowLabel}>{t('home.month_income')}</Text>
           </View>
           <Text style={[styles.flowValue, { color: '#34D399' }]}>
             +{formatCurrency(monthIncome, activeCurrency, { isRTL })}
@@ -169,7 +171,7 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
         <View style={styles.cashflowItem}>
           <View style={styles.flowLabelRow}>
             <View style={[styles.dotIndicator, { backgroundColor: '#FB7185' }]} />
-            <Text style={styles.flowLabel}>کۆی خەرجی</Text>
+            <Text style={styles.flowLabel}>{t('home.monthly_expense')}</Text>
           </View>
           <Text style={[styles.flowValue, { color: '#FB7185' }]}>
             -{formatCurrency(monthExpense, activeCurrency, { isRTL })}
@@ -185,7 +187,8 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
       >
         <Ionicons name="swap-horizontal" size={13} color="rgba(255, 255, 255, 0.85)" />
         <Text style={styles.marketRateText}>
-          نرخی بازاڕ: 100$ = {Number(marketRate100USD || 150000).toLocaleString()} د.ع
+          {t('common.market_rate')}: 100$ ={' '}
+          {Number(marketRate100USD || 150000).toLocaleString()} {t('currency.iqd_symbol')}
         </Text>
         <Ionicons name="pencil" size={11} color="rgba(255, 255, 255, 0.6)" />
       </TouchableOpacity>

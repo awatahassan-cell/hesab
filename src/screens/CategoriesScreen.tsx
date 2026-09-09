@@ -77,9 +77,9 @@ export const CategoriesScreen: React.FC = () => {
     const name = cat.custom_name || t('categories.names.' + cat.name_key, cat.name_key);
     setConfirmConfig({
       visible: true,
-      title: 'سڕینەوەی بەش',
+      title: t('categories.delete_category'),
       message: `ئایا دڵنیایت لە سڕینەوەی بەشی (${name})؟`,
-      confirmText: 'سڕینەوە',
+      confirmText: t('common.reset'),
       isDanger: true,
       icon: 'trash-outline',
       onConfirm: async () => {
@@ -93,12 +93,12 @@ export const CategoriesScreen: React.FC = () => {
   const handleRestoreDefaults = () => {
     setConfirmConfig({
       visible: true,
-      title: t('categories.restore_defaults', 'گەڕاندنەوەی بەشە سەرەکییەکان'),
+      title: t('categories.restore_defaults', t('categories.restore_defaults')),
       message: t(
         'categories.restore_confirm',
-        'ئایا دڵنیایت دەتەوێت هەموو بەشە سەرەکییە بنەڕەتییەکان بگێڕیتەوە؟ بەشە دروستکراوەکانی خۆت ناسڕدرێنەوە.'
+        t('categories.restore_confirm')
       ),
-      confirmText: 'گەڕاندنەوە',
+      confirmText: t('common.restore'),
       isDanger: false,
       icon: 'refresh-circle-outline',
       onConfirm: async () => {
@@ -157,7 +157,7 @@ export const CategoriesScreen: React.FC = () => {
             >
               <Ionicons name="refresh-outline" size={16} color={colors.accent} />
               <Text style={[styles.restoreDefaultsText, { color: colors.accent, marginHorizontal: 6 }]}>
-                {t('categories.restore_defaults', 'گەڕاندنەوەی بەشە سەرەکییەکان')}
+                {t('categories.restore_defaults', t('categories.restore_defaults'))}
               </Text>
             </TouchableOpacity>
           </View>

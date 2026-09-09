@@ -58,7 +58,7 @@ export const PinSetupModal: React.FC<PinSetupModalProps> = ({ visible, onClose, 
           handleClose();
         } else {
           setErrorShake(true);
-          setErrorText('کۆدەکان یەکسان نین، دووبارە هەوڵبدەرەوە');
+          setErrorText(t('security.pins_do_not_match'));
           setTimeout(() => {
             setStep(1);
             setFirstPin('');
@@ -104,13 +104,13 @@ export const PinSetupModal: React.FC<PinSetupModalProps> = ({ visible, onClose, 
 
           {/* Step Title */}
           <Text style={[styles.title, { color: colors.textPrimary }]}>
-            {step === 1 ? 'کۆدی نوێ داخڵ بکە' : 'دووبارە کۆدەکە داخڵ بکەرەوە'}
+            {step === 1 ? t('security.enter_new_pin') : t('security.repeat_pin')}
           </Text>
 
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             {step === 1
-              ? 'تکایە ٤ ژمارە بۆ کۆدی تێپەڕبوون هەڵبژێرە'
-              : 'بۆ دڵنیابوونەوە هەمان ٤ ژمارە داخڵ بکەرەوە'}
+              ? t('security.choose_4_digits')
+              : t('security.confirm_same_digits')}
           </Text>
 
           {/* 4 Dots indicator */}

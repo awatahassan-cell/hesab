@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, StatusBar as RNStatusBar } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar as RNStatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
@@ -15,6 +15,7 @@ import { generatePDFReport, exportTransactionsToCSV } from '../utils/export';
 import { Transaction } from '../db/schema';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
 
 interface ReportsScreenProps {
   navigation: any;
@@ -70,7 +71,7 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
         isRTL
       });
     } catch (e) {
-      Alert.alert(t('common.error'), 'Could not generate PDF');
+      AppDialog.alert(t('common.error'), 'Could not generate PDF');
     }
   };
 
@@ -82,13 +83,13 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
         endDate: end.toISOString()
       });
       if (!periodTx || periodTx.length === 0) {
-        Alert.alert(t('common.info', 'زانیاری'), 'هیچ مامەڵەیەک نییە بۆ هەناردەکردن لەم ماوەیەدا');
+        AppDialog.alert(t('common.info', t('common.info')), t('reports.nothing_in_range'));
         return;
       }
       await exportTransactionsToCSV(periodTx);
     } catch (e) {
       console.error('Export Excel error', e);
-      Alert.alert(t('common.error'), 'Could not export Excel file');
+      AppDialog.alert(t('common.error'), 'Could not export Excel file');
     }
   };
 
@@ -175,7 +176,7 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
               <Ionicons name="document-text" size={16} color="#EF4444" />
             </View>
             <Text style={[styles.exportBtnText, { color: colors.textPrimary }]}>
-              ڕاپۆرتی PDF
+              {t('menu.pdf_report')}
             </Text>
           </TouchableOpacity>
 
@@ -196,7 +197,7 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
               <Ionicons name="stats-chart" size={16} color="#10B981" />
             </View>
             <Text style={[styles.exportBtnText, { color: colors.textPrimary }]}>
-              فایلی Excel / CSV
+              {t('menu.excel_file')}
             </Text>
           </TouchableOpacity>
         </View>
