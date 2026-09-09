@@ -574,7 +574,14 @@
     "restore_failed_format": "Ini bukan file cadangan Hesab",
     "restore_failed_newer": "Cadangan ini dari versi yang lebih baru. Perbarui aplikasi terlebih dahulu.",
     "restore_failed_write": "Pemulihan gagal. Data Anda yang ada tidak tersentuh.",
-    "section": "Cadangan & pemulihan"
+    "section": "Cadangan & pemulihan",
+    "last_backup": "Cadangan terakhir",
+    "never": "Belum pernah — data Anda hanya ada di ponsel ini",
+    "today": "Hari ini",
+    "remind_me": "Ingatkan untuk mencadangkan",
+    "remind_me_hint": "Pengingat mingguan, hanya saat cadangan Anda usang",
+    "reminder_title": "Cadangkan Hesab",
+    "reminder_body": "Catatan Anda hanya ada di ponsel ini. Ekspor cadangan dan simpan di tempat aman."
   },
   "countries": {
     "IQ": "Irak",

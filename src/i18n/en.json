@@ -574,7 +574,14 @@
     "restore_failed_format": "This is not a Hesab backup file",
     "restore_failed_newer": "This backup is from a newer version. Update the app first.",
     "restore_failed_write": "The restore failed. Your existing data was left untouched.",
-    "section": "Backup & restore"
+    "section": "Backup & restore",
+    "last_backup": "Last backup",
+    "never": "Never — your data exists only on this phone",
+    "today": "Today",
+    "remind_me": "Remind me to back up",
+    "remind_me_hint": "A weekly nudge, only while your backup is out of date",
+    "reminder_title": "Back up Hesab",
+    "reminder_body": "Your records exist only on this phone. Export a backup and keep it somewhere safe."
   },
   "countries": {
     "IQ": "Iraq",

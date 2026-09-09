@@ -574,7 +574,14 @@
     "restore_failed_format": "Este no es un archivo de copia de Hesab",
     "restore_failed_newer": "Esta copia es de una versión más reciente. Actualiza la app primero.",
     "restore_failed_write": "La restauración falló. Tus datos actuales quedaron intactos.",
-    "section": "Copia de seguridad y restauración"
+    "section": "Copia de seguridad y restauración",
+    "last_backup": "Última copia",
+    "never": "Nunca — tus datos solo existen en este teléfono",
+    "today": "Hoy",
+    "remind_me": "Recordarme hacer copia",
+    "remind_me_hint": "Un aviso semanal, solo si tu copia está desactualizada",
+    "reminder_title": "Haz una copia de Hesab",
+    "reminder_body": "Tus registros solo existen en este teléfono. Exporta una copia y guárdala en lugar seguro."
   },
   "countries": {
     "IQ": "Irak",

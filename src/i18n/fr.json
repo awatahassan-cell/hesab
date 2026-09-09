@@ -574,7 +574,14 @@
     "restore_failed_format": "Ce n'est pas un fichier de sauvegarde Hesab",
     "restore_failed_newer": "Cette sauvegarde vient d'une version plus récente. Mettez d'abord l'application à jour.",
     "restore_failed_write": "La restauration a échoué. Vos données actuelles sont intactes.",
-    "section": "Sauvegarde et restauration"
+    "section": "Sauvegarde et restauration",
+    "last_backup": "Dernière sauvegarde",
+    "never": "Jamais — vos données n'existent que sur ce téléphone",
+    "today": "Aujourd'hui",
+    "remind_me": "Me rappeler de sauvegarder",
+    "remind_me_hint": "Un rappel hebdomadaire, seulement si la sauvegarde est ancienne",
+    "reminder_title": "Sauvegardez Hesab",
+    "reminder_body": "Vos données n'existent que sur ce téléphone. Exportez une sauvegarde et conservez-la en lieu sûr."
   },
   "countries": {
     "IQ": "Irak",

@@ -574,7 +574,14 @@
     "restore_failed_format": "Este não é um arquivo de backup do Hesab",
     "restore_failed_newer": "Este backup é de uma versão mais recente. Atualize o app primeiro.",
     "restore_failed_write": "A restauração falhou. Seus dados atuais continuam intactos.",
-    "section": "Backup e restauração"
+    "section": "Backup e restauração",
+    "last_backup": "Última cópia",
+    "never": "Nunca — os seus dados só existem neste telefone",
+    "today": "Hoje",
+    "remind_me": "Lembrar-me de fazer cópia",
+    "remind_me_hint": "Um aviso semanal, apenas se a cópia estiver desatualizada",
+    "reminder_title": "Faça uma cópia do Hesab",
+    "reminder_body": "Os seus registos só existem neste telefone. Exporte uma cópia e guarde-a em local seguro."
   },
   "countries": {
     "IQ": "Iraque",

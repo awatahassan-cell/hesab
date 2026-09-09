@@ -574,7 +574,14 @@
     "restore_failed_format": "Bu bir Hesab yedek dosyası değil",
     "restore_failed_newer": "Bu yedek daha yeni bir sürümden. Önce uygulamayı güncelleyin.",
     "restore_failed_write": "Geri yükleme başarısız oldu. Mevcut verileriniz olduğu gibi kaldı.",
-    "section": "Yedekleme ve geri yükleme"
+    "section": "Yedekleme ve geri yükleme",
+    "last_backup": "Son yedekleme",
+    "never": "Hiç — verileriniz yalnızca bu telefonda",
+    "today": "Bugün",
+    "remind_me": "Yedeklemeyi hatırlat",
+    "remind_me_hint": "Haftalık, yalnızca yedeğiniz eskiyken",
+    "reminder_title": "Hesab'ı yedekleyin",
+    "reminder_body": "Kayıtlarınız yalnızca bu telefonda. Bir yedek alıp güvenli bir yerde saklayın."
   },
   "countries": {
     "IQ": "Irak",

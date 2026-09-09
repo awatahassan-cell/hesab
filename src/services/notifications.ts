@@ -164,3 +164,44 @@ export async function scheduleShoppingReminder(
     return false;
   }
 }
+
+/** Identifier for the backup nudge, kept apart from the reminder prefix. */
+const BACKUP_ID = 'backup-reminder';
+
+export async function cancelBackupReminder(): Promise<void> {
+  try {
+    await Notifications.cancelScheduledNotificationAsync(BACKUP_ID);
+  } catch {
+    // Nothing scheduled, or notifications unavailable.
+  }
+}
+
+/**
+ * A weekly nudge to export a backup.
+ *
+ * Scheduled only while the last backup is old, and cancelled the moment one
+ * is taken, so it never becomes noise a person learns to swipe away.
+ */
+export async function scheduleBackupReminder(title: string, body: string): Promise<boolean> {
+  const granted = await ensureNotificationPermission();
+  if (!granted) return false;
+
+  await cancelBackupReminder();
+
+  try {
+    await Notifications.scheduleNotificationAsync({
+      identifier: BACKUP_ID,
+      content: { title, body },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        weekday: 6, // Friday, before the weekend
+        hour: 19,
+        minute: 0,
+        channelId: Platform.OS === 'android' ? ANDROID_CHANNEL : undefined
+      }
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}

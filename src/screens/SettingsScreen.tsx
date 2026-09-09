@@ -18,12 +18,22 @@ import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
 import { rescheduleAll } from '../services/notifications';
 import { resetBudgetAlerts } from '../services/budgetAlerts';
+import {
+  BackupStatus,
+  getBackupStatus,
+  isReminderEnabled,
+  recordBackupTaken,
+  setReminderEnabled,
+  clearBackupRecord
+} from '../services/backupHealth';
+import { cancelBackupReminder, scheduleBackupReminder } from '../services/notifications';
 import { LANGUAGES } from '../i18n';
+import { formatLocalDate } from '../utils/dates';
 import { getCountryLanguages } from '../utils/currencyData';
 
 export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, isDark } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
   const {
     language,
@@ -74,6 +84,30 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
     ] as typeof LANGUAGES;
   }, [countryCode]);
 
+  const [backup, setBackup] = React.useState<BackupStatus>({
+    health: 'never',
+    lastBackupAt: null,
+    ageDays: null
+  });
+  const [backupReminder, setBackupReminder] = React.useState(true);
+
+  const refreshBackupStatus = React.useCallback(async () => {
+    const [status, reminderOn] = await Promise.all([getBackupStatus(), isReminderEnabled()]);
+    setBackup(status);
+    setBackupReminder(reminderOn);
+
+    // The nudge exists only while there is something to nudge about.
+    if (reminderOn && status.health !== 'fresh') {
+      await scheduleBackupReminder(t('backup.reminder_title'), t('backup.reminder_body'));
+    } else {
+      await cancelBackupReminder();
+    }
+  }, [t]);
+
+  React.useEffect(() => {
+    refreshBackupStatus();
+  }, [refreshBackupStatus]);
+
   const handleCurrencyChange = (c: any) => {
     setCountryAndCurrency(c.countryCode, c.currencyCode);
   };
@@ -81,6 +115,8 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
   const handleExportBackup = async () => {
     try {
       const { counts } = await exportBackup();
+      await recordBackupTaken();
+      await refreshBackupStatus();
       const total = Object.values(counts).reduce((a, b) => a + b, 0);
       AppDialog.alert(
         t('backup.export_done'),
@@ -242,6 +278,7 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
       onConfirm: async () => {
         await resetAllDatabaseData();
         await resetBudgetAlerts();
+        await clearBackupRecord();
         await refreshAll();
         setConfirmConfig({
           visible: true,
@@ -400,6 +437,73 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
           {t('settings.backup_export')}
         </Text>
         <Card style={{ backgroundColor: colors.surface, marginBottom: 16 }}>
+          {/*
+            No server means no silent sync: data survives a lost phone only if
+            it has been exported somewhere. The app cannot do that for someone,
+            but it can keep the question visible.
+          */}
+          <View
+            style={[
+              styles.row,
+              { borderBottomColor: colors.divider, flexDirection: isRTL ? 'row-reverse' : 'row' }
+            ]}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={[typography.body, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left' }]}>
+                {t('backup.last_backup')}
+              </Text>
+              <Text
+                style={[
+                  typography.captionSmall,
+                  {
+                    color: backup.health === 'fresh' ? colors.income : colors.warning,
+                    textAlign: isRTL ? 'right' : 'left'
+                  }
+                ]}
+              >
+                {/*
+                  The date rather than "{{count}} days ago": i18next needs every
+                  CLDR plural form for a language, and a partial set renders the
+                  raw key. The date also says more.
+                */}
+                {backup.health === 'never'
+                  ? t('backup.never')
+                  : backup.ageDays === 0
+                    ? t('backup.today')
+                    : formatLocalDate(new Date(backup.lastBackupAt as string), i18n.language)}
+              </Text>
+            </View>
+            <Ionicons
+              name={backup.health === 'fresh' ? 'shield-checkmark' : 'shield-outline'}
+              size={20}
+              color={backup.health === 'fresh' ? colors.income : colors.warning}
+            />
+          </View>
+
+          <View
+            style={[
+              styles.row,
+              { borderBottomColor: colors.divider, flexDirection: isRTL ? 'row-reverse' : 'row' }
+            ]}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={[typography.body, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left' }]}>
+                {t('backup.remind_me')}
+              </Text>
+              <Text style={[typography.captionSmall, { color: colors.textMuted, textAlign: isRTL ? 'right' : 'left' }]}>
+                {t('backup.remind_me_hint')}
+              </Text>
+            </View>
+            <Switch
+              value={backupReminder}
+              onValueChange={async (value) => {
+                setBackupReminder(value);
+                await setReminderEnabled(value);
+                await refreshBackupStatus();
+              }}
+            />
+          </View>
+
           <TouchableOpacity
             onPress={handleExportBackup}
             style={[styles.row, { borderBottomColor: colors.divider, flexDirection: isRTL ? 'row-reverse' : 'row' }]}
