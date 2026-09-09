@@ -14,7 +14,20 @@ export interface ColorTheme {
   accentMuted: string;
   heroGradient: [string, string, string];
   cardGlow: string;
-  
+
+  // Glass layer — frosted surfaces sitting over the aurora wash.
+  // In light these lighten toward white; in dark they lift off the ground.
+  glass: string;
+  glassStrong: string;
+  glassEdge: string;
+  hairline: string;
+  // Three blurred colour fields painted behind the content of a screen.
+  aurora: [string, string, string];
+  auroraOpacity: [number, number, number];
+  // Passed straight to expo-blur's `tint`.
+  blurTint: 'light' | 'dark';
+  shadowColor: string;
+
   // Semantic
   expense: string;
   expenseMuted: string;
@@ -26,7 +39,7 @@ export interface ColorTheme {
   debtLentMuted: string;
   debtBorrowed: string;
   debtBorrowedMuted: string;
-  
+
   warning: string;
   warningMuted: string;
   danger: string;
@@ -35,68 +48,86 @@ export interface ColorTheme {
 
 export const lightColors: ColorTheme = {
   isDark: false,
-  background: '#F6F8FD',
+  background: '#F5F3FC',
   surface: '#FFFFFF',
-  surfaceSecondary: '#F0F3FC',
-  surfaceSubtle: '#E7EBF9',
-  cardBorder: '#E2E7F6',
-  divider: '#EEF1FA',
-  textPrimary: '#0F172A',
-  textSecondary: '#475569',
-  textMuted: '#8E9BAE',
+  surfaceSecondary: '#EFEBFA',
+  surfaceSubtle: '#E6E0F7',
+  cardBorder: '#E7E2F5',
+  divider: '#EFEBFA',
+  textPrimary: '#17142B',
+  textSecondary: '#5C5877',
+  textMuted: '#918DAA',
   textInverse: '#FFFFFF',
-  accent: '#5B42F3',
-  accentMuted: '#EEECFD',
-  heroGradient: ['#4338CA', '#6366F1', '#7C3AED'],
-  cardGlow: 'rgba(99, 102, 241, 0.25)',
+  accent: '#6D4AFF',
+  accentMuted: '#EEEAFF',
+  heroGradient: ['#6D4AFF', '#8B5CF6', '#06AED4'],
+  cardGlow: 'rgba(109, 74, 255, 0.22)',
 
-  expense: '#F43F5E',
-  expenseMuted: '#FFE4E6',
-  income: '#10B981',
-  incomeMuted: '#DCFCE7',
-  transfer: '#0EA5E9',
-  transferMuted: '#E0F2FE',
-  debtLent: '#D97706',
-  debtLentMuted: '#FEF3C7',
-  debtBorrowed: '#EA580C',
-  debtBorrowedMuted: '#FFEDD5',
+  glass: 'rgba(255, 255, 255, 0.68)',
+  glassStrong: 'rgba(255, 255, 255, 0.82)',
+  glassEdge: 'rgba(255, 255, 255, 0.90)',
+  hairline: 'rgba(24, 20, 52, 0.07)',
+  aurora: ['#A78BFA', '#67E8F9', '#FDA4AF'],
+  auroraOpacity: [0.62, 0.5, 0.42],
+  blurTint: 'light',
+  shadowColor: '#302266',
 
-  warning: '#F59E0B',
-  warningMuted: '#FEF3C7',
-  danger: '#F43F5E',
-  success: '#10B981'
+  expense: '#E11D6B',
+  expenseMuted: '#FCE7F0',
+  income: '#059669',
+  incomeMuted: '#D8F5E9',
+  transfer: '#06AED4',
+  transferMuted: '#D7F4FA',
+  debtLent: '#B45309',
+  debtLentMuted: '#FDF0DC',
+  debtBorrowed: '#C2410C',
+  debtBorrowedMuted: '#FDEBE0',
+
+  warning: '#D97706',
+  warningMuted: '#FDF0DC',
+  danger: '#E11D6B',
+  success: '#059669'
 };
 
 export const darkColors: ColorTheme = {
   isDark: true,
-  background: '#0B0E18',
-  surface: '#13192B',
-  surfaceSecondary: '#1C243D',
-  surfaceSubtle: '#263052',
-  cardBorder: '#253053',
-  divider: '#1D2542',
-  textPrimary: '#F8FAFC',
-  textSecondary: '#94A3B8',
-  textMuted: '#64748B',
-  textInverse: '#0B0E18',
-  accent: '#7D5FFF',
-  accentMuted: '#261F54',
-  heroGradient: ['#2E1065', '#4C1D95', '#5B21B6'],
-  cardGlow: 'rgba(125, 95, 255, 0.3)',
+  background: '#07070B',
+  surface: '#12121C',
+  surfaceSecondary: '#1A1A28',
+  surfaceSubtle: '#232338',
+  cardBorder: '#232336',
+  divider: '#1C1C2B',
+  textPrimary: '#F5F5F7',
+  textSecondary: '#9C99AE',
+  textMuted: '#6E6B80',
+  textInverse: '#07070B',
+  accent: '#8B6DFF',
+  accentMuted: '#1E1740',
+  heroGradient: ['#7C5CFF', '#6D4AFF', '#22D3EE'],
+  cardGlow: 'rgba(124, 92, 255, 0.32)',
+
+  glass: 'rgba(255, 255, 255, 0.06)',
+  glassStrong: 'rgba(255, 255, 255, 0.10)',
+  glassEdge: 'rgba(255, 255, 255, 0.09)',
+  hairline: 'rgba(255, 255, 255, 0.08)',
+  aurora: ['#7C5CFF', '#22D3EE', '#F43F8E'],
+  auroraOpacity: [0.78, 0.34, 0.26],
+  blurTint: 'dark',
+  shadowColor: '#000000',
 
   expense: '#FB7185',
-  expenseMuted: '#4C0519',
+  expenseMuted: '#3A1024',
   income: '#34D399',
-  incomeMuted: '#064E3B',
+  incomeMuted: '#06331F',
   transfer: '#38BDF8',
-  transferMuted: '#0C4A6E',
+  transferMuted: '#07364C',
   debtLent: '#FBBF24',
-  debtLentMuted: '#3E2F0A',
+  debtLentMuted: '#332510',
   debtBorrowed: '#FB923C',
-  debtBorrowedMuted: '#3E240D',
+  debtBorrowedMuted: '#331D0F',
 
   warning: '#FBBF24',
-  warningMuted: '#3E2F0A',
+  warningMuted: '#332510',
   danger: '#FB7185',
   success: '#34D399'
 };

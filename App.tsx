@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -31,79 +31,18 @@ import { GoalsAndBudgetsScreen } from './src/screens/GoalsAndBudgetsScreen';
 import { MenuScreen } from './src/screens/MenuScreen';
 import { OnboardingModal } from './src/screens/OnboardingModal';
 import { PinLockScreen } from './src/components/security/PinLockScreen';
+import { GlassTabBar } from './src/components/navigation/GlassTabBar';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function BottomTabs() {
-  const { colors, isDark } = useTheme();
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
-  const bottomInset = Platform.OS === 'android'
-    ? Math.max(insets.bottom, 48) + 8
-    : Math.max(insets.bottom, 14);
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.cardBorder,
-          height: 56 + bottomInset,
-          paddingBottom: bottomInset,
-          paddingTop: 6
-        },
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: colors.textMuted,
-        tabBarLabelStyle: {
-          fontFamily: Platform.select({
-            android: 'IBMPlexSansArabic-Medium',
-            ios: 'IBMPlexSansArabic-Medium',
-            default: '"IBM Plex Sans Arabic", Inter, sans-serif'
-          }),
-          fontSize: 11,
-          fontWeight: '600'
-        },
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';
-
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'GoalsAndBudgets') {
-            iconName = focused ? 'pie-chart' : 'pie-chart-outline';
-          } else if (route.name === 'Add') {
-            return (
-              <View
-                style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: 26,
-                  backgroundColor: colors.accent,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 16,
-                  shadowColor: colors.accent,
-                  shadowOffset: { width: 0, height: 6 },
-                  shadowOpacity: 0.45,
-                  shadowRadius: 10,
-                  elevation: 7,
-                  borderWidth: 3,
-                  borderColor: colors.surface
-                }}
-              >
-                <Ionicons name="add" size={32} color="#FFFFFF" />
-              </View>
-            );
-          } else if (route.name === 'Reports') {
-            iconName = focused ? 'bar-chart' : 'bar-chart-outline';
-          } else if (route.name === 'Menu') {
-            iconName = focused ? 'grid' : 'grid-outline';
-          }
-
-          return <Ionicons name={iconName} size={22} color={color} />;
-        }
-      })}
+      tabBar={(props) => <GlassTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
     >
       <Tab.Screen
         name="Home"
@@ -118,10 +57,7 @@ function BottomTabs() {
       <Tab.Screen
         name="Add"
         component={AddTransactionScreen}
-        options={{
-          title: '',
-          tabBarLabel: () => null
-        }}
+        options={{ title: '' }}
       />
       <Tab.Screen
         name="Reports"
