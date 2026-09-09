@@ -14,6 +14,7 @@ import { exportTransactionsToCSV } from '../utils/export';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
+import { ReceiptViewer } from '../components/transactions/ReceiptViewer';
 
 interface TransactionsScreenProps {
   navigation: any;
@@ -28,6 +29,7 @@ export const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ navigati
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState<'all' | 'expense' | 'income' | 'transfer'>('all');
   const [deleteTxTarget, setDeleteTxTarget] = useState<Transaction | null>(null);
+  const [receiptUri, setReceiptUri] = useState<string | null>(null);
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter((tx) => {
@@ -59,6 +61,14 @@ export const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ navigati
       t('common.actions'),
       `${tx.amount} ${tx.currency}`,
       [
+        ...(tx.receipt_uri
+          ? [
+              {
+                text: t('transactions.view_receipt'),
+                onPress: () => setReceiptUri(tx.receipt_uri ?? null)
+              }
+            ]
+          : []),
         {
           text: t('common.duplicate'),
           onPress: async () => {
@@ -214,6 +224,8 @@ export const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ navigati
         }}
         onCancel={() => setDeleteTxTarget(null)}
       />
+
+      <ReceiptViewer uri={receiptUri} onClose={() => setReceiptUri(null)} />
     </View>
   );
 };

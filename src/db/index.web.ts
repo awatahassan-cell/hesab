@@ -138,6 +138,19 @@ function persistState() {
   }
 }
 
+/**
+ * Values bind to '?' by position, so a clause's parameter is the one at its
+ * own index among the placeholders before it. The filters below were matched
+ * by substring but read params[0] regardless, which quietly ignored every
+ * date range in the app: on web, "this month" showed all-time figures.
+ */
+function boundParam(sql: string, clause: string, params: any[]): any {
+  const at = sql.indexOf(clause);
+  if (at === -1) return undefined;
+  const index = (sql.slice(0, at + clause.length).match(/\?/g) || []).length - 1;
+  return params[index];
+}
+
 class WebDatabase implements IDatabase {
   async execAsync(sql: string): Promise<void> {
     const trimmed = sql.trim();
@@ -325,6 +338,18 @@ class WebDatabase implements IDatabase {
         } else if (params.includes('income')) {
           txs = txs.filter((t) => t.type === 'income');
         }
+
+        const from = boundParam(trimmed, 't.date_time >= ?', params);
+        const to = boundParam(trimmed, 't.date_time <= ?', params);
+        const accountId = boundParam(trimmed, '(t.account_id = ? OR t.to_account_id = ?)', params);
+        const categoryId = boundParam(trimmed, 't.category_id = ?', params);
+
+        if (from !== undefined) txs = txs.filter((t) => (t.date_time || '') >= from);
+        if (to !== undefined) txs = txs.filter((t) => (t.date_time || '') <= to);
+        if (accountId !== undefined) {
+          txs = txs.filter((t) => t.account_id === accountId || t.to_account_id === accountId);
+        }
+        if (categoryId !== undefined) txs = txs.filter((t) => t.category_id === categoryId);
       }
 
       if (trimmed.includes('GROUP BY t.category_id')) {
@@ -435,6 +460,11 @@ class WebDatabase implements IDatabase {
       if (trimmed.includes('account_id = ?')) txs = txs.filter((t) => t.account_id === params[0]);
       if (trimmed.includes('to_account_id = ?')) txs = txs.filter((t) => t.to_account_id === params[0]);
       if (trimmed.includes('category_id = ?')) txs = txs.filter((t) => t.category_id === params[0]);
+
+      const from = boundParam(trimmed, 'date_time >= ?', params);
+      const to = boundParam(trimmed, 'date_time <= ?', params);
+      if (from !== undefined) txs = txs.filter((t) => t.date_time >= from);
+      if (to !== undefined) txs = txs.filter((t) => t.date_time <= to);
 
       const sum = txs.reduce((acc, t) => acc + (t.amount || 0), 0);
       return { sum } as any;

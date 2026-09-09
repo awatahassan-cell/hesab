@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar as RNStatusBar } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar as RNStatusBar, Dimensions } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
@@ -16,6 +17,10 @@ import { Transaction } from '../db/schema';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
+import { MonthCalendar } from '../components/charts/MonthCalendar';
+import { TrendChart } from '../components/charts/TrendChart';
+import { fillMonths, recentMonthKeys, totalsByDay, totalsByMonth, PeriodTotal } from '../utils/aggregate';
+import { formatLocalDate } from '../utils/dates';
 
 interface ReportsScreenProps {
   navigation: any;
@@ -23,7 +28,7 @@ interface ReportsScreenProps {
 
 export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
   const { colors, typography, spacing, radius } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
   const monthStartDay = useAppStore((state) => state.monthStartDay);
@@ -33,27 +38,84 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
   const [categoriesData, setCategoriesData] = useState<any[]>([]);
   const [topExpenses, setTopExpenses] = useState<Transaction[]>([]);
   const [selectedCatId, setSelectedCatId] = useState<string | undefined>(undefined);
-  const [activeTab, setActiveTab] = useState<'category' | 'top' | 'comparison'>('category');
+  const [activeTab, setActiveTab] = useState<'category' | 'top' | 'calendar' | 'trend'>('category');
+
+  // Custom range. Kept beside `period` rather than replacing it, so switching
+  // back to a preset does not lose the dates someone picked.
+  const [customStart, setCustomStart] = useState<Date>(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 1);
+    return d;
+  });
+  const [customEnd, setCustomEnd] = useState<Date>(new Date());
+  const [pickerFor, setPickerFor] = useState<'start' | 'end' | null>(null);
+
+  const [dayTotals, setDayTotals] = useState<PeriodTotal[]>([]);
+  const [monthTotals, setMonthTotals] = useState<PeriodTotal[]>([]);
+  const [selectedDay, setSelectedDay] = useState<string | undefined>(undefined);
+  const [dayTransactions, setDayTransactions] = useState<Transaction[]>([]);
+
+  /** The dates the whole screen reports on, preset or hand-picked. */
+  const activeRange = useMemo(() => {
+    if (period === 'custom') {
+      const start = new Date(customStart);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(customEnd);
+      end.setHours(23, 59, 59, 999);
+      // Tolerate the dates being picked in either order.
+      return start <= end ? { start, end } : { start: end, end: start };
+    }
+    return getPeriodRange(period, new Date(), monthStartDay);
+  }, [period, customStart, customEnd, monthStartDay]);
 
   useEffect(() => {
     loadReportData();
-  }, [period, monthStartDay]);
+  }, [activeRange.start.getTime(), activeRange.end.getTime()]);
 
   const loadReportData = async () => {
-    const { start, end } = getPeriodRange(period, new Date(), monthStartDay);
-    const startIso = start.toISOString();
-    const endIso = end.toISOString();
+    const startIso = activeRange.start.toISOString();
+    const endIso = activeRange.end.toISOString();
 
-    const [periodTotals, catData, top10] = await Promise.all([
+    // The trend charts look further back than the selected period on purpose:
+    // twelve months of history is what makes a trend readable.
+    const trendKeys = recentMonthKeys(12, activeRange.end);
+    const trendStart = new Date(activeRange.end.getFullYear(), activeRange.end.getMonth() - 11, 1);
+
+    const [periodTotals, catData, top10, rangeTx, trendTx] = await Promise.all([
       getTotalsForPeriod(startIso, endIso),
       getCategorySpendingForPeriod(startIso, endIso),
-      getTopExpenses(10, startIso, endIso)
+      getTopExpenses(10, startIso, endIso),
+      getTransactions({ startDate: startIso, endDate: endIso }),
+      getTransactions({ startDate: trendStart.toISOString(), endDate: endIso })
     ]);
 
     setTotals(periodTotals);
     setCategoriesData(catData);
     setTopExpenses(top10);
+    setDayTotals(totalsByDay(rangeTx));
+    setMonthTotals(fillMonths(totalsByMonth(trendTx), trendKeys));
+    setSelectedDay(undefined);
   };
+
+  // Loaded on demand: a month of taps should not mean a month of queries up
+  // front, and only one day is ever on screen.
+  useEffect(() => {
+    if (!selectedDay) {
+      setDayTransactions([]);
+      return;
+    }
+    let cancelled = false;
+    const [year, month, day] = selectedDay.split('-').map(Number);
+    const start = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const end = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+    getTransactions({ startDate: start.toISOString(), endDate: end.toISOString() }).then((rows) => {
+      if (!cancelled) setDayTransactions(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDay]);
 
   const handleExportPDF = async () => {
     try {
@@ -77,10 +139,9 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
 
   const handleExportExcel = async () => {
     try {
-      const { start, end } = getPeriodRange(period, new Date(), monthStartDay);
       const periodTx = await getTransactions({
-        startDate: start.toISOString(),
-        endDate: end.toISOString()
+        startDate: activeRange.start.toISOString(),
+        endDate: activeRange.end.toISOString()
       });
       if (!periodTx || periodTx.length === 0) {
         AppDialog.alert(t('common.info', t('common.info')), t('reports.nothing_in_range'));
@@ -92,6 +153,9 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
       AppDialog.alert(t('common.error'), 'Could not export Excel file');
     }
   };
+
+  // The cards sit inside 16px screen padding and 14px card padding.
+  const chartWidth = Dimensions.get('window').width - 32 - 28;
 
   const insets = useSafeAreaInsets();
   const topSafeInset = Platform.OS === 'android'
@@ -118,7 +182,8 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
             { value: 'day', label: t('reports.period_day') },
             { value: 'week', label: t('reports.period_week') },
             { value: 'month', label: t('reports.period_month') },
-            { value: 'year', label: t('reports.period_year') }
+            { value: 'year', label: t('reports.period_year') },
+            { value: 'custom', label: t('reports.period_custom') }
           ]}
           selected={period}
           onSelect={(p) => {
@@ -126,6 +191,40 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
             setSelectedCatId(undefined);
           }}
         />
+
+        {period === 'custom' && (
+          <View style={[styles.rangeRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            {(['start', 'end'] as const).map((which) => (
+              <TouchableOpacity
+                key={which}
+                activeOpacity={0.8}
+                onPress={() => setPickerFor(which)}
+                style={[
+                  styles.rangeBtn,
+                  { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.sm }
+                ]}
+              >
+                <Ionicons name="calendar-outline" size={14} color={colors.textMuted} />
+                <Text style={[typography.caption, { color: colors.textPrimary, marginHorizontal: 6 }]}>
+                  {formatLocalDate(which === 'start' ? customStart : customEnd, i18n.language)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {pickerFor && (
+          <DateTimePicker
+            value={pickerFor === 'start' ? customStart : customEnd}
+            mode="date"
+            onChange={(event, date) => {
+              setPickerFor(null);
+              if (event.type === 'dismissed' || !date) return;
+              if (pickerFor === 'start') setCustomStart(date);
+              else setCustomEnd(date);
+            }}
+          />
+        )}
 
         {/* Summary Card */}
         <Card style={{ marginVertical: 12, backgroundColor: colors.surface }}>
@@ -207,6 +306,8 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
           <SegmentedControl
             options={[
               { value: 'category', label: t('reports.category_breakdown') },
+              { value: 'trend', label: t('reports.monthly_trends') },
+              { value: 'calendar', label: t('reports.calendar_view') },
               { value: 'top', label: t('reports.top_expenses') }
             ]}
             selected={activeTab}
@@ -235,6 +336,57 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
           </Card>
         )}
 
+        {/* Income vs expense, and the running net, over twelve months */}
+        {activeTab === 'trend' && (
+          <View style={{ marginTop: 8 }}>
+            <Card style={{ backgroundColor: colors.surface }}>
+              <Text style={[typography.titleSmall, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left' }]}>
+                {t('reports.monthly_trends')}
+              </Text>
+              <TrendChart totals={monthTotals} isRTL={isRTL} variant="bars" width={chartWidth} />
+            </Card>
+
+            <Card style={{ backgroundColor: colors.surface, marginTop: 10 }}>
+              <Text style={[typography.titleSmall, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left' }]}>
+                {t('reports.net_balance_trend')}
+              </Text>
+              <TrendChart totals={monthTotals} isRTL={isRTL} variant="line" width={chartWidth} />
+            </Card>
+          </View>
+        )}
+
+        {/* Calendar of the selected month */}
+        {activeTab === 'calendar' && (
+          <View style={{ marginTop: 8 }}>
+            <Card style={{ backgroundColor: colors.surface }}>
+              <Text style={[typography.titleSmall, { color: colors.textPrimary, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
+                {t('reports.calendar_view')}
+              </Text>
+              <MonthCalendar
+                month={activeRange.end}
+                totals={dayTotals}
+                isRTL={isRTL}
+                selectedDay={selectedDay}
+                onSelectDay={setSelectedDay}
+              />
+            </Card>
+
+            {selectedDay && (
+              <View style={{ marginTop: 10 }}>
+                {dayTransactions.length === 0 ? (
+                  <Text style={[typography.caption, { color: colors.textMuted, textAlign: 'center', paddingVertical: 16 }]}>
+                    {t('common.no_data')}
+                  </Text>
+                ) : (
+                  dayTransactions.map((tx) => (
+                    <TransactionItem key={tx.id} transaction={tx} showDate={false} />
+                  ))
+                )}
+              </View>
+            )}
+          </View>
+        )}
+
         {/* Top 10 Largest Expenses */}
         {activeTab === 'top' && (
           <View style={{ marginTop: 8 }}>
@@ -254,6 +406,18 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1
+  },
+  rangeRow: {
+    gap: 8,
+    marginTop: 10
+  },
+  rangeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    paddingVertical: 10
   },
   summaryRow: {
     justifyContent: 'space-between',
