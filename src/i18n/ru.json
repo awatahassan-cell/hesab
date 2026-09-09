@@ -62,7 +62,8 @@
     "enter_amount": "Введите сумму...",
     "error_short": "Ошибка",
     "ok": "ОК",
-    "notice": "Уведомление"
+    "notice": "Уведомление",
+    "delete_confirm_named": "Удалить «{{name}}»?"
   },
   "types": {
     "expense": "Расход",
@@ -173,7 +174,8 @@
     "archive_confirm": "Счёт будет перенесён в архив без удаления истории операций.",
     "transfer_funds": "Перевод средств между счетами",
     "type_wallet": "Эл. кошелёк",
-    "total_balance": "Общий баланс"
+    "total_balance": "Общий баланс",
+    "default_savings": "Сбережения"
   },
   "categories": {
     "title": "Категории",
@@ -326,7 +328,9 @@
     "empty_body": "Нажмите + Новый бюджет, чтобы задать лимит по категории",
     "over_budget_warning": "Внимание: эта категория превысила бюджет!",
     "set_limit": "Задать лимит бюджета",
-    "overall": "Общий бюджет"
+    "overall": "Общий бюджет",
+    "spent_of": "Потрачено: {{spent}} из {{total}}",
+    "monthly_amount_label": "Сумма месячного бюджета ({{currency}}):"
   },
   "reports": {
     "title": "Отчёты и графики",
@@ -409,7 +413,10 @@
     "dollar_rate": "Курс доллара",
     "rate_hint": "Сколько стоят 100 долларов на рынке? Позже это можно изменить на главном экране.",
     "ready": "Всё готово",
-    "privacy_note": "Все ваши данные остаются только на этом телефоне."
+    "privacy_note": "Все ваши данные остаются только на этом телефоне.",
+    "select_language": "Выберите язык",
+    "language_hint": "Используется в стране {{country}}. Изменить можно в любой момент в настройках.",
+    "other_languages": "Другие языки"
   },
   "charts": {
     "other_slices": "Другие категории",
@@ -442,7 +449,16 @@
     "add_new": "Добавить напоминание",
     "day_of_month": "День месяца для платежа (с 1 по 31):",
     "pay_confirm": "Записать {{amount}} за «{{title}}» как расход?",
-    "notification_body": "{{amount}} — срок сегодня"
+    "notification_body": "{{amount}} — срок сегодня",
+    "days_left": "Осталось {{count}} дн.",
+    "days_overdue": "Просрочено на {{count}} дн.!",
+    "due_on_day": "{{day}}-е число месяца",
+    "paid_count": "Оплачено {{paid}} из {{total}}",
+    "remaining_count": "Осталось {{count}}",
+    "due_for": "Срок: {{title}}",
+    "amount_label": "Сумма: {{amount}}",
+    "more_payments": "(ещё платежей: {{count}})",
+    "amount_and_day": "Сумма: {{amount}} • {{day}}-е число"
   },
   "app": {
     "tagline_short": "Финансовое приложение Hesab",
@@ -463,7 +479,11 @@
     "total_in_funds": "Всего накоплено во всех фондах",
     "create_fund": "Создать накопительный фонд",
     "fund_color": "Цвет фонда:",
-    "fund_icon": "Значок фонда:"
+    "fund_icon": "Значок фонда:",
+    "active_funds": "Активных фондов: {{count}}",
+    "remaining_label": "Осталось: {{amount}}",
+    "collected_label": "Накоплено: {{amount}}",
+    "target_label": "Цель: {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "Разблокируйте отпечатком",
@@ -522,7 +542,8 @@
     "empty_title": "Целей накопления нет",
     "empty_body": "Нажмите + Новая цель, чтобы добавить",
     "add_amount": "Добавить сумму",
-    "new_savings_goal": "Новая цель накопления"
+    "new_savings_goal": "Новая цель накопления",
+    "saved_of": "Накоплено: {{saved}} из {{target}}"
   },
   "currency": {
     "iqd_symbol": "IQD"
@@ -598,5 +619,10 @@
     "SE": "Швеция",
     "CA": "Канада",
     "AU": "Австралия"
+  },
+  "errors": {
+    "title": "Что-то пошло не так",
+    "data_safe": "Ваши данные на этом устройстве и не пострадали.",
+    "try_again": "Повторить"
   }
 }

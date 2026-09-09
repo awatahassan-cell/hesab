@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle, G } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../theme';
-import { formatCurrency, convertCurrency } from '../../utils/currency';
+import { formatCurrency, convertCurrency, formatNumber, getCurrencySymbol } from '../../utils/currency';
 import { FONT_FAMILY, FONT_FAMILY_BOLD, FONT_FAMILY_MEDIUM, FONT_FAMILY_SEMIBOLD } from '../../theme/typography';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +14,8 @@ interface HeroDonutCardProps {
   monthExpense: number;
   activeCurrency: string;
   primaryCurrency: string;
+  /** The second half of the pair the toggle flips to. */
+  referenceCurrency: string;
   exchangeRates: Record<string, number>;
   marketRate100USD: number;
   isRTL: boolean;
@@ -27,6 +29,7 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
   monthExpense,
   activeCurrency,
   primaryCurrency,
+  referenceCurrency,
   exchangeRates,
   marketRate100USD,
   isRTL,
@@ -36,8 +39,9 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  // Alternative currency balance estimation
-  const altCurrency = activeCurrency === 'IQD' ? 'USD' : 'IQD';
+  // The pair is the country's own currency and its reference currency, so a
+  // Turkish user sees ₺ / $ where an Iraqi sees د.ع / $.
+  const altCurrency = activeCurrency === primaryCurrency ? referenceCurrency : primaryCurrency;
   const altBalance = convertCurrency(
     monthNetBalance,
     activeCurrency,
@@ -82,16 +86,19 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
           onPress={onToggleCurrency}
           style={styles.currencyPill}
         >
-          <View style={[styles.currencyItem, activeCurrency === 'IQD' && styles.currencyItemActive]}>
-            <Text style={[styles.currencyText, activeCurrency === 'IQD' && styles.currencyTextActive]}>
-              {t('currency.iqd_symbol')}
-            </Text>
-          </View>
-          <View style={[styles.currencyItem, activeCurrency === 'USD' && styles.currencyItemActive]}>
-            <Text style={[styles.currencyText, activeCurrency === 'USD' && styles.currencyTextActive]}>
-              $ USD
-            </Text>
-          </View>
+          {[primaryCurrency, referenceCurrency].map((code) => (
+            <View
+              key={code}
+              style={[styles.currencyItem, activeCurrency === code && styles.currencyItemActive]}
+            >
+              <Text
+                numberOfLines={1}
+                style={[styles.currencyText, activeCurrency === code && styles.currencyTextActive]}
+              >
+                {getCurrencySymbol(code)} {code}
+              </Text>
+            </View>
+          ))}
         </TouchableOpacity>
       </View>
 
@@ -188,7 +195,7 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
         <Ionicons name="swap-horizontal" size={13} color="rgba(255, 255, 255, 0.85)" />
         <Text style={styles.marketRateText}>
           {t('common.market_rate')}: 100$ ={' '}
-          {Number(marketRate100USD || 150000).toLocaleString()} {t('currency.iqd_symbol')}
+          {formatNumber(marketRate100USD || 0)} {getCurrencySymbol(primaryCurrency)}
         </Text>
         <Ionicons name="pencil" size={11} color="rgba(255, 255, 255, 0.6)" />
       </TouchableOpacity>

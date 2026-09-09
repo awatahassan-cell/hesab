@@ -100,7 +100,7 @@ export const SplashScreen: React.FC = () => {
             end={{ x: 1, y: 1 }}
             style={[styles.mark, { shadowColor: colors.accent }]}
           >
-            <Text style={styles.markLetter}>ح</Text>
+            <Text style={styles.markLetter}>{t('app_name').charAt(0)}</Text>
           </LinearGradient>
         </Animated.View>
 
@@ -112,7 +112,7 @@ export const SplashScreen: React.FC = () => {
             ]
           }}
         >
-          <Text style={[styles.name, { color: colors.textPrimary }]}>حساب</Text>
+          <Text style={[styles.name, { color: colors.textPrimary }]}>{t('app_name')}</Text>
           <Text style={[styles.tag, { color: colors.textSecondary }]}>
             {t('app.tagline')}
           </Text>

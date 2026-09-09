@@ -62,7 +62,8 @@
     "enter_amount": "مبلغ را وارد کنید...",
     "error_short": "خطا",
     "ok": "باشه",
-    "notice": "توجه"
+    "notice": "توجه",
+    "delete_confirm_named": "آیا «{{name}}» حذف شود؟"
   },
   "types": {
     "expense": "هزینه",
@@ -173,7 +174,8 @@
     "archive_confirm": "این حساب بدون حذف سابقه تراکنش‌ها بایگانی می‌شود.",
     "transfer_funds": "انتقال وجه بین حساب‌ها",
     "type_wallet": "کیف پول الکترونیکی",
-    "total_balance": "موجودی کل"
+    "total_balance": "موجودی کل",
+    "default_savings": "پس‌انداز"
   },
   "categories": {
     "title": "دسته‌ها",
@@ -326,7 +328,9 @@
     "empty_body": "برای تعیین سقف هزینه هر دسته، روی + بودجه جدید بزنید",
     "over_budget_warning": "هشدار: این دسته از بودجه گذشته است!",
     "set_limit": "تعیین سقف بودجه",
-    "overall": "بودجه کلی"
+    "overall": "بودجه کلی",
+    "spent_of": "خرج‌شده: {{spent}} از {{total}}",
+    "monthly_amount_label": "مبلغ بودجه ماهانه ({{currency}}):"
   },
   "reports": {
     "title": "گزارش‌ها و نمودارها",
@@ -409,7 +413,10 @@
     "dollar_rate": "نرخ دلار",
     "rate_hint": "در بازار ۱۰۰ دلار چند است؟ بعداً می‌توانید از صفحه اصلی تغییرش دهید.",
     "ready": "آماده‌اید",
-    "privacy_note": "همه داده‌های شما فقط روی همین گوشی می‌ماند."
+    "privacy_note": "همه داده‌های شما فقط روی همین گوشی می‌ماند.",
+    "select_language": "زبان خود را انتخاب کنید",
+    "language_hint": "در {{country}} خوانده می‌شود. هر زمان بخواهید از تنظیمات تغییرش دهید.",
+    "other_languages": "زبان‌های دیگر"
   },
   "charts": {
     "other_slices": "دسته‌های دیگر",
@@ -442,7 +449,16 @@
     "add_new": "افزودن یادآور جدید",
     "day_of_month": "روز پرداخت در ماه (۱ تا ۳۱):",
     "pay_confirm": "مبلغ {{amount}} برای «{{title}}» به‌عنوان هزینه ثبت شود؟",
-    "notification_body": "{{amount}} — امروز موعد پرداخت است"
+    "notification_body": "{{amount}} — امروز موعد پرداخت است",
+    "days_left": "{{count}} روز مانده",
+    "days_overdue": "{{count}} روز عقب افتاده!",
+    "due_on_day": "روز {{day}} ماه",
+    "paid_count": "{{paid}} از {{total}} پرداخت شده",
+    "remaining_count": "{{count}} باقی مانده",
+    "due_for": "سررسید {{title}}",
+    "amount_label": "مبلغ: {{amount}}",
+    "more_payments": "({{count}} پرداخت دیگر مانده)",
+    "amount_and_day": "مبلغ: {{amount}} • روز {{day}}"
   },
   "app": {
     "tagline_short": "برنامه مالی حساب",
@@ -463,7 +479,11 @@
     "total_in_funds": "مجموع پس‌انداز در صندوق‌ها",
     "create_fund": "ساخت صندوق پس‌انداز",
     "fund_color": "رنگ صندوق:",
-    "fund_icon": "آیکون صندوق:"
+    "fund_icon": "آیکون صندوق:",
+    "active_funds": "{{count}} صندوق فعال",
+    "remaining_label": "باقی‌مانده: {{amount}}",
+    "collected_label": "پس‌انداز شده: {{amount}}",
+    "target_label": "هدف: {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "برای باز کردن، از اثر انگشت استفاده کنید",
@@ -522,7 +542,8 @@
     "empty_title": "هدف پس‌اندازی نیست",
     "empty_body": "برای افزودن، روی + هدف جدید بزنید",
     "add_amount": "افزودن مبلغ",
-    "new_savings_goal": "هدف پس‌انداز جدید"
+    "new_savings_goal": "هدف پس‌انداز جدید",
+    "saved_of": "پس‌انداز: {{saved}} از {{target}}"
   },
   "currency": {
     "iqd_symbol": "IQD"
@@ -598,5 +619,10 @@
     "SE": "سوئد",
     "CA": "کانادا",
     "AU": "استرالیا"
+  },
+  "errors": {
+    "title": "مشکلی پیش آمد",
+    "data_safe": "داده‌های شما روی همین گوشی است و دست‌نخورده مانده.",
+    "try_again": "دوباره تلاش کنید"
   }
 }

@@ -62,7 +62,8 @@
     "enter_amount": "أدخل المبلغ...",
     "error_short": "خطأ",
     "ok": "حسنًا",
-    "notice": "تنبيه"
+    "notice": "تنبيه",
+    "delete_confirm_named": "هل تريد حذف \"{{name}}\"؟"
   },
   "types": {
     "expense": "مصروف",
@@ -173,7 +174,8 @@
     "archive_confirm": "سيتم أرشفة الحساب مع الاحتفاظ بسجل معاملاته كاملاً.",
     "transfer_funds": "تحويل الأموال بين الحسابات",
     "type_wallet": "محفظة إلكترونية",
-    "total_balance": "الرصيد الإجمالي"
+    "total_balance": "الرصيد الإجمالي",
+    "default_savings": "المدخرات"
   },
   "categories": {
     "title": "الفئات",
@@ -326,7 +328,9 @@
     "empty_body": "اضغط على زر + ميزانية جديدة لتحديد سقف إنفاق الأقسام",
     "over_budget_warning": "تنبيه: تم تجاوز ميزانية هذا القسم!",
     "set_limit": "تحديد سقف الميزانية",
-    "overall": "الميزانية الإجمالية"
+    "overall": "الميزانية الإجمالية",
+    "spent_of": "المصروف: {{spent}} من {{total}}",
+    "monthly_amount_label": "مبلغ الميزانية الشهرية ({{currency}}):"
   },
   "reports": {
     "title": "التقارير والإحصائيات",
@@ -350,7 +354,7 @@
   "settings": {
     "title": "الإعدادات",
     "general": "عام",
-    "language": "اللغة (Language)",
+    "language": "اللغة",
     "primary_currency": "العملة الرئيسية",
     "country": "الدولة",
     "exchange_rates": "أسعار صرف العملات",
@@ -409,7 +413,10 @@
     "dollar_rate": "سعر الدولار",
     "rate_hint": "100 دولار كم دينارًا في السوق؟ يمكنك تغييره لاحقًا من الشاشة الرئيسية.",
     "ready": "أنت جاهز",
-    "privacy_note": "تبقى كل بياناتك على هذا الهاتف وحده."
+    "privacy_note": "تبقى كل بياناتك على هذا الهاتف وحده.",
+    "select_language": "اختر لغتك",
+    "language_hint": "مستخدمة في {{country}}. يمكنك تغييرها في أي وقت من الإعدادات.",
+    "other_languages": "لغات أخرى"
   },
   "charts": {
     "other_slices": "أقسام أخرى",
@@ -442,7 +449,16 @@
     "add_new": "إضافة تذكير جديد",
     "day_of_month": "يوم الشهر للدفع (1 إلى 31):",
     "pay_confirm": "هل تريد تسجيل مبلغ {{amount}} لـ «{{title}}» كمصروف؟",
-    "notification_body": "{{amount}} — مستحق اليوم"
+    "notification_body": "{{amount}} — مستحق اليوم",
+    "days_left": "باقٍ {{count}} يوم",
+    "days_overdue": "متأخر {{count}} يوم!",
+    "due_on_day": "يوم {{day}} من الشهر",
+    "paid_count": "تم دفع {{paid}} من {{total}}",
+    "remaining_count": "متبقٍ {{count}}",
+    "due_for": "موعد {{title}}",
+    "amount_label": "المبلغ: {{amount}}",
+    "more_payments": "({{count}} دفعات أخرى مستحقة)",
+    "amount_and_day": "المبلغ: {{amount}} • يوم {{day}}"
   },
   "app": {
     "tagline_short": "تطبيق حساب المالي",
@@ -463,7 +479,11 @@
     "total_in_funds": "إجمالي المدخرات في الصناديق",
     "create_fund": "إنشاء صندوق ادخار",
     "fund_color": "لون الصندوق:",
-    "fund_icon": "أيقونة الصندوق:"
+    "fund_icon": "أيقونة الصندوق:",
+    "active_funds": "{{count}} صندوق نشط",
+    "remaining_label": "المتبقي: {{amount}}",
+    "collected_label": "المُدّخر: {{amount}}",
+    "target_label": "الهدف: {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "استخدم بصمتك لفتح التطبيق",
@@ -522,7 +542,8 @@
     "empty_title": "لا توجد أهداف ادخار",
     "empty_body": "اضغط على زر + هدف جديد لإضافة هدف",
     "add_amount": "إضافة مبلغ",
-    "new_savings_goal": "هدف ادخار جديد"
+    "new_savings_goal": "هدف ادخار جديد",
+    "saved_of": "المُدّخر: {{saved}} من {{target}}"
   },
   "currency": {
     "iqd_symbol": "د.ع"
@@ -598,5 +619,10 @@
     "SE": "السويد",
     "CA": "كندا",
     "AU": "أستراليا"
+  },
+  "errors": {
+    "title": "حدث خطأ ما",
+    "data_safe": "بياناتك على هاتفك ولم تُمس.",
+    "try_again": "حاول مرة أخرى"
   }
 }

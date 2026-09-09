@@ -1,3 +1,5 @@
+import { formatNumber } from './currency';
+
 /**
  * Safe mathematical calculator for amount inputs like:
  * "3000+500", "15000-2500", "500*3", "12000/4"
@@ -36,5 +38,7 @@ export function evaluateExpression(expr: string): number | null {
 export function formatExpressionPreview(expr: string): string {
   const evaluated = evaluateExpression(expr);
   if (evaluated === null) return '';
-  return evaluated.toLocaleString();
+  // Latin digits, like every other number in the app: the preview sits right
+  // above a keypad that types them.
+  return formatNumber(evaluated);
 }

@@ -78,7 +78,7 @@ export const CategoriesScreen: React.FC = () => {
     setConfirmConfig({
       visible: true,
       title: t('categories.delete_category'),
-      message: `ئایا دڵنیایت لە سڕینەوەی بەشی (${name})؟`,
+      message: t('common.delete_confirm_named', { name }),
       confirmText: t('common.reset'),
       isDanger: true,
       icon: 'trash-outline',

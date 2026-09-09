@@ -1,6 +1,7 @@
 import { getDatabase } from '../index';
 import { Reminder } from '../schema';
 import { createTransaction } from './transactions';
+import i18n from '../../i18n';
 
 export async function getAllReminders(): Promise<Reminder[]> {
   const db = await getDatabase();
@@ -82,7 +83,7 @@ export async function payReminderAndLogExpense(
     account_id: accountId,
     category_id: reminder.category_id || undefined,
     date_time: now,
-    note: `وەبیرهێنەرەوە: ${reminder.title}`
+    note: `${i18n.t('home.reminders')}: ${reminder.title}`
   });
 
   // 2. Mark reminder as paid

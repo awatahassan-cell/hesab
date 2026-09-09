@@ -18,6 +18,7 @@ import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
 import { rescheduleAll } from '../services/notifications';
 import { LANGUAGES } from '../i18n';
+import { getCountryLanguages } from '../utils/currencyData';
 
 export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, isDark } = useTheme();
@@ -26,6 +27,7 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
   const {
     language,
     setLanguage,
+    countryCode,
     primaryCurrency,
     setCountryAndCurrency,
     themeMode,
@@ -60,6 +62,16 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
   const handleLanguageChange = (lang: string) => {
     setLanguage(lang);
   };
+
+  // The languages actually read in the chosen country come first, so someone
+  // in Turkey is not scrolling past Kurdish and Arabic to reach Turkish.
+  const orderedLanguages = React.useMemo(() => {
+    const local = getCountryLanguages(countryCode);
+    return [
+      ...local.map((code) => LANGUAGES.find((l) => l.code === code)).filter(Boolean),
+      ...LANGUAGES.filter((l) => !local.includes(l.code))
+    ] as typeof LANGUAGES;
+  }, [countryCode]);
 
   const handleCurrencyChange = (c: any) => {
     setCountryAndCurrency(c.countryCode, c.currencyCode);
@@ -252,7 +264,7 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
         </Text>
         <Card style={{ backgroundColor: colors.surface, marginBottom: 16 }}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingVertical: 4 }}>
-            {LANGUAGES.map((lang) => {
+            {orderedLanguages.map((lang) => {
               const isSelected = language === lang.code;
               return (
                 <TouchableOpacity

@@ -1,4 +1,14 @@
 import { IDatabase } from './types';
+import i18n from '../i18n';
+
+/**
+ * The one account every install starts with. Seeding runs after the language
+ * is chosen, so a Turkish install gets "Birikim" rather than a Kurdish name
+ * nobody there can read.
+ */
+function defaultAccountName(): string {
+  return i18n.t('accounts.default_savings', { defaultValue: 'Savings' });
+}
 
 // 1. Comprehensive Expense Categories (16 top categories like Money Manager / Wallet)
 export const defaultExpenseCategories = [
@@ -274,9 +284,9 @@ export async function seedInitialData(db: IDatabase, primaryCurrency: string = '
 
   const now = new Date().toISOString();
 
-  // 1. Seed Accounts (Primary account: پاشەکەوت / Savings)
+  // 1. Seed Accounts — named in whatever language the app starts in.
   const defaultAccounts = [
-    { id: 'acc_savings', name: 'پاشەکەوت (Savings)', type: 'savings', icon: 'wallet-outline', color: '#10B981', starting_balance: 0, sort: 0 }
+    { id: 'acc_savings', name: defaultAccountName(), type: 'savings', icon: 'wallet-outline', color: '#10B981', starting_balance: 0, sort: 0 }
   ];
 
   for (const acc of defaultAccounts) {

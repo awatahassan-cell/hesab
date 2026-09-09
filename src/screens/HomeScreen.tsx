@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
 import { useFinanceStore } from '../store/useFinanceStore';
 import { useAppStore } from '../store/useAppStore';
-import { formatCurrency, convertCurrency } from '../utils/currency';
+import { formatCurrency, convertCurrency, getCurrencySymbol, per100Usd } from '../utils/currency';
 import { formatLocalDate } from '../utils/dates';
 import { TransactionItem } from '../components/transactions/TransactionItem';
 import { EmptyState } from '../components/common/EmptyState';
@@ -39,6 +39,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
   const displayCurrency = useAppStore((state) => state.displayCurrency);
+  const referenceCurrency = useAppStore((state) => state.referenceCurrency);
   const toggleDisplayCurrency = useAppStore((state) => state.toggleDisplayCurrency);
   const marketRate100USD = useAppStore((state) => state.marketRate100USD);
   const setMarketRate100USD = useAppStore((state) => state.setMarketRate100USD);
@@ -60,7 +61,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   const [refreshing, setRefreshing] = useState(false);
   const [showRateModal, setShowRateModal] = useState(false);
-  const [tempRate, setTempRate] = useState(String(marketRate100USD || 150000));
+  const [tempRate, setTempRate] = useState(String(marketRate100USD || ''));
 
   useEffect(() => {
     refreshAll();
@@ -84,7 +85,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   };
 
   // Active currency conversion
-  const activeCurrency = displayCurrency || 'IQD';
+  const activeCurrency = displayCurrency || primaryCurrency;
   const monthNetBalancePrimary = monthIncome - monthExpense;
   const displayMonthBalance = convertCurrency(
     monthNetBalancePrimary,
@@ -217,8 +218,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           exchangeRates={exchangeRates}
           marketRate100USD={marketRate100USD}
           isRTL={isRTL}
+          referenceCurrency={referenceCurrency}
           onToggleCurrency={toggleDisplayCurrency}
-          onOpenRateModal={() => setShowRateModal(true)}
+          onOpenRateModal={() => {
+            // Seed from the live rate: the stored value loads after this
+            // screen first renders, so initialising the field once would
+            // leave the modal empty.
+            setTempRate(String(marketRate100USD || per100Usd(primaryCurrency, exchangeRates)));
+            setShowRateModal(true);
+          }}
         />
 
         {/* Royal Violet Quick Action 4-Grid */}
@@ -465,7 +473,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <View style={[styles.rateInputRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
               <Text style={[styles.rateLabel, { color: colors.textPrimary }]}>100$ =</Text>
               <TextInput
-                placeholder="150000"
+                placeholder={String(per100Usd(primaryCurrency, exchangeRates))}
                 placeholderTextColor={colors.textMuted}
                 value={tempRate}
                 onChangeText={setTempRate}
@@ -473,7 +481,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 style={[styles.modalInput, { flex: 1, backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder, color: colors.textPrimary, borderRadius: 8 }]}
                 autoFocus
               />
-              <Text style={[styles.rateLabel, { color: colors.textPrimary, marginHorizontal: 6 }]}>{t('currency.iqd_symbol')}</Text>
+              <Text style={[styles.rateLabel, { color: colors.textPrimary, marginHorizontal: 6 }]}>{getCurrencySymbol(primaryCurrency)}</Text>
             </View>
 
             <View style={[styles.modalActions, { flexDirection: isRTL ? 'row-reverse' : 'row', marginTop: 18 }]}>
@@ -826,12 +834,14 @@ const styles = StyleSheet.create({
   },
   rateInputRow: {
     alignItems: 'center',
+    alignSelf: 'stretch',
     marginVertical: 8
   },
   rateLabel: {
     fontSize: 14,
     fontWeight: '700',
-    fontFamily: FONT_FAMILY_BOLD
+    fontFamily: FONT_FAMILY_BOLD,
+    flexShrink: 0
   },
   modalInput: {
     paddingHorizontal: 12,
@@ -839,6 +849,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 15,
     marginHorizontal: 8,
+    // Keeps a flexed input from setting the row's minimum width and pushing
+    // the currency symbol beside it off the screen.
+    minWidth: 0,
     fontFamily: FONT_FAMILY_SEMIBOLD
   },
   modalActions: {

@@ -62,7 +62,8 @@
     "enter_amount": "Introduce un importe...",
     "error_short": "Error",
     "ok": "Aceptar",
-    "notice": "Aviso"
+    "notice": "Aviso",
+    "delete_confirm_named": "¿Eliminar \"{{name}}\"?"
   },
   "types": {
     "expense": "Gasto",
@@ -173,7 +174,8 @@
     "archive_confirm": "Esta cuenta se archivará sin borrar su historial de movimientos.",
     "transfer_funds": "Transferir dinero entre cuentas",
     "type_wallet": "Billetera digital",
-    "total_balance": "Saldo total"
+    "total_balance": "Saldo total",
+    "default_savings": "Ahorros"
   },
   "categories": {
     "title": "Categorías",
@@ -326,7 +328,9 @@
     "empty_body": "Toca + Nuevo presupuesto para poner un límite de gasto por categoría",
     "over_budget_warning": "Atención: esta categoría ha superado el presupuesto",
     "set_limit": "Poner un límite de presupuesto",
-    "overall": "Presupuesto general"
+    "overall": "Presupuesto general",
+    "spent_of": "Gastado: {{spent}} de {{total}}",
+    "monthly_amount_label": "Importe del presupuesto mensual ({{currency}}):"
   },
   "reports": {
     "title": "Informes y gráficos",
@@ -409,7 +413,10 @@
     "dollar_rate": "Tipo de cambio del dólar",
     "rate_hint": "¿Cuánto valen 100 dólares en el mercado? Puedes cambiarlo luego desde el inicio.",
     "ready": "Todo listo",
-    "privacy_note": "Todos tus datos se quedan solo en este teléfono."
+    "privacy_note": "Todos tus datos se quedan solo en este teléfono.",
+    "select_language": "Elige tu idioma",
+    "language_hint": "Se usa en {{country}}. Puedes cambiarlo cuando quieras en Ajustes.",
+    "other_languages": "Otros idiomas"
   },
   "charts": {
     "other_slices": "Otras categorías",
@@ -442,7 +449,16 @@
     "add_new": "Añadir un recordatorio",
     "day_of_month": "Día del mes para el pago (1 a 31):",
     "pay_confirm": "¿Registrar {{amount}} de «{{title}}» como gasto?",
-    "notification_body": "{{amount}} — vence hoy"
+    "notification_body": "{{amount}} — vence hoy",
+    "days_left": "Faltan {{count}} días",
+    "days_overdue": "¡{{count}} días de retraso!",
+    "due_on_day": "Día {{day}} del mes",
+    "paid_count": "{{paid}} de {{total}} pagados",
+    "remaining_count": "Quedan {{count}}",
+    "due_for": "Vence: {{title}}",
+    "amount_label": "Importe: {{amount}}",
+    "more_payments": "({{count}} pagos más pendientes)",
+    "amount_and_day": "Importe: {{amount}} • Día {{day}}"
   },
   "app": {
     "tagline_short": "App de finanzas Hesab",
@@ -463,7 +479,11 @@
     "total_in_funds": "Total ahorrado en los fondos",
     "create_fund": "Crear un fondo de ahorro",
     "fund_color": "Color del fondo:",
-    "fund_icon": "Icono del fondo:"
+    "fund_icon": "Icono del fondo:",
+    "active_funds": "{{count}} fondos activos",
+    "remaining_label": "Restante: {{amount}}",
+    "collected_label": "Ahorrado: {{amount}}",
+    "target_label": "Meta: {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "Usa tu huella para desbloquear",
@@ -522,7 +542,8 @@
     "empty_title": "No hay metas de ahorro",
     "empty_body": "Toca + Nueva meta para añadir una",
     "add_amount": "Añadir importe",
-    "new_savings_goal": "Nueva meta de ahorro"
+    "new_savings_goal": "Nueva meta de ahorro",
+    "saved_of": "Ahorrado: {{saved}} de {{target}}"
   },
   "currency": {
     "iqd_symbol": "IQD"
@@ -598,5 +619,10 @@
     "SE": "Suecia",
     "CA": "Canadá",
     "AU": "Australia"
+  },
+  "errors": {
+    "title": "Algo salió mal",
+    "data_safe": "Tus datos están en este dispositivo y no se han tocado.",
+    "try_again": "Reintentar"
   }
 }

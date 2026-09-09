@@ -62,7 +62,8 @@
     "enter_amount": "بڕی پارە بنووسە...",
     "error_short": "هەڵە",
     "ok": "باشە",
-    "notice": "ئاگاداری"
+    "notice": "ئاگاداری",
+    "delete_confirm_named": "ئایا دڵنیایت لە سڕینەوەی \"{{name}}\"؟"
   },
   "types": {
     "expense": "خەرجی",
@@ -173,7 +174,8 @@
     "archive_confirm": "ئەم هەژمارە دەخرێتە ئەرشیڤەوە بەڵام مێژووی مامەڵەکانی دەمێنێتەوە.",
     "transfer_funds": "گواستنەوەی پارە لە نێوان هەژمارەکان",
     "type_wallet": "جزدانی ئەلیکترۆنی",
-    "total_balance": "مەوجودی کۆل (باڵانس)"
+    "total_balance": "مەوجودی کۆل (باڵانس)",
+    "default_savings": "پاشەکەوت"
   },
   "categories": {
     "title": "بەشەکان",
@@ -326,7 +328,9 @@
     "empty_body": "کلیک لەسەر دوگمەی + بودجەی نوێ بکە بۆ دیاریکردنی سنوری خەرجی بەشەکان",
     "over_budget_warning": "ئاگاداری: بودجەی ئەم بەشە تێپەڕیوە!",
     "set_limit": "دانانی سنوری بودجە",
-    "overall": "بودجەی گشتی"
+    "overall": "بودجەی گشتی",
+    "spent_of": "خەرجکراو: {{spent}} لە {{total}}",
+    "monthly_amount_label": "بڕی بودجەی مانگانە ({{currency}}):"
   },
   "reports": {
     "title": "ڕاپۆرت و ئامار",
@@ -350,7 +354,7 @@
   "settings": {
     "title": "ڕێکخستنەکان",
     "general": "گشتی",
-    "language": "زمان (Language)",
+    "language": "زمان",
     "primary_currency": "دراوی سەرەکی",
     "country": "وڵات",
     "exchange_rates": "نرخی گۆڕینەوەی دراوەکان",
@@ -409,7 +413,10 @@
     "dollar_rate": "نرخی دۆلار",
     "rate_hint": "100 دۆلار بە چەند دینارە لە بازاڕدا؟ دواتر دەتوانیت لە ڕووی سەرەکییەوە بیگۆڕیت.",
     "ready": "ئامادەیت",
-    "privacy_note": "هەموو داتاکانت تەنها لەسەر ئەم مۆبایلە دەمێننەوە."
+    "privacy_note": "هەموو داتاکانت تەنها لەسەر ئەم مۆبایلە دەمێننەوە.",
+    "select_language": "زمانەکەت هەڵبژێرە",
+    "language_hint": "لە {{country}} بەکاردێت. هەر کاتێک بتەوێت لە ڕێکخستنەکاندا دەیگۆڕیت.",
+    "other_languages": "زمانەکانی تر"
   },
   "charts": {
     "other_slices": "بەشەکانی تر",
@@ -442,7 +449,16 @@
     "add_new": "زیادکردنی وەبیرهێنەرەوەی نوێ",
     "day_of_month": "ڕۆژی مانگ بۆ پارەدان (1 تا 31):",
     "pay_confirm": "ئایا دەتەوێت بڕی {{amount}} بۆ «{{title}}» تۆمار بکەیت وەک خەرجی؟",
-    "notification_body": "{{amount}} — ئەمڕۆ کاتی پارەدانە"
+    "notification_body": "{{amount}} — ئەمڕۆ کاتی پارەدانە",
+    "days_left": "{{count}} ڕۆژی ماوە",
+    "days_overdue": "{{count}} ڕۆژ دواکەوتووە!",
+    "due_on_day": "ڕۆژی {{day}}ی مانگ",
+    "paid_count": "{{paid}} لە {{total}} دراوە",
+    "remaining_count": "{{count}} ماوەتەوە",
+    "due_for": "موعدی {{title}}",
+    "amount_label": "بڕی: {{amount}}",
+    "more_payments": "({{count}} پارەدانی تر ماوە)",
+    "amount_and_day": "بڕ: {{amount}} • ڕۆژی {{day}}ی مانگ"
   },
   "app": {
     "tagline_short": "ئەپی دارایی حساب",
@@ -463,7 +479,11 @@
     "total_in_funds": "کۆی گشتی پاشەکەوت لە سندووقەکان",
     "create_fund": "دروستکردنی سندووقی پاشەکەوت",
     "fund_color": "ڕەنگی سندووق:",
-    "fund_icon": "ئایکۆنی سندووق:"
+    "fund_icon": "ئایکۆنی سندووق:",
+    "active_funds": "{{count}} سندووقی چالاک",
+    "remaining_label": "ماوەتەوە: {{amount}}",
+    "collected_label": "کۆکراوەتەوە: {{amount}}",
+    "target_label": "ئامانج: {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "پەنجەمۆرت دابنێ بۆ کردنەوەی ئەپ",
@@ -522,7 +542,8 @@
     "empty_title": "هیچ ئامانجێکی پاشەکەوت نییە",
     "empty_body": "بۆ دانانی ئامانجی نوێ، کلیک لەسەر دوگمەی + ئامانجی نوێ بکە",
     "add_amount": "زیادکردنی بڕ",
-    "new_savings_goal": "ئامانجی نوێی پاشەکەوت"
+    "new_savings_goal": "ئامانجی نوێی پاشەکەوت",
+    "saved_of": "پاشەکەوتکراو: {{saved}} لە {{target}}"
   },
   "currency": {
     "iqd_symbol": "د.ع"
@@ -598,5 +619,10 @@
     "SE": "سوید",
     "CA": "کەنەدا",
     "AU": "ئوستڕالیا"
+  },
+  "errors": {
+    "title": "شتێک هەڵە بوو",
+    "data_safe": "داتاکانت لەسەر مۆبایلەکەتن و دەستیان لێ نەدراوە.",
+    "try_again": "دووبارە هەوڵبدە"
   }
 }

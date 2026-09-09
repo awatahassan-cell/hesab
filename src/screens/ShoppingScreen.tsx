@@ -27,7 +27,7 @@ import {
   deleteShoppingTrip,
   setShoppingTripReminder
 } from '../db/queries/shopping';
-import { formatCurrency } from '../utils/currency';
+import { formatCurrency, getCurrencySymbol } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { SegmentedControl } from '../components/common/SegmentedControl';
@@ -485,7 +485,7 @@ export const ShoppingScreen: React.FC = () => {
                   />
 
                   <TextInput
-                    placeholder={`${t('shopping.item_price')} (${t('currency.iqd_symbol')})`}
+                    placeholder={`${t('shopping.item_price')} (${getCurrencySymbol(primaryCurrency)})`}
                     placeholderTextColor={colors.textMuted}
                     value={newItemPrice}
                     onChangeText={(txt) => setNewItemPrice(txt.replace(/[^0-9.]/g, ''))}

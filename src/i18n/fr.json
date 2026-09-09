@@ -62,7 +62,8 @@
     "enter_amount": "Saisissez un montant...",
     "error_short": "Erreur",
     "ok": "OK",
-    "notice": "Avis"
+    "notice": "Avis",
+    "delete_confirm_named": "Supprimer « {{name}} » ?"
   },
   "types": {
     "expense": "Dépense",
@@ -173,7 +174,8 @@
     "archive_confirm": "Ce compte sera archivé sans supprimer son historique d'opérations.",
     "transfer_funds": "Transférer de l'argent entre comptes",
     "type_wallet": "Portefeuille électronique",
-    "total_balance": "Solde total"
+    "total_balance": "Solde total",
+    "default_savings": "Épargne"
   },
   "categories": {
     "title": "Catégories",
@@ -326,7 +328,9 @@
     "empty_body": "Appuyez sur + Nouveau budget pour fixer un plafond par catégorie",
     "over_budget_warning": "Attention : cette catégorie dépasse son budget !",
     "set_limit": "Fixer un plafond de budget",
-    "overall": "Budget global"
+    "overall": "Budget global",
+    "spent_of": "Dépensé : {{spent}} sur {{total}}",
+    "monthly_amount_label": "Montant du budget mensuel ({{currency}}) :"
   },
   "reports": {
     "title": "Rapports et graphiques",
@@ -409,7 +413,10 @@
     "dollar_rate": "Taux du dollar",
     "rate_hint": "Combien valent 100 dollars sur le marché ? Vous pourrez le changer plus tard depuis l'accueil.",
     "ready": "Vous êtes prêt",
-    "privacy_note": "Toutes vos données restent uniquement sur ce téléphone."
+    "privacy_note": "Toutes vos données restent uniquement sur ce téléphone.",
+    "select_language": "Choisissez votre langue",
+    "language_hint": "Utilisée en {{country}}. Vous pouvez en changer à tout moment dans les réglages.",
+    "other_languages": "Autres langues"
   },
   "charts": {
     "other_slices": "Autres catégories",
@@ -442,7 +449,16 @@
     "add_new": "Ajouter un rappel",
     "day_of_month": "Jour du mois pour le paiement (1 à 31) :",
     "pay_confirm": "Enregistrer {{amount}} pour « {{title}} » comme dépense ?",
-    "notification_body": "{{amount}} — à payer aujourd'hui"
+    "notification_body": "{{amount}} — à payer aujourd'hui",
+    "days_left": "{{count}} jours restants",
+    "days_overdue": "{{count}} jours de retard !",
+    "due_on_day": "Le {{day}} du mois",
+    "paid_count": "{{paid}} sur {{total}} payés",
+    "remaining_count": "{{count}} restants",
+    "due_for": "Échéance : {{title}}",
+    "amount_label": "Montant : {{amount}}",
+    "more_payments": "({{count}} autres paiements à venir)",
+    "amount_and_day": "Montant : {{amount}} • Le {{day}}"
   },
   "app": {
     "tagline_short": "Application de finances Hesab",
@@ -463,7 +479,11 @@
     "total_in_funds": "Total épargné dans les cagnottes",
     "create_fund": "Créer une cagnotte d'épargne",
     "fund_color": "Couleur de la cagnotte :",
-    "fund_icon": "Icône de la cagnotte :"
+    "fund_icon": "Icône de la cagnotte :",
+    "active_funds": "{{count}} fonds actifs",
+    "remaining_label": "Restant : {{amount}}",
+    "collected_label": "Épargné : {{amount}}",
+    "target_label": "Objectif : {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "Utilisez votre empreinte pour déverrouiller",
@@ -522,7 +542,8 @@
     "empty_title": "Aucun objectif d'épargne",
     "empty_body": "Appuyez sur + Nouvel objectif pour en ajouter un",
     "add_amount": "Ajouter un montant",
-    "new_savings_goal": "Nouvel objectif d'épargne"
+    "new_savings_goal": "Nouvel objectif d'épargne",
+    "saved_of": "Épargné : {{saved}} sur {{target}}"
   },
   "currency": {
     "iqd_symbol": "IQD"
@@ -598,5 +619,10 @@
     "SE": "Suède",
     "CA": "Canada",
     "AU": "Australie"
+  },
+  "errors": {
+    "title": "Une erreur est survenue",
+    "data_safe": "Vos données sont sur cet appareil et intactes.",
+    "try_again": "Réessayer"
   }
 }

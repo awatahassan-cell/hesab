@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { lightColors, darkColors } from '../../theme/colors';
 import { Appearance } from 'react-native';
+import i18n from '../../i18n';
 
 interface Props {
   children: React.ReactNode;
@@ -57,15 +58,20 @@ export class ErrorBoundary extends React.Component<Props, State> {
           ]}
         >
           <Text style={[styles.emoji]}>⚠️</Text>
+          {/*
+            Translated through the i18n instance directly rather than a hook:
+            this screen has to render when the tree below it has already
+            failed. Every string carries its English text as the default, so
+            it still reads correctly if the bundles never loaded.
+          */}
           <Text style={[styles.title, { color: colors.textPrimary }]}>
-            شتێک هەڵە بوو{'\n'}
-            <Text style={styles.titleAlt}>حدث خطأ ما · Something went wrong</Text>
+            {i18n.t('errors.title', { defaultValue: 'Something went wrong' })}
           </Text>
 
           <Text style={[styles.body, { color: colors.textSecondary }]}>
-            داتاکانت لەسەر مۆبایلەکەتن و دەستیان لێ نەدراوە.{'\n'}
-            بياناتك على هاتفك ولم تُمس.{'\n'}
-            Your data is on this device and untouched.
+            {i18n.t('errors.data_safe', {
+              defaultValue: 'Your data is on this device and untouched.'
+            })}
           </Text>
 
           <Pressable
@@ -76,7 +82,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
               { backgroundColor: colors.accent, opacity: pressed ? 0.85 : 1 }
             ]}
           >
-            <Text style={styles.buttonText}>دووبارە هەوڵبدە · Try again</Text>
+            <Text style={styles.buttonText}>
+              {i18n.t('errors.try_again', { defaultValue: 'Try again' })}
+            </Text>
           </Pressable>
 
           {__DEV__ && (
@@ -106,7 +114,6 @@ const styles = StyleSheet.create({
   },
   emoji: { fontSize: 40, marginBottom: 12 },
   title: { fontSize: 19, fontWeight: '700', textAlign: 'center', lineHeight: 30 },
-  titleAlt: { fontSize: 13, fontWeight: '500' },
   body: { fontSize: 14, lineHeight: 24, textAlign: 'center', marginTop: 14 },
   button: {
     marginTop: 22,

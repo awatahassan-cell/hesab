@@ -213,7 +213,10 @@ export default function App() {
           console.warn('Native font load warning:', fontErr);
         }
 
-        await initDatabase(primaryCurrency);
+        // Read through the store, not the closure: loadInitialSettings has
+        // just changed the currency, and the value captured when this effect
+        // was created is the pre-detection default.
+        await initDatabase(useAppStore.getState().primaryCurrency);
         await refreshAll();
 
         const currentOnboard = useAppStore.getState().hasCompletedOnboarding;

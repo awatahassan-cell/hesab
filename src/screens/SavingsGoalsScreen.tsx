@@ -43,12 +43,13 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
   const { t } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
+  const referenceCurrency = useAppStore((state) => state.referenceCurrency);
   const { savingsGoals, refreshAll } = useFinanceStore();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newTarget, setNewTarget] = useState('');
-  const [newCurrency, setNewCurrency] = useState<'IQD' | 'USD'>('USD');
+  const [newCurrency, setNewCurrency] = useState<string>(primaryCurrency);
   const [newColor, setNewColor] = useState(GOAL_COLORS[0]);
   const [newIcon, setNewIcon] = useState('car-outline');
 
@@ -104,7 +105,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
   const handleDeleteGoal = (goal: SavingsGoal) => {
     AppDialog.alert(
       t('common.delete'),
-      `ئایا دڵنیایت لە سڕینەوەی سندووقی "${goal.title}"؟`,
+      t('common.delete_confirm_named', { name: goal.title }),
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
@@ -119,12 +120,15 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
     );
   };
 
-  const totalUSD = savingsGoals
-    .filter((g) => g.currency === 'USD')
+  // Funds are summed per currency rather than converted: a goal set in
+  // dollars is a dollar goal, and folding it into dinars at today's rate
+  // would move the target every time the rate does.
+  const totalPrimary = savingsGoals
+    .filter((g) => g.currency === primaryCurrency)
     .reduce((sum, g) => sum + g.current_amount, 0);
 
-  const totalIQD = savingsGoals
-    .filter((g) => g.currency === 'IQD')
+  const totalReference = savingsGoals
+    .filter((g) => g.currency === referenceCurrency)
     .reduce((sum, g) => sum + g.current_amount, 0);
 
   return (
@@ -143,23 +147,29 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
               </Text>
               <View style={[styles.balanceRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                 <Text style={[styles.mainBalance, { color: colors.textPrimary }]}>
-                  {formatCurrency(totalUSD, 'USD')}
+                  {formatCurrency(totalPrimary, primaryCurrency, { isRTL })}
                 </Text>
-                {totalIQD > 0 && (
+                {totalReference > 0 && (
                   <Text style={[styles.subBalance, { color: colors.income, marginHorizontal: 10 }]}>
-                    + {formatCurrency(totalIQD, 'IQD', { isRTL })}
+                    + {formatCurrency(totalReference, referenceCurrency, { isRTL })}
                   </Text>
                 )}
               </View>
               <Text style={[typography.captionSmall, { color: colors.textMuted, textAlign: isRTL ? 'right' : 'left', marginTop: 4 }]}>
-                {savingsGoals.length} سندووقی چالاک
+                {t('savings.active_funds', { count: savingsGoals.length })}
               </Text>
             </Card>
 
             {/* Add Goal Button */}
             <Button
               title={t('savings.create_fund_plus')}
-              onPress={() => setShowAddModal(true)}
+              onPress={() => {
+                // Default to the local currency each time: settings load after
+                // this screen first renders, so seeding the state once would
+                // pin it to whatever the store held at mount.
+                setNewCurrency(primaryCurrency);
+                setShowAddModal(true);
+              }}
               variant="primary"
             />
           </View>
@@ -181,7 +191,9 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
                     {item.title}
                   </Text>
                   <Text style={[typography.captionSmall, { color: colors.textMuted }]}>
-                    ماوەتەوە: {formatCurrency(remaining, item.currency, { isRTL })}
+                    {t('savings.remaining_label', {
+                      amount: formatCurrency(remaining, item.currency, { isRTL })
+                    })}
                   </Text>
                 </View>
 
@@ -210,10 +222,14 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
               {/* Amounts row */}
               <View style={[styles.amountsRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                 <Text style={[typography.caption, { color: colors.textPrimary, fontWeight: '700' }]}>
-                  کۆکراوەتەوە: {formatCurrency(item.current_amount, item.currency, { isRTL })}
+                  {t('savings.collected_label', {
+                    amount: formatCurrency(item.current_amount, item.currency, { isRTL })
+                  })}
                 </Text>
                 <Text style={[typography.captionSmall, { color: colors.textMuted }]}>
-                  ئامانج: {formatCurrency(item.target_amount, item.currency, { isRTL })}
+                  {t('savings.target_label', {
+                    amount: formatCurrency(item.target_amount, item.currency, { isRTL })
+                  })}
                 </Text>
               </View>
 
@@ -278,18 +294,17 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
               />
 
               <View style={[styles.currencyToggle, { flexDirection: 'row', marginHorizontal: 8 }]}>
-                <TouchableOpacity
-                  onPress={() => setNewCurrency('USD')}
-                  style={[styles.currBtn, { backgroundColor: newCurrency === 'USD' ? colors.accent : colors.surfaceSecondary, borderRadius: radius.sm }]}
-                >
-                  <Text style={{ color: newCurrency === 'USD' ? colors.textInverse : colors.textPrimary, fontWeight: '700', fontSize: 12 }}>USD $</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setNewCurrency('IQD')}
-                  style={[styles.currBtn, { backgroundColor: newCurrency === 'IQD' ? colors.accent : colors.surfaceSecondary, borderRadius: radius.sm }]}
-                >
-                  <Text style={{ color: newCurrency === 'IQD' ? colors.textInverse : colors.textPrimary, fontWeight: '700', fontSize: 12 }}>IQD</Text>
-                </TouchableOpacity>
+                {[primaryCurrency, referenceCurrency].map((code) => (
+                  <TouchableOpacity
+                    key={code}
+                    onPress={() => setNewCurrency(code)}
+                    style={[styles.currBtn, { backgroundColor: newCurrency === code ? colors.accent : colors.surfaceSecondary, borderRadius: radius.sm }]}
+                  >
+                    <Text style={{ color: newCurrency === code ? colors.textInverse : colors.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                      {code}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
 

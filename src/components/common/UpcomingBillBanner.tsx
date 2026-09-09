@@ -46,13 +46,13 @@ export const UpcomingBillBanner: React.FC<UpcomingBillBannerProps> = ({
 
   if (diffDays < 0) {
     isOverdue = true;
-    timeText = `${Math.abs(diffDays)} ڕۆژە بەسەرچووە!`;
+    timeText = t('reminders.days_overdue', { count: Math.abs(diffDays) });
   } else if (diffDays === 0) {
     timeText = t('reminders.due_today_bang');
   } else if (diffDays === 1) {
     timeText = t('reminders.due_tomorrow_bang');
   } else {
-    timeText = `${diffDays} ڕۆژی ماوە!`;
+    timeText = t('reminders.days_left', { count: diffDays });
   }
 
   const badgeColor = isOverdue ? colors.danger : colors.warning;
@@ -82,7 +82,7 @@ export const UpcomingBillBanner: React.FC<UpcomingBillBannerProps> = ({
       <View style={[styles.textWrap, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
         <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: 'center' }}>
           <Text style={[styles.titleText, { color: colors.textPrimary, marginHorizontal: 4 }]}>
-            موعدی {nextBill.title}
+            {t('reminders.due_for', { title: nextBill.title })}
           </Text>
           <View style={[styles.timeChip, { backgroundColor: badgeColor }]}>
             <Text style={styles.timeChipText}>{timeText}</Text>
@@ -90,8 +90,11 @@ export const UpcomingBillBanner: React.FC<UpcomingBillBannerProps> = ({
         </View>
 
         <Text style={[styles.subtitleText, { color: colors.textSecondary }]}>
-          بڕی: {formatCurrency(nextBill.amount, nextBill.currency || primaryCurrency, { isRTL })}
-          {unpaid.length > 1 && ` • (${unpaid.length - 1} پارەدانی تر ماوە)`}
+          {t('reminders.amount_label', {
+            amount: formatCurrency(nextBill.amount, nextBill.currency || primaryCurrency, { isRTL })
+          })}
+          {unpaid.length > 1 &&
+            ` • ${t('reminders.more_payments', { count: unpaid.length - 1 })}`}
         </Text>
       </View>
 

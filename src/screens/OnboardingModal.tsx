@@ -18,6 +18,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme';
 import { useAppStore } from '../store/useAppStore';
 import { COUNTRIES_CURRENCIES, CountryCurrency } from '../utils/currency';
+import { getCountryLanguages, hasDualRate } from '../utils/currencyData';
+import { per100Usd } from '../utils/currency';
+import { detectRegion } from '../utils/region';
+import { LANGUAGES } from '../i18n';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { Icon, IconName } from '../components/icons/Icon';
 import { elevation } from '../theme/spacing';
@@ -27,8 +31,11 @@ interface OnboardingModalProps {
   onComplete: () => void;
 }
 
-/** Steps are derived, not fixed: the rate step only exists for dinar users. */
-type StepId = 'welcome' | 'country' | 'rate' | 'ready';
+/**
+ * Steps are derived, not fixed: the rate step only exists where the street
+ * rate and the official one differ.
+ */
+type StepId = 'welcome' | 'country' | 'language' | 'rate' | 'ready';
 
 // Keys, not text: this array is module scope, so it cannot call t() here.
 const FEATURES: { icon: IconName; titleKey: string; bodyKey: string }[] = [
@@ -55,26 +62,64 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
   const insets = useSafeAreaInsets();
   const {
     setCountryAndCurrency,
+    setLanguage,
     completeOnboarding,
     setMarketRate100USD,
-    marketRate100USD
+    exchangeRates
   } = useAppStore();
 
+  // The device's own region and language, read once. Onboarding shows the
+  // guess rather than acting on it silently, so it can always be corrected.
+  const region = useMemo(() => detectRegion(), []);
+
   const [index, setIndex] = useState(0);
-  const [country, setCountry] = useState<CountryCurrency>(COUNTRIES_CURRENCIES[0]);
-  const [rate, setRate] = useState(String(marketRate100USD || 150000));
+  const [country, setCountry] = useState<CountryCurrency>(
+    () =>
+      COUNTRIES_CURRENCIES.find((c) => c.countryCode === region.countryCode) ??
+      COUNTRIES_CURRENCIES[0]
+  );
+  const [language, setLanguageChoice] = useState(region.language);
+  // Seeded from the table for the detected country, so the step opens valid
+  // and is a confirmation rather than a form to fill in.
+  const [rate, setRate] = useState(() =>
+    String(per100Usd(country.currencyCode, useAppStore.getState().exchangeRates))
+  );
   const [saving, setSaving] = useState(false);
+
+  // The detected country first, so the guess is one tap to confirm rather
+  // than a scroll through forty-three others.
+  const countryList = useMemo(() => {
+    if (!region.detected) return COUNTRIES_CURRENCIES;
+    const hit = COUNTRIES_CURRENCIES.find((c) => c.countryCode === region.countryCode);
+    if (!hit) return COUNTRIES_CURRENCIES;
+    return [hit, ...COUNTRIES_CURRENCIES.filter((c) => c !== hit)];
+  }, [region]);
+
+  // The languages actually read in the chosen country come first; the rest
+  // stay reachable for anyone the country guess does not describe.
+  const languageList = useMemo(() => {
+    const local = getCountryLanguages(country.countryCode);
+    const ordered = [
+      ...local,
+      ...LANGUAGES.map((l) => l.code).filter((c) => !local.includes(c))
+    ];
+    return ordered.map((code) => ({
+      code,
+      label: LANGUAGES.find((l) => l.code === code)?.label ?? code,
+      local: local.includes(code)
+    }));
+  }, [country.countryCode]);
 
   const fade = useRef(new Animated.Value(1)).current;
   const rise = useRef(new Animated.Value(0)).current;
 
-  // The market-rate question is only meaningful when the primary currency is
-  // the dinar, so it drops out of the flow entirely for everyone else.
+  // The market-rate question only means something where the street rate and
+  // the official one diverge, so it drops out of the flow everywhere else.
   const steps = useMemo<StepId[]>(
     () =>
-      country.currencyCode === 'IQD'
-        ? ['welcome', 'country', 'rate', 'ready']
-        : ['welcome', 'country', 'ready'],
+      hasDualRate(country.currencyCode)
+        ? ['welcome', 'country', 'language', 'rate', 'ready']
+        : ['welcome', 'country', 'language', 'ready'],
     [country.currencyCode]
   );
   const step = steps[Math.min(index, steps.length - 1)];
@@ -104,6 +149,23 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
   const countryName = (c: CountryCurrency) =>
     t(`countries.${c.countryCode}`, { defaultValue: c.countryNameEn });
 
+  // Applied straight away, not at the end: the rest of onboarding should
+  // already be in the language someone just picked.
+  const chooseLanguage = (code: string) => {
+    setLanguageChoice(code);
+    void setLanguage(code);
+  };
+
+  const chooseCountry = (next: CountryCurrency) => {
+    setCountry(next);
+    // Keep the language sensible for the new country, unless the person has
+    // already chosen one this country also reads.
+    const local = getCountryLanguages(next.countryCode);
+    if (!local.includes(language)) chooseLanguage(local[0]);
+    setRate(String(per100Usd(next.currencyCode, exchangeRates)));
+  };
+
+  const suggestedRate = per100Usd(country.currencyCode, exchangeRates);
   const parsedRate = parseFloat(rate);
   const rateValid = !Number.isNaN(parsedRate) && parsedRate > 0;
   const canAdvance = step !== 'rate' || rateValid;
@@ -116,7 +178,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
     setSaving(true);
     try {
       await setCountryAndCurrency(country.countryCode, country.currencyCode);
-      if (country.currencyCode === 'IQD' && rateValid) {
+      await setLanguage(language);
+      if (hasDualRate(country.currencyCode) && rateValid) {
         await setMarketRate100USD(parsedRate);
       }
       await completeOnboarding();
@@ -177,7 +240,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                 end={{ x: 1, y: 1 }}
                 style={[styles.mark, { shadowColor: colors.accent }]}
               >
-                <Text style={styles.markLetter}>ح</Text>
+                <Text style={styles.markLetter}>{t('app_name').charAt(0)}</Text>
               </LinearGradient>
 
               <Text style={[styles.h1, { color: colors.textPrimary }]}>{t('onboarding.welcome')}</Text>
@@ -231,7 +294,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
               </Text>
 
               <FlatList
-                data={COUNTRIES_CURRENCIES}
+                data={countryList}
                 keyExtractor={(i) => i.countryCode}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 12 }}
@@ -240,7 +303,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                   return (
                     <TouchableOpacity
                       activeOpacity={0.75}
-                      onPress={() => setCountry(item)}
+                      onPress={() => chooseCountry(item)}
                       style={[
                         styles.countryRow,
                         {
@@ -265,6 +328,60 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                         </View>
                       )}
                     </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
+
+          {step === 'language' && (
+            <View style={styles.fill}>
+              <Text style={[styles.h2, { color: colors.textPrimary }]}>
+                {t('onboarding.select_language')}
+              </Text>
+              <Text style={[styles.sub2, { color: colors.textSecondary }]}>
+                {t('onboarding.language_hint', { country: countryName(country) })}
+              </Text>
+
+              <FlatList
+                data={languageList}
+                keyExtractor={(i) => i.code}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 12 }}
+                renderItem={({ item, index: i }) => {
+                  const on = language === item.code;
+                  const firstOther = !item.local && !!languageList[i - 1]?.local;
+                  return (
+                    <>
+                      {firstOther && (
+                        <Text style={[styles.groupLabel, { color: colors.textMuted }]}>
+                          {t('onboarding.other_languages')}
+                        </Text>
+                      )}
+                      <TouchableOpacity
+                        activeOpacity={0.75}
+                        onPress={() => chooseLanguage(item.code)}
+                        style={[
+                          styles.countryRow,
+                          {
+                            backgroundColor: on ? colors.accentMuted : colors.glassStrong,
+                            borderColor: on ? colors.accent : colors.glassEdge,
+                            borderRadius: radius.md
+                          }
+                        ]}
+                      >
+                        <View style={styles.fill}>
+                          <Text style={[styles.countryName, { color: colors.textPrimary }]}>
+                            {item.label}
+                          </Text>
+                        </View>
+                        {on && (
+                          <View style={[styles.check, { backgroundColor: colors.accent }]}>
+                            <Text style={styles.checkTxt}>✓</Text>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+                    </>
                   );
                 }}
               />
@@ -297,10 +414,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                   onChangeText={setRate}
                   keyboardType="number-pad"
                   style={[styles.rateInput, { color: colors.textPrimary }]}
-                  placeholder="150000"
+                  placeholder={String(suggestedRate)}
                   placeholderTextColor={colors.textMuted}
                 />
-                <Text style={[styles.rateLabel, { color: colors.textSecondary }]}>{t('currency.iqd_symbol')}</Text>
+                <Text style={[styles.rateLabel, { color: colors.textSecondary }]}>{country.currencySymbol}</Text>
               </View>
 
               {!rateValid && (
@@ -345,7 +462,14 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                     {country.currencyCode} ({country.currencySymbol})
                   </Text>
                 </View>
-                {country.currencyCode === 'IQD' && rateValid && (
+                <View style={[styles.divider, { backgroundColor: colors.hairline }]} />
+                <View style={styles.summaryRow}>
+                  <Text style={[styles.summaryKey, { color: colors.textSecondary }]}>{t('settings.language')}</Text>
+                  <Text style={[styles.summaryVal, { color: colors.textPrimary }]}>
+                    {LANGUAGES.find((l) => l.code === language)?.label ?? language}
+                  </Text>
+                </View>
+                {hasDualRate(country.currencyCode) && rateValid && (
                   <>
                     <View style={[styles.divider, { backgroundColor: colors.hairline }]} />
                     <View style={styles.summaryRow}>
@@ -353,8 +477,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
                         {t('common.market_rate')}
                       </Text>
                       <Text style={[styles.summaryVal, { color: colors.textPrimary }]}>
-                        100$ = {parsedRate.toLocaleString('en-US')}{' '}
-                        {t('currency.iqd_symbol')}
+                        100$ = {parsedRate.toLocaleString('en-US')} {country.currencySymbol}
                       </Text>
                     </View>
                   </>
@@ -387,6 +510,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
 };
 
 const styles = StyleSheet.create({
+  groupLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    marginTop: 14,
+    marginBottom: 6,
+    marginHorizontal: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4
+  },
   root: { flex: 1 },
   fill: { flex: 1 },
   top: {
@@ -466,15 +598,19 @@ const styles = StyleSheet.create({
   rateBox: {
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'stretch',
     gap: 10,
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderWidth: 1,
     marginTop: 6
   },
-  rateLabel: { fontSize: 15, fontWeight: '600' },
+  rateLabel: { fontSize: 15, fontWeight: '600', flexShrink: 0 },
   rateInput: {
     flex: 1,
+    // Without this a long number sets the row's minimum width and pushes the
+    // currency symbol off the screen.
+    minWidth: 0,
     fontSize: 24,
     fontWeight: '700',
     textAlign: 'center',

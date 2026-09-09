@@ -269,7 +269,10 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                       <View style={{ flex: 1 }}>
                         <Text style={[styles.cardItemTitle, { color: colors.textPrimary }]}>{catName}</Text>
                         <Text style={[styles.cardItemSub, { color: colors.textMuted }]}>
-                          خەرجکراو: {formatCurrency(item.spent, primaryCurrency, { isRTL })} لە {formatCurrency(item.budget.amount, primaryCurrency, { isRTL })}
+                          {t('budgets.spent_of', {
+                            spent: formatCurrency(item.spent, primaryCurrency, { isRTL }),
+                            total: formatCurrency(item.budget.amount, primaryCurrency, { isRTL })
+                          })}
                         </Text>
                       </View>
 
@@ -284,7 +287,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                           setDeleteConfirm({
                             visible: true,
                             title: t('budgets.delete_budget'),
-                            message: `ئایا دڵنیایت لە سڕینەوەی بودجەی (${catName})؟`,
+                            message: t('common.delete_confirm_named', { name: catName }),
                             onConfirm: async () => {
                               await deleteBudget(item.budget.id);
                               await refreshAll();
@@ -372,7 +375,10 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                       <View style={{ flex: 1, marginHorizontal: 10 }}>
                         <Text style={[styles.cardItemTitle, { color: colors.textPrimary }]}>{g.title}</Text>
                         <Text style={[styles.cardItemSub, { color: colors.textMuted }]}>
-                          پاشەکەوتکراو: {formatCurrency(g.current_amount || 0, g.currency || primaryCurrency, { isRTL })} لە {formatCurrency(g.target_amount, g.currency || primaryCurrency, { isRTL })}
+                          {t('goals.saved_of', {
+                            saved: formatCurrency(g.current_amount || 0, g.currency || primaryCurrency, { isRTL }),
+                            target: formatCurrency(g.target_amount, g.currency || primaryCurrency, { isRTL })
+                          })}
                         </Text>
                       </View>
 
@@ -416,7 +422,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                           setDeleteConfirm({
                             visible: true,
                             title: t('goals.delete_goal'),
-                            message: `ئایا دڵنیایت لە سڕینەوەی ئامانجی پاشەکەوتی (${g.title})؟`,
+                            message: t('common.delete_confirm_named', { name: g.title }),
                             onConfirm: async () => {
                               await deleteSavingsGoal(g.id);
                               await refreshAll();
@@ -510,7 +516,10 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                         {r.title}
                       </Text>
                       <Text style={[styles.cardItemSub, { color: colors.textMuted }]}>
-                        بڕ: {formatCurrency(r.amount, r.currency || primaryCurrency, { isRTL })} • ڕۆژی: {r.due_day}ی مانگ
+                        {t('reminders.amount_and_day', {
+                          amount: formatCurrency(r.amount, r.currency || primaryCurrency, { isRTL }),
+                          day: r.due_day
+                        })}
                       </Text>
                     </View>
 
@@ -519,7 +528,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                         setDeleteConfirm({
                           visible: true,
                           title: t('reminders.delete_reminder'),
-                          message: `ئایا دڵنیایت لە سڕینەوەی (${r.title})؟`,
+                          message: t('common.delete_confirm_named', { name: r.title }),
                           onConfirm: async () => {
                             await deleteReminder(r.id);
                             await refreshAll();
@@ -587,7 +596,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
             </ScrollView>
 
             <Text style={[typography.caption, { color: colors.textMuted, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
-              بڕی بودجەی مانگانە ({primaryCurrency}):
+              {t('budgets.monthly_amount_label', { currency: primaryCurrency })}
             </Text>
             <TextInput
               placeholder={t('budgets.amount_placeholder')}

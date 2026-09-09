@@ -1,6 +1,6 @@
 import { IDatabase } from './types';
 import { Account, Category, Subcategory, Transaction, Debt, Budget, ShoppingTrip, ShoppingItem, Reminder, SavingsGoal } from './schema';
-import { DEFAULT_ACCOUNTS, DEFAULT_CATEGORIES, DEFAULT_REMINDERS, DEFAULT_SAVINGS_GOALS } from './defaultData';
+import { getDefaultAccounts, DEFAULT_CATEGORIES, DEFAULT_REMINDERS, DEFAULT_SAVINGS_GOALS } from './defaultData';
 
 interface WebState {
   accounts: Account[];
@@ -68,7 +68,7 @@ function getStoredState(): WebState {
       if (c && c.subcategories) initialSubs.push(...c.subcategories);
     }
     loadedState = {
-      accounts: [...DEFAULT_ACCOUNTS],
+      accounts: getDefaultAccounts(),
       categories: [...DEFAULT_CATEGORIES],
       subcategories: initialSubs,
       transactions: [],
@@ -98,7 +98,7 @@ function getStoredState(): WebState {
 
     // Ensure all default accounts exist
     const accIds = new Set(loadedState.accounts.map((a) => a && a.id));
-    for (const defAcc of DEFAULT_ACCOUNTS) {
+    for (const defAcc of getDefaultAccounts()) {
       if (!accIds.has(defAcc.id)) {
         loadedState.accounts.push(defAcc);
       }
@@ -508,7 +508,7 @@ export async function resetAllDatabaseData(): Promise<void> {
     if (c && c.subcategories) initialSubs.push(...c.subcategories);
   }
   state = {
-    accounts: [...DEFAULT_ACCOUNTS],
+    accounts: getDefaultAccounts(),
     categories: [...DEFAULT_CATEGORIES],
     subcategories: initialSubs,
     transactions: [],

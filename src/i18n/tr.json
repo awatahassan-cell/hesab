@@ -62,7 +62,8 @@
     "enter_amount": "Bir tutar girin...",
     "error_short": "Hata",
     "ok": "Tamam",
-    "notice": "Uyarı"
+    "notice": "Uyarı",
+    "delete_confirm_named": "\"{{name}}\" silinsin mi?"
   },
   "types": {
     "expense": "Gider",
@@ -173,7 +174,8 @@
     "archive_confirm": "Bu hesap, işlem geçmişi silinmeden arşivlenecek.",
     "transfer_funds": "Hesaplar arasında para aktar",
     "type_wallet": "E-cüzdan",
-    "total_balance": "Toplam bakiye"
+    "total_balance": "Toplam bakiye",
+    "default_savings": "Birikim"
   },
   "categories": {
     "title": "Kategoriler",
@@ -326,7 +328,9 @@
     "empty_body": "Kategori bazlı harcama sınırı koymak için + Yeni bütçe'ye dokunun",
     "over_budget_warning": "Uyarı: bu kategori bütçeyi aştı!",
     "set_limit": "Bütçe sınırı belirle",
-    "overall": "Genel bütçe"
+    "overall": "Genel bütçe",
+    "spent_of": "Harcanan: {{total}} bütçenin {{spent}} kadarı",
+    "monthly_amount_label": "Aylık bütçe tutarı ({{currency}}):"
   },
   "reports": {
     "title": "Raporlar ve grafikler",
@@ -409,7 +413,10 @@
     "dollar_rate": "Dolar kuru",
     "rate_hint": "Piyasada 100 dolar ne kadar? Daha sonra ana sayfadan değiştirebilirsiniz.",
     "ready": "Hazırsınız",
-    "privacy_note": "Tüm verileriniz yalnızca bu telefonda kalır."
+    "privacy_note": "Tüm verileriniz yalnızca bu telefonda kalır.",
+    "select_language": "Dilinizi seçin",
+    "language_hint": "{{country}} ülkesinde kullanılıyor. İstediğiniz zaman Ayarlar’dan değiştirebilirsiniz.",
+    "other_languages": "Diğer diller"
   },
   "charts": {
     "other_slices": "Diğer kategoriler",
@@ -442,7 +449,16 @@
     "add_new": "Yeni hatırlatıcı ekle",
     "day_of_month": "Ödeme günü (1–31):",
     "pay_confirm": "\"{{title}}\" için {{amount}} gider olarak kaydedilsin mi?",
-    "notification_body": "{{amount}} — bugün ödenecek"
+    "notification_body": "{{amount}} — bugün ödenecek",
+    "days_left": "{{count}} gün kaldı",
+    "days_overdue": "{{count}} gün gecikti!",
+    "due_on_day": "Ayın {{day}}. günü",
+    "paid_count": "{{total}} taksitin {{paid}} tanesi ödendi",
+    "remaining_count": "{{count}} kaldı",
+    "due_for": "{{title}} vadesi",
+    "amount_label": "Tutar: {{amount}}",
+    "more_payments": "({{count}} ödeme daha var)",
+    "amount_and_day": "Tutar: {{amount}} • Ayın {{day}}. günü"
   },
   "app": {
     "tagline_short": "Hesab finans uygulaması",
@@ -463,7 +479,11 @@
     "total_in_funds": "Kasalardaki toplam birikim",
     "create_fund": "Birikim kasası oluştur",
     "fund_color": "Kasa rengi:",
-    "fund_icon": "Kasa simgesi:"
+    "fund_icon": "Kasa simgesi:",
+    "active_funds": "{{count}} etkin kasa",
+    "remaining_label": "Kalan: {{amount}}",
+    "collected_label": "Biriken: {{amount}}",
+    "target_label": "Hedef: {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "Kilidi açmak için parmak izinizi kullanın",
@@ -522,7 +542,8 @@
     "empty_title": "Birikim hedefi yok",
     "empty_body": "Eklemek için + Yeni hedef'e dokunun",
     "add_amount": "Tutar ekle",
-    "new_savings_goal": "Yeni birikim hedefi"
+    "new_savings_goal": "Yeni birikim hedefi",
+    "saved_of": "Biriken: {{target}} hedefin {{saved}} kadarı"
   },
   "currency": {
     "iqd_symbol": "IQD"
@@ -598,5 +619,10 @@
     "SE": "İsveç",
     "CA": "Kanada",
     "AU": "Avustralya"
+  },
+  "errors": {
+    "title": "Bir şeyler ters gitti",
+    "data_safe": "Verileriniz bu cihazda ve dokunulmadı.",
+    "try_again": "Tekrar dene"
   }
 }

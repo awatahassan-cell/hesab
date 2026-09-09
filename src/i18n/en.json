@@ -62,7 +62,8 @@
     "enter_amount": "Enter an amount...",
     "error_short": "Error",
     "ok": "OK",
-    "notice": "Notice"
+    "notice": "Notice",
+    "delete_confirm_named": "Delete \"{{name}}\"?"
   },
   "types": {
     "expense": "Expense",
@@ -173,7 +174,8 @@
     "archive_confirm": "This account will be archived without deleting its transaction history.",
     "transfer_funds": "Transfer funds between accounts",
     "type_wallet": "E-wallet",
-    "total_balance": "Total balance"
+    "total_balance": "Total balance",
+    "default_savings": "Savings"
   },
   "categories": {
     "title": "Categories",
@@ -326,7 +328,9 @@
     "empty_body": "Tap + New budget to set a spending limit per category",
     "over_budget_warning": "Warning: this category is over budget!",
     "set_limit": "Set a budget limit",
-    "overall": "Overall budget"
+    "overall": "Overall budget",
+    "spent_of": "Spent: {{spent}} of {{total}}",
+    "monthly_amount_label": "Monthly budget amount ({{currency}}):"
   },
   "reports": {
     "title": "Reports & Charts",
@@ -409,7 +413,10 @@
     "dollar_rate": "Dollar rate",
     "rate_hint": "How many dinars is 100 dollars on the market? You can change it later from the home screen.",
     "ready": "You're ready",
-    "privacy_note": "All your data stays on this phone only."
+    "privacy_note": "All your data stays on this phone only.",
+    "select_language": "Choose your language",
+    "language_hint": "Read in {{country}}. You can change this any time in Settings.",
+    "other_languages": "Other languages"
   },
   "charts": {
     "other_slices": "Other categories",
@@ -442,7 +449,16 @@
     "add_new": "Add a new reminder",
     "day_of_month": "Day of month for payment (1 to 31):",
     "pay_confirm": "Record {{amount}} for \"{{title}}\" as an expense?",
-    "notification_body": "{{amount}} — due today"
+    "notification_body": "{{amount}} — due today",
+    "days_left": "{{count}} days left",
+    "days_overdue": "{{count}} days overdue!",
+    "due_on_day": "Day {{day}} of the month",
+    "paid_count": "{{paid}} of {{total}} paid",
+    "remaining_count": "{{count}} remaining",
+    "due_for": "Due: {{title}}",
+    "amount_label": "Amount: {{amount}}",
+    "more_payments": "({{count}} more payments due)",
+    "amount_and_day": "Amount: {{amount}} • Day {{day}}"
   },
   "app": {
     "tagline_short": "Hesab finance app",
@@ -463,7 +479,11 @@
     "total_in_funds": "Total saved across funds",
     "create_fund": "Create a savings fund",
     "fund_color": "Fund colour:",
-    "fund_icon": "Fund icon:"
+    "fund_icon": "Fund icon:",
+    "active_funds": "{{count}} active funds",
+    "remaining_label": "Remaining: {{amount}}",
+    "collected_label": "Saved: {{amount}}",
+    "target_label": "Target: {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "Use your fingerprint to unlock",
@@ -522,7 +542,8 @@
     "empty_title": "No savings goals",
     "empty_body": "Tap + New goal to add one",
     "add_amount": "Add amount",
-    "new_savings_goal": "New savings goal"
+    "new_savings_goal": "New savings goal",
+    "saved_of": "Saved: {{saved}} of {{target}}"
   },
   "currency": {
     "iqd_symbol": "IQD"
@@ -598,5 +619,10 @@
     "SE": "Sweden",
     "CA": "Canada",
     "AU": "Australia"
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "data_safe": "Your data is on this device and untouched.",
+    "try_again": "Try again"
   }
 }

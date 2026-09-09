@@ -62,7 +62,8 @@
     "enter_amount": "Masukkan jumlah...",
     "error_short": "Kesalahan",
     "ok": "OK",
-    "notice": "Pemberitahuan"
+    "notice": "Pemberitahuan",
+    "delete_confirm_named": "Hapus \"{{name}}\"?"
   },
   "types": {
     "expense": "Pengeluaran",
@@ -173,7 +174,8 @@
     "archive_confirm": "Akun ini akan diarsipkan tanpa menghapus riwayat transaksinya.",
     "transfer_funds": "Transfer dana antar akun",
     "type_wallet": "Dompet digital",
-    "total_balance": "Total saldo"
+    "total_balance": "Total saldo",
+    "default_savings": "Tabungan"
   },
   "categories": {
     "title": "Kategori",
@@ -326,7 +328,9 @@
     "empty_body": "Ketuk + Anggaran baru untuk menetapkan batas per kategori",
     "over_budget_warning": "Peringatan: kategori ini melebihi anggaran!",
     "set_limit": "Tetapkan batas anggaran",
-    "overall": "Anggaran keseluruhan"
+    "overall": "Anggaran keseluruhan",
+    "spent_of": "Terpakai: {{spent}} dari {{total}}",
+    "monthly_amount_label": "Jumlah anggaran bulanan ({{currency}}):"
   },
   "reports": {
     "title": "Laporan & Grafik",
@@ -409,7 +413,10 @@
     "dollar_rate": "Kurs dolar",
     "rate_hint": "Berapa nilai 100 dolar di pasar? Anda bisa mengubahnya nanti dari layar beranda.",
     "ready": "Anda siap",
-    "privacy_note": "Semua data Anda hanya tersimpan di ponsel ini."
+    "privacy_note": "Semua data Anda hanya tersimpan di ponsel ini.",
+    "select_language": "Pilih bahasa Anda",
+    "language_hint": "Digunakan di {{country}}. Anda bisa mengubahnya kapan saja di Pengaturan.",
+    "other_languages": "Bahasa lain"
   },
   "charts": {
     "other_slices": "Kategori lain",
@@ -442,7 +449,16 @@
     "add_new": "Tambah pengingat baru",
     "day_of_month": "Tanggal pembayaran dalam bulan (1 sampai 31):",
     "pay_confirm": "Catat {{amount}} untuk “{{title}}” sebagai pengeluaran?",
-    "notification_body": "{{amount}} — jatuh tempo hari ini"
+    "notification_body": "{{amount}} — jatuh tempo hari ini",
+    "days_left": "{{count}} hari lagi",
+    "days_overdue": "Telat {{count}} hari!",
+    "due_on_day": "Tanggal {{day}} tiap bulan",
+    "paid_count": "{{paid}} dari {{total}} dibayar",
+    "remaining_count": "Sisa {{count}}",
+    "due_for": "Jatuh tempo: {{title}}",
+    "amount_label": "Jumlah: {{amount}}",
+    "more_payments": "({{count}} pembayaran lagi)",
+    "amount_and_day": "Jumlah: {{amount}} • Tanggal {{day}}"
   },
   "app": {
     "tagline_short": "Aplikasi keuangan Hesab",
@@ -463,7 +479,11 @@
     "total_in_funds": "Total tabungan di semua dana",
     "create_fund": "Buat dana tabungan",
     "fund_color": "Warna dana:",
-    "fund_icon": "Ikon dana:"
+    "fund_icon": "Ikon dana:",
+    "active_funds": "{{count}} dana aktif",
+    "remaining_label": "Sisa: {{amount}}",
+    "collected_label": "Terkumpul: {{amount}}",
+    "target_label": "Target: {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "Gunakan sidik jari untuk membuka",
@@ -522,7 +542,8 @@
     "empty_title": "Belum ada tujuan tabungan",
     "empty_body": "Ketuk + Tujuan baru untuk menambahkannya",
     "add_amount": "Tambah jumlah",
-    "new_savings_goal": "Tujuan tabungan baru"
+    "new_savings_goal": "Tujuan tabungan baru",
+    "saved_of": "Terkumpul: {{saved}} dari {{target}}"
   },
   "currency": {
     "iqd_symbol": "IQD"
@@ -598,5 +619,10 @@
     "SE": "Swedia",
     "CA": "Kanada",
     "AU": "Australia"
+  },
+  "errors": {
+    "title": "Terjadi kesalahan",
+    "data_safe": "Data Anda ada di perangkat ini dan tidak tersentuh.",
+    "try_again": "Coba lagi"
   }
 }

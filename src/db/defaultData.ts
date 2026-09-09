@@ -1,9 +1,14 @@
 import { Account, Category, Reminder, SavingsGoal } from './schema';
+import i18n from '../i18n';
 
-export const DEFAULT_ACCOUNTS: Account[] = [
+/**
+ * Read through getDefaultAccounts(), never directly: the name is translated at
+ * call time, because this module is imported long before a language is chosen.
+ */
+const DEFAULT_ACCOUNTS_RAW: Account[] = [
   {
     id: 'acc_savings',
-    name: 'پاشەکەوت (Savings)',
+    name: 'Savings',
     type: 'savings',
     icon: 'wallet-outline',
     color: '#10B981',
@@ -15,6 +20,14 @@ export const DEFAULT_ACCOUNTS: Account[] = [
     created_at: new Date().toISOString()
   }
 ];
+
+export function getDefaultAccounts(): Account[] {
+  return DEFAULT_ACCOUNTS_RAW.map((a) =>
+    a.id === 'acc_savings'
+      ? { ...a, name: i18n.t('accounts.default_savings', { defaultValue: 'Savings' }) }
+      : a
+  );
+}
 
 export const DEFAULT_CATEGORIES: Category[] = [
   // 16 Expenses

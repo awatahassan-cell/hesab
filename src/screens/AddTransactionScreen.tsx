@@ -24,6 +24,7 @@ import { Button } from '../components/common/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
+import { getCurrencySymbol, per100Usd, rateFromPer100Usd } from '../utils/currency';
 
 interface AddTransactionScreenProps {
   navigation: any;
@@ -46,6 +47,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
   const marketRate100USD = useAppStore((state) => state.marketRate100USD);
+  const exchangeRates = useAppStore((state) => state.exchangeRates);
   const { accounts, categories, refreshAll } = useFinanceStore();
 
   const initialType = route?.params?.type || 'expense';
@@ -189,7 +191,12 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
     setSaving(true);
     try {
       const selectedAcc = accounts.find((a) => a.id === selectedAccountId);
-      const ratePerDollar = (marketRate100USD || 150000) / 100;
+      // Stamped on the row so a later rate change does not silently restate
+      // what an old transaction was worth.
+      const ratePerDollar = rateFromPer100Usd(
+        primaryCurrency,
+        marketRate100USD || per100Usd(primaryCurrency, exchangeRates)
+      );
 
       await createTransaction({
         type,
@@ -293,7 +300,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
               ]}
             >
               <Text style={[styles.currencyBadgeText, { color: colors.textSecondary }]}>
-                {primaryCurrency === 'USD' ? 'USD ($)' : `IQD (${t('currency.iqd_symbol')})`}
+                {`${primaryCurrency} (${getCurrencySymbol(primaryCurrency)})`}
               </Text>
             </View>
           </View>

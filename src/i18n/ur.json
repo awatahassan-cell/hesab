@@ -62,7 +62,8 @@
     "enter_amount": "رقم درج کریں...",
     "error_short": "خرابی",
     "ok": "ٹھیک ہے",
-    "notice": "اطلاع"
+    "notice": "اطلاع",
+    "delete_confirm_named": "کیا \"{{name}}\" حذف کریں؟"
   },
   "types": {
     "expense": "خرچ",
@@ -173,7 +174,8 @@
     "archive_confirm": "یہ اکاؤنٹ لین دین کی تاریخ حذف کیے بغیر محفوظ خانے میں چلا جائے گا۔",
     "transfer_funds": "اکاؤنٹس کے درمیان رقم منتقل کریں",
     "type_wallet": "ای والٹ",
-    "total_balance": "کل بیلنس"
+    "total_balance": "کل بیلنس",
+    "default_savings": "بچت"
   },
   "categories": {
     "title": "زمرے",
@@ -326,7 +328,9 @@
     "empty_body": "ہر زمرے کے لیے خرچ کی حد مقرر کرنے کو + نیا بجٹ دبائیں",
     "over_budget_warning": "انتباہ: یہ زمرہ بجٹ سے تجاوز کر گیا!",
     "set_limit": "بجٹ کی حد مقرر کریں",
-    "overall": "مجموعی بجٹ"
+    "overall": "مجموعی بجٹ",
+    "spent_of": "خرچ: {{total}} میں سے {{spent}}",
+    "monthly_amount_label": "ماہانہ بجٹ کی رقم ({{currency}}):"
   },
   "reports": {
     "title": "رپورٹس اور چارٹس",
@@ -409,7 +413,10 @@
     "dollar_rate": "ڈالر ریٹ",
     "rate_hint": "مارکیٹ میں 100 ڈالر کتنے کے ہیں؟ بعد میں ہوم اسکرین سے بدل سکتے ہیں۔",
     "ready": "آپ تیار ہیں",
-    "privacy_note": "آپ کا سارا ڈیٹا صرف اسی فون پر رہتا ہے۔"
+    "privacy_note": "آپ کا سارا ڈیٹا صرف اسی فون پر رہتا ہے۔",
+    "select_language": "اپنی زبان منتخب کریں",
+    "language_hint": "{{country}} میں پڑھی جاتی ہے۔ آپ اسے کسی بھی وقت ترتیبات سے بدل سکتے ہیں۔",
+    "other_languages": "دیگر زبانیں"
   },
   "charts": {
     "other_slices": "دیگر زمرے",
@@ -442,7 +449,16 @@
     "add_new": "نئی یاد دہانی شامل کریں",
     "day_of_month": "ادائیگی کا دن (1 تا 31):",
     "pay_confirm": "کیا «{{title}}» کے لیے {{amount}} خرچ کے طور پر درج کر دیا جائے؟",
-    "notification_body": "{{amount}} — آج ادائیگی ہے"
+    "notification_body": "{{amount}} — آج ادائیگی ہے",
+    "days_left": "{{count}} دن باقی",
+    "days_overdue": "{{count}} دن تاخیر!",
+    "due_on_day": "مہینے کا {{day}} دن",
+    "paid_count": "{{total}} میں سے {{paid}} ادا",
+    "remaining_count": "{{count}} باقی",
+    "due_for": "{{title}} کی مقررہ تاریخ",
+    "amount_label": "رقم: {{amount}}",
+    "more_payments": "({{count}} مزید ادائیگیاں باقی)",
+    "amount_and_day": "رقم: {{amount}} • دن {{day}}"
   },
   "app": {
     "tagline_short": "حساب مالیاتی ایپ",
@@ -463,7 +479,11 @@
     "total_in_funds": "فنڈز میں کل بچت",
     "create_fund": "بچت فنڈ بنائیں",
     "fund_color": "فنڈ کا رنگ:",
-    "fund_icon": "فنڈ کا آئیکن:"
+    "fund_icon": "فنڈ کا آئیکن:",
+    "active_funds": "{{count}} فعال فنڈ",
+    "remaining_label": "باقی: {{amount}}",
+    "collected_label": "جمع شدہ: {{amount}}",
+    "target_label": "ہدف: {{amount}}"
   },
   "security": {
     "unlock_with_biometrics": "کھولنے کے لیے اپنا فنگر پرنٹ استعمال کریں",
@@ -522,7 +542,8 @@
     "empty_title": "کوئی بچت ہدف نہیں",
     "empty_body": "شامل کرنے کے لیے + نیا ہدف دبائیں",
     "add_amount": "رقم شامل کریں",
-    "new_savings_goal": "نیا بچت ہدف"
+    "new_savings_goal": "نیا بچت ہدف",
+    "saved_of": "جمع: {{target}} میں سے {{saved}}"
   },
   "currency": {
     "iqd_symbol": "IQD"
@@ -598,5 +619,10 @@
     "SE": "سویڈن",
     "CA": "کینیڈا",
     "AU": "آسٹریلیا"
+  },
+  "errors": {
+    "title": "کچھ غلط ہو گیا",
+    "data_safe": "آپ کا ڈیٹا اسی فون پر محفوظ ہے۔",
+    "try_again": "دوبارہ کوشش کریں"
   }
 }

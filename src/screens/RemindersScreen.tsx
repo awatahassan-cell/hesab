@@ -121,7 +121,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
   const handleDelete = (item: Reminder) => {
     AppDialog.alert(
       t('common.delete'),
-      `ئایا دڵنیایت لە سڕینەوەی "${item.title}"؟`,
+      t('common.delete_confirm_named', { name: item.title }),
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
@@ -180,10 +180,10 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
                     {t('reminders.month_status')}
                   </Text>
                   <Text style={[styles.statValue, { color: colors.income }]}>
-                    {paidCount} / {reminders.length} دراوە
+                    {t('reminders.paid_count', { paid: paidCount, total: reminders.length })}
                   </Text>
                   <Text style={[typography.captionSmall, { color: colors.expense }]}>
-                    {reminders.length - paidCount} ماوەتەوە
+                    {t('reminders.remaining_count', { count: reminders.length - paidCount })}
                   </Text>
                 </View>
               </View>
@@ -209,10 +209,10 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
             statusText = t('reminders.due_today_badge');
             statusColor = colors.warning;
           } else if (daysLeft > 0) {
-            statusText = `${daysLeft} ڕۆژی ماوە`;
+            statusText = t('reminders.days_left', { count: daysLeft });
             statusColor = colors.textSecondary;
           } else {
-            statusText = `${Math.abs(daysLeft)} ڕۆژ دواکەوتووە!`;
+            statusText = t('reminders.days_overdue', { count: Math.abs(daysLeft) });
             statusColor = colors.danger;
           }
 
@@ -241,7 +241,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
                     {item.title}
                   </Text>
                   <Text style={[typography.captionSmall, { color: colors.textMuted }]}>
-                    ڕۆژی {item.due_day}ی مانگ • {statusText}
+                    {t('reminders.due_on_day', { day: item.due_day })} • {statusText}
                   </Text>
                 </View>
 
