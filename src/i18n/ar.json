@@ -63,7 +63,8 @@
     "error_short": "خطأ",
     "ok": "حسنًا",
     "notice": "تنبيه",
-    "delete_confirm_named": "هل تريد حذف \"{{name}}\"؟"
+    "delete_confirm_named": "هل تريد حذف \"{{name}}\"؟",
+    "no_repeat": "بدون تكرار"
   },
   "types": {
     "expense": "مصروف",
@@ -524,7 +525,8 @@
     "export_and_reports": "التصدير والتقارير",
     "pdf_report": "تقرير PDF",
     "excel_file": "ملف Excel / CSV",
-    "settings_desc": "اللغة والعملة ورمز PIN والنسخ الاحتياطي"
+    "settings_desc": "اللغة والعملة ورمز PIN والنسخ الاحتياطي",
+    "recurring_desc": "الإيجار والراتب والاشتراكات"
   },
   "goals": {
     "enter_name_err": "يرجى إدخال اسم الهدف",
@@ -624,5 +626,16 @@
     "title": "حدث خطأ ما",
     "data_safe": "بياناتك على هاتفك ولم تُمس.",
     "try_again": "حاول مرة أخرى"
+  },
+  "recurring": {
+    "title": "المعاملات المتكررة",
+    "empty_title": "لا يوجد تكرار بعد",
+    "empty_body": "عند إضافة معاملة، اختر تكرارها وستظهر هنا.",
+    "hint": "تُسجَّل عند فتح التطبيق في المرة القادمة، وليس أثناء إغلاقه.",
+    "next_on": "التالي: {{date}}",
+    "paused": "موقوف",
+    "pause": "إيقاف",
+    "resume": "استئناف",
+    "posted": "تمت إضافة {{count}} معاملة متكررة"
   }
 }

@@ -17,6 +17,7 @@ import { PinSetupModal } from '../components/security/PinSetupModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
 import { rescheduleAll } from '../services/notifications';
+import { resetBudgetAlerts } from '../services/budgetAlerts';
 import { LANGUAGES } from '../i18n';
 import { getCountryLanguages } from '../utils/currencyData';
 
@@ -240,6 +241,7 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
       icon: 'warning-outline',
       onConfirm: async () => {
         await resetAllDatabaseData();
+        await resetBudgetAlerts();
         await refreshAll();
         setConfirmConfig({
           visible: true,

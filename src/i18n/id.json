@@ -63,7 +63,8 @@
     "error_short": "Kesalahan",
     "ok": "OK",
     "notice": "Pemberitahuan",
-    "delete_confirm_named": "Hapus \"{{name}}\"?"
+    "delete_confirm_named": "Hapus \"{{name}}\"?",
+    "no_repeat": "Tanpa pengulangan"
   },
   "types": {
     "expense": "Pengeluaran",
@@ -524,7 +525,8 @@
     "export_and_reports": "Ekspor & laporan",
     "pdf_report": "Laporan PDF",
     "excel_file": "File Excel / CSV",
-    "settings_desc": "Bahasa, mata uang, PIN, dan cadangan"
+    "settings_desc": "Bahasa, mata uang, PIN, dan cadangan",
+    "recurring_desc": "Sewa, gaji, langganan"
   },
   "goals": {
     "enter_name_err": "Masukkan nama tujuan",
@@ -624,5 +626,16 @@
     "title": "Terjadi kesalahan",
     "data_safe": "Data Anda ada di perangkat ini dan tidak tersentuh.",
     "try_again": "Coba lagi"
+  },
+  "recurring": {
+    "title": "Transaksi berulang",
+    "empty_title": "Belum ada yang berulang",
+    "empty_body": "Saat menambah transaksi, pilih pengulangannya dan akan muncul di sini.",
+    "hint": "Dicatat saat Anda membuka aplikasi lagi, bukan ketika tertutup.",
+    "next_on": "Berikutnya: {{date}}",
+    "paused": "Dijeda",
+    "pause": "Jeda",
+    "resume": "Lanjutkan",
+    "posted": "{{count}} transaksi berulang ditambahkan"
   }
 }

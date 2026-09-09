@@ -797,7 +797,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    fontSize: 14
+    fontSize: 14,
+    minWidth: 0
   },
   addBtn: {
     width: 38,

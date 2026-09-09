@@ -248,7 +248,8 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     marginHorizontal: 8,
-    fontSize: 14
+    fontSize: 14,
+    minWidth: 0
   },
   chipsRow: {
     marginTop: 10,

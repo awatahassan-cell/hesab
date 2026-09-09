@@ -5,6 +5,8 @@ import { getTransactions, getTotalsForPeriod } from '../db/queries/transactions'
 import { getAllCategories } from '../db/queries/categories';
 import { getAllDebts, getDebtTotals } from '../db/queries/debts';
 import { getBudgetProgressList, BudgetProgress } from '../db/queries/budgets';
+import i18n from '../i18n';
+import { runBudgetAlerts, BudgetAlert } from '../services/budgetAlerts';
 import { getAllReminders } from '../db/queries/reminders';
 import { getAllSavingsGoals } from '../db/queries/savingsGoals';
 import { getPeriodRange } from '../utils/dates';
@@ -31,6 +33,32 @@ interface FinanceState {
   
   refreshAll: () => Promise<void>;
   refreshTransactions: () => Promise<void>;
+}
+
+/**
+ * The wording for a budget notification.
+ *
+ * Kept beside the store rather than in the alert service so that module stays
+ * free of translations, and named by category where there is one — "Food &
+ * Dining" says more than "your budget".
+ */
+function describeBudgetAlert(
+  alert: BudgetAlert,
+  progress: BudgetProgress[]
+): { title: string; body: string } {
+  const item = progress.find((p) => p.budget.id === alert.budgetId);
+  const name = item?.budget.category_custom_name
+    ? item.budget.category_custom_name
+    : item?.budget.category_name_key
+      ? i18n.t(`categories.names.${item.budget.category_name_key}`, {
+          defaultValue: item.budget.category_name_key
+        })
+      : i18n.t('budgets.overall');
+
+  return {
+    title: name,
+    body: i18n.t(alert.threshold === 100 ? 'budgets.alert_100' : 'budgets.alert_80')
+  };
 }
 
 export const useFinanceStore = create<FinanceState>((set, get) => ({
@@ -104,6 +132,12 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
         budgetProgressList: budgetProgress,
         isLoading: false
       });
+
+      // Deliberately not awaited: a refresh must not wait on the notification
+      // system, and a blocked permission must never fail the reload.
+      void runBudgetAlerts(budgetProgress, (alert) =>
+        describeBudgetAlert(alert, budgetProgress)
+      ).catch(() => {});
     } catch (e) {
       console.error('Error refreshing finance store', e);
       set({ isLoading: false });

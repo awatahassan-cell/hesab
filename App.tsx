@@ -15,6 +15,7 @@ import { ThemeProvider, useTheme } from './src/theme';
 import { useAppStore } from './src/store/useAppStore';
 import { useFinanceStore } from './src/store/useFinanceStore';
 import { initDatabase } from './src/db';
+import { runDueRecurringRules } from './src/db/queries/recurring';
 
 import { HomeScreen } from './src/screens/HomeScreen';
 import { TransactionsScreen } from './src/screens/TransactionsScreen';
@@ -27,6 +28,7 @@ import { BudgetsScreen } from './src/screens/BudgetsScreen';
 import { AccountsScreen } from './src/screens/AccountsScreen';
 import { CategoriesScreen } from './src/screens/CategoriesScreen';
 import { RemindersScreen } from './src/screens/RemindersScreen';
+import { RecurringScreen } from './src/screens/RecurringScreen';
 import { SavingsGoalsScreen } from './src/screens/SavingsGoalsScreen';
 import { GoalsAndBudgetsScreen } from './src/screens/GoalsAndBudgetsScreen';
 import { MenuScreen } from './src/screens/MenuScreen';
@@ -146,6 +148,11 @@ function MainNavigation() {
         options={{ title: t('reminders.screen_title') }}
       />
       <Stack.Screen
+        name="RecurringScreen"
+        component={RecurringScreen}
+        options={{ title: t('recurring.title') }}
+      />
+      <Stack.Screen
         name="SavingsGoalsScreen"
         component={SavingsGoalsScreen}
         options={{ title: t('savings.screen_title') }}
@@ -217,6 +224,16 @@ export default function App() {
         // just changed the currency, and the value captured when this effect
         // was created is the pre-detection default.
         await initDatabase(useAppStore.getState().primaryCurrency);
+
+        // Repeating transactions catch up here. The phone is the only clock
+        // this app has, so a rule posts when the app is next opened rather
+        // than while it sits closed.
+        try {
+          await runDueRecurringRules();
+        } catch (recurringErr) {
+          console.warn('Recurring rules skipped:', recurringErr);
+        }
+
         await refreshAll();
 
         const currentOnboard = useAppStore.getState().hasCompletedOnboarding;

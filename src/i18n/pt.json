@@ -63,7 +63,8 @@
     "error_short": "Erro",
     "ok": "OK",
     "notice": "Aviso",
-    "delete_confirm_named": "Eliminar \"{{name}}\"?"
+    "delete_confirm_named": "Eliminar \"{{name}}\"?",
+    "no_repeat": "Sem repetição"
   },
   "types": {
     "expense": "Despesa",
@@ -524,7 +525,8 @@
     "export_and_reports": "Exportação e relatórios",
     "pdf_report": "Relatório PDF",
     "excel_file": "Arquivo Excel / CSV",
-    "settings_desc": "Idioma, moeda, PIN e backup"
+    "settings_desc": "Idioma, moeda, PIN e backup",
+    "recurring_desc": "Renda, salário, subscrições"
   },
   "goals": {
     "enter_name_err": "Informe um nome para a meta",
@@ -624,5 +626,16 @@
     "title": "Algo correu mal",
     "data_safe": "Os seus dados estão neste dispositivo e intactos.",
     "try_again": "Tentar novamente"
+  },
+  "recurring": {
+    "title": "Operações recorrentes",
+    "empty_title": "Ainda nada se repete",
+    "empty_body": "Ao adicionar uma operação, escolha a frequência e aparecerá aqui.",
+    "hint": "São registadas na próxima vez que abrir a app, não enquanto está fechada.",
+    "next_on": "Próxima: {{date}}",
+    "paused": "Em pausa",
+    "pause": "Pausar",
+    "resume": "Retomar",
+    "posted": "Foram adicionadas {{count}} operações recorrentes"
   }
 }

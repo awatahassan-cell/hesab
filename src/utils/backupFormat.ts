@@ -14,19 +14,19 @@ export const BACKUP_FORMAT_VERSION = 2;
  */
 export const TABLES = [
   'accounts', 'categories', 'subcategories', 'transactions', 'debts', 'budgets',
-  'reminders', 'savings_goals', 'shopping_trips', 'shopping_items'
+  'reminders', 'savings_goals', 'shopping_trips', 'shopping_items', 'recurring_rules'
 ] as const;
 
 /** Children before parents, so deletes never trip a foreign key. */
 export const DELETE_ORDER = [
-  'shopping_items', 'shopping_trips', 'savings_goals', 'reminders',
+  'shopping_items', 'shopping_trips', 'savings_goals', 'reminders', 'recurring_rules',
   'debts', 'budgets', 'transactions', 'subcategories', 'categories', 'accounts'
 ];
 
 /** Parents before children, so inserts always find their reference. */
 export const INSERT_ORDER = [
   'accounts', 'categories', 'subcategories', 'transactions', 'budgets',
-  'debts', 'reminders', 'savings_goals', 'shopping_trips', 'shopping_items'
+  'debts', 'reminders', 'savings_goals', 'shopping_trips', 'shopping_items', 'recurring_rules'
 ];
 
 export interface BackupPayload {

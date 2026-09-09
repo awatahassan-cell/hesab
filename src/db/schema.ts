@@ -143,6 +143,34 @@ export interface SavingsGoal {
   created_at: string;
 }
 
+export interface RecurringRule {
+  id: string;
+  type: 'expense' | 'income' | 'transfer';
+  amount: number;
+  currency: string;
+  account_id: string;
+  to_account_id?: string;
+  category_id?: string;
+  subcategory_id?: string;
+  note?: string;
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  interval_count: number;
+  /** Anchors the day of month for monthly and yearly rules. */
+  start_date: string;
+  /** When this rule next posts a transaction. */
+  next_run: string;
+  last_run?: string;
+  end_date?: string;
+  is_active: number; // 0 or 1
+  created_at: string;
+
+  account_name?: string;
+  category_name_key?: string;
+  category_custom_name?: string;
+  category_icon?: string;
+  category_color?: string;
+}
+
 export const CREATE_TABLES_SQL = `
   CREATE TABLE IF NOT EXISTS accounts (
     id TEXT PRIMARY KEY,
@@ -269,6 +297,26 @@ export const CREATE_TABLES_SQL = `
     color TEXT NOT NULL DEFAULT '#10B981',
     icon TEXT NOT NULL DEFAULT 'flag-outline',
     is_completed INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS recurring_rules (
+    id TEXT PRIMARY KEY,
+    type TEXT NOT NULL,
+    amount REAL NOT NULL,
+    currency TEXT NOT NULL,
+    account_id TEXT NOT NULL,
+    to_account_id TEXT,
+    category_id TEXT,
+    subcategory_id TEXT,
+    note TEXT,
+    frequency TEXT NOT NULL DEFAULT 'monthly',
+    interval_count INTEGER NOT NULL DEFAULT 1,
+    start_date TEXT NOT NULL,
+    next_run TEXT NOT NULL,
+    last_run TEXT,
+    end_date TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1,
     created_at TEXT NOT NULL
   );
 

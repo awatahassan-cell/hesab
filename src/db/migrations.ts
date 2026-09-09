@@ -14,7 +14,7 @@ import { roundMoney } from '../utils/money';
  *   - Bump LATEST_SCHEMA_VERSION to match.
  *   - Assume the database may be several versions behind; they run in order.
  */
-export const LATEST_SCHEMA_VERSION = 4;
+export const LATEST_SCHEMA_VERSION = 5;
 
 interface Migration {
   version: number;
@@ -145,6 +145,36 @@ const MIGRATIONS: Migration[] = [
       if (!existing.includes('reminder_at')) {
         await db.execAsync('ALTER TABLE shopping_trips ADD COLUMN reminder_at TEXT;');
       }
+    }
+  },
+  {
+    version: 5,
+    name: 'recurring transaction rules',
+    up: async (db) => {
+      // This table was referenced by the "delete all data" routine but never
+      // created, so a wipe threw "no such table" on a real device.
+      await db.execAsync(`
+        CREATE TABLE IF NOT EXISTS recurring_rules (
+          id TEXT PRIMARY KEY,
+          type TEXT NOT NULL,
+          amount REAL NOT NULL,
+          currency TEXT NOT NULL,
+          account_id TEXT NOT NULL,
+          to_account_id TEXT,
+          category_id TEXT,
+          subcategory_id TEXT,
+          note TEXT,
+          frequency TEXT NOT NULL DEFAULT 'monthly',
+          interval_count INTEGER NOT NULL DEFAULT 1,
+          start_date TEXT NOT NULL,
+          next_run TEXT NOT NULL,
+          last_run TEXT,
+          end_date TEXT,
+          is_active INTEGER NOT NULL DEFAULT 1,
+          created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_recurring_next ON recurring_rules(next_run);
+      `);
     }
   }
 ];

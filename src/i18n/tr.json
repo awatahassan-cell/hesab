@@ -63,7 +63,8 @@
     "error_short": "Hata",
     "ok": "Tamam",
     "notice": "Uyarı",
-    "delete_confirm_named": "\"{{name}}\" silinsin mi?"
+    "delete_confirm_named": "\"{{name}}\" silinsin mi?",
+    "no_repeat": "Tekrar yok"
   },
   "types": {
     "expense": "Gider",
@@ -524,7 +525,8 @@
     "export_and_reports": "Dışa aktarma ve raporlar",
     "pdf_report": "PDF raporu",
     "excel_file": "Excel / CSV dosyası",
-    "settings_desc": "Dil, para birimi, PIN ve yedekleme"
+    "settings_desc": "Dil, para birimi, PIN ve yedekleme",
+    "recurring_desc": "Kira, maaş, abonelikler"
   },
   "goals": {
     "enter_name_err": "Lütfen bir hedef adı girin",
@@ -624,5 +626,16 @@
     "title": "Bir şeyler ters gitti",
     "data_safe": "Verileriniz bu cihazda ve dokunulmadı.",
     "try_again": "Tekrar dene"
+  },
+  "recurring": {
+    "title": "Tekrarlanan işlemler",
+    "empty_title": "Henüz tekrarlanan yok",
+    "empty_body": "Bir işlem eklerken tekrar sıklığını seçin, burada görünür.",
+    "hint": "Uygulamayı bir sonraki açışınızda işlenir, kapalıyken değil.",
+    "next_on": "Sonraki: {{date}}",
+    "paused": "Duraklatıldı",
+    "pause": "Duraklat",
+    "resume": "Sürdür",
+    "posted": "{{count}} tekrarlanan işlem eklendi"
   }
 }

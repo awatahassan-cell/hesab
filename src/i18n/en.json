@@ -63,7 +63,8 @@
     "error_short": "Error",
     "ok": "OK",
     "notice": "Notice",
-    "delete_confirm_named": "Delete \"{{name}}\"?"
+    "delete_confirm_named": "Delete \"{{name}}\"?",
+    "no_repeat": "No repeat"
   },
   "types": {
     "expense": "Expense",
@@ -524,7 +525,8 @@
     "export_and_reports": "Export & reports",
     "pdf_report": "PDF report",
     "excel_file": "Excel / CSV file",
-    "settings_desc": "Language, currency, PIN and backup"
+    "settings_desc": "Language, currency, PIN and backup",
+    "recurring_desc": "Rent, salary, subscriptions"
   },
   "goals": {
     "enter_name_err": "Please enter a goal name",
@@ -624,5 +626,16 @@
     "title": "Something went wrong",
     "data_safe": "Your data is on this device and untouched.",
     "try_again": "Try again"
+  },
+  "recurring": {
+    "title": "Repeating transactions",
+    "empty_title": "Nothing repeats yet",
+    "empty_body": "When you add a transaction, choose how often it repeats and it appears here.",
+    "hint": "These post the next time you open the app, not while it is closed.",
+    "next_on": "Next: {{date}}",
+    "paused": "Paused",
+    "pause": "Pause",
+    "resume": "Resume",
+    "posted": "{{count}} repeating transactions were added"
   }
 }

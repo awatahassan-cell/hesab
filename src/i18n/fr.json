@@ -63,7 +63,8 @@
     "error_short": "Erreur",
     "ok": "OK",
     "notice": "Avis",
-    "delete_confirm_named": "Supprimer « {{name}} » ?"
+    "delete_confirm_named": "Supprimer « {{name}} » ?",
+    "no_repeat": "Sans répétition"
   },
   "types": {
     "expense": "Dépense",
@@ -524,7 +525,8 @@
     "export_and_reports": "Export et rapports",
     "pdf_report": "Rapport PDF",
     "excel_file": "Fichier Excel / CSV",
-    "settings_desc": "Langue, devise, code PIN et sauvegarde"
+    "settings_desc": "Langue, devise, code PIN et sauvegarde",
+    "recurring_desc": "Loyer, salaire, abonnements"
   },
   "goals": {
     "enter_name_err": "Veuillez saisir un nom d'objectif",
@@ -624,5 +626,16 @@
     "title": "Une erreur est survenue",
     "data_safe": "Vos données sont sur cet appareil et intactes.",
     "try_again": "Réessayer"
+  },
+  "recurring": {
+    "title": "Opérations récurrentes",
+    "empty_title": "Rien ne se répète encore",
+    "empty_body": "En ajoutant une opération, choisissez sa fréquence et elle apparaîtra ici.",
+    "hint": "Elles sont enregistrées à la prochaine ouverture, pas pendant que l'app est fermée.",
+    "next_on": "Prochaine : {{date}}",
+    "paused": "En pause",
+    "pause": "Mettre en pause",
+    "resume": "Reprendre",
+    "posted": "{{count}} opérations récurrentes ajoutées"
   }
 }

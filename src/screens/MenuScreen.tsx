@@ -112,6 +112,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       action: () => navigation.navigate('RemindersScreen')
     },
     {
+      id: 'recurring',
+      title: t('recurring.title'),
+      desc: t('menu.recurring_desc'),
+      icon: 'repeat-outline',
+      color: '#8B5CF6',
+      action: () => navigation.navigate('RecurringScreen')
+    },
+    {
       id: 'goals',
       title: t('menu.savings_title'),
       desc: t('menu.savings_desc'),

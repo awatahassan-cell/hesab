@@ -25,6 +25,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
 import { getCurrencySymbol, per100Usd, rateFromPer100Usd } from '../utils/currency';
+import { createRecurringRule } from '../db/queries/recurring';
+import { FREQUENCIES, Frequency, addStep } from '../utils/recurrence';
 
 interface AddTransactionScreenProps {
   navigation: any;
@@ -59,6 +61,8 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState('');
   const [note, setNote] = useState('');
   const [receiptUri, setReceiptUri] = useState<string | null>(null);
+  /** null means a one-off. */
+  const [repeat, setRepeat] = useState<Frequency | null>(null);
   const [saving, setSaving] = useState(false);
 
   // New Category modal state
@@ -212,6 +216,25 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
         receipt_uri: receiptUri || undefined
       });
 
+      if (repeat) {
+        // The transaction just saved covers today, so the rule starts at the
+        // next occurrence — otherwise opening the app would post it twice.
+        const next = addStep(new Date(), repeat, 1);
+        await createRecurringRule({
+          type,
+          amount: finalAmount,
+          currency: primaryCurrency,
+          account_id: selectedAccountId,
+          to_account_id: type === 'transfer' ? toAccountId : undefined,
+          category_id: type !== 'transfer' ? selectedCategoryId : undefined,
+          subcategory_id:
+            type !== 'transfer' && selectedSubcategoryId ? selectedSubcategoryId : undefined,
+          note: note.trim() || undefined,
+          frequency: repeat,
+          start_date: next.toISOString()
+        });
+      }
+
       await refreshAll();
       setSaving(false);
 
@@ -219,6 +242,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
       setAmountStr('');
       setNote('');
       setReceiptUri(null);
+      setRepeat(null);
       navigation.navigate('Home');
     } catch (err) {
       console.error('Failed to create transaction', err);
@@ -661,6 +685,46 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
               </TouchableOpacity>
             </View>
           )}
+
+          {/* Repeat */}
+          <Text
+            style={[
+              typography.captionSmall,
+              { color: colors.textMuted, marginTop: 14, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }
+            ]}
+          >
+            {t('add.recurring')}
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {([null, ...FREQUENCIES] as (Frequency | null)[]).map((option) => {
+              const on = repeat === option;
+              const label = option ? t(`add.recurring_${option}`) : t('common.no_repeat');
+              return (
+                <TouchableOpacity
+                  key={option ?? 'none'}
+                  onPress={() => setRepeat(option)}
+                  style={[
+                    styles.repeatChip,
+                    {
+                      backgroundColor: on ? colors.accent : colors.surfaceSecondary,
+                      borderColor: on ? colors.accent : colors.cardBorder,
+                      borderRadius: radius.sm
+                    }
+                  ]}
+                >
+                  <Text
+                    style={{
+                      color: on ? colors.textInverse : colors.textPrimary,
+                      fontWeight: '600',
+                      fontSize: 12
+                    }}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         </View>
 
         {/* Save Action Button */}
@@ -888,6 +952,7 @@ const styles = StyleSheet.create({
     fontSize: 42,
     fontWeight: '800',
     flex: 1,
+    minWidth: 0,
     paddingVertical: 4,
     fontVariant: ['tabular-nums']
   },
@@ -959,7 +1024,14 @@ const styles = StyleSheet.create({
   noteTextInput: {
     flex: 1,
     fontSize: 14,
-    paddingVertical: 6
+    paddingVertical: 6,
+    minWidth: 0
+  },
+  repeatChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderWidth: 1,
+    marginRight: 8
   },
   receiptBtn: {
     padding: 8,

@@ -1,5 +1,5 @@
 import { IDatabase } from './types';
-import { Account, Category, Subcategory, Transaction, Debt, Budget, ShoppingTrip, ShoppingItem, Reminder, SavingsGoal } from './schema';
+import { Account, Category, Subcategory, Transaction, Debt, Budget, ShoppingTrip, ShoppingItem, Reminder, SavingsGoal, RecurringRule } from './schema';
 import { getDefaultAccounts, DEFAULT_CATEGORIES, DEFAULT_REMINDERS, DEFAULT_SAVINGS_GOALS } from './defaultData';
 
 interface WebState {
@@ -13,6 +13,7 @@ interface WebState {
   shopping_items: ShoppingItem[];
   reminders: Reminder[];
   savings_goals: SavingsGoal[];
+  recurring_rules: RecurringRule[];
 }
 
 const STORAGE_KEY = 'hesab_web_database_v3';
@@ -53,7 +54,8 @@ function getStoredState(): WebState {
             reminders: Array.isArray(parsed.reminders)
               ? parsed.reminders.filter((r: any) => r.id !== 'rem_ronaki' && r.id !== 'rem_internet' && r.id !== 'rem_rent')
               : [],
-            savings_goals: Array.isArray(parsed.savings_goals) ? parsed.savings_goals : [...DEFAULT_SAVINGS_GOALS]
+            savings_goals: Array.isArray(parsed.savings_goals) ? parsed.savings_goals : [...DEFAULT_SAVINGS_GOALS],
+            recurring_rules: Array.isArray(parsed.recurring_rules) ? parsed.recurring_rules : []
           };
         }
       }
@@ -77,7 +79,8 @@ function getStoredState(): WebState {
       shopping_trips: [],
       shopping_items: [],
       reminders: [...DEFAULT_REMINDERS],
-      savings_goals: [...DEFAULT_SAVINGS_GOALS]
+      savings_goals: [...DEFAULT_SAVINGS_GOALS],
+      recurring_rules: []
     };
   } else {
     // Remove accounts requested by user (acc_cash, acc_ewallet, acc_bank)
@@ -274,6 +277,23 @@ class WebDatabase implements IDatabase {
     // Reminders
     if (trimmed.includes('FROM reminders')) {
       return (state.reminders || []) as any;
+    }
+
+    // Recurring rules, with the same joins the real query performs.
+    if (trimmed.includes('FROM recurring_rules')) {
+      const rules = [...(state.recurring_rules?.filter(Boolean) || [])];
+      return rules.map((r) => {
+        const acc = state.accounts?.find((a) => a && a.id === r.account_id);
+        const cat = state.categories?.find((c) => c && c.id === r.category_id);
+        return {
+          ...r,
+          account_name: acc?.name,
+          category_name_key: cat?.name_key,
+          category_custom_name: cat?.custom_name,
+          category_icon: cat?.icon,
+          category_color: cat?.color
+        };
+      }) as any;
     }
 
     // Savings Goals
@@ -547,7 +567,8 @@ export async function resetAllDatabaseData(): Promise<void> {
     shopping_trips: [],
     shopping_items: [],
     reminders: [...DEFAULT_REMINDERS],
-    savings_goals: [...DEFAULT_SAVINGS_GOALS]
+    savings_goals: [...DEFAULT_SAVINGS_GOALS],
+    recurring_rules: []
   };
   persistState();
 }

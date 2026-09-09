@@ -63,7 +63,8 @@
     "error_short": "Error",
     "ok": "Aceptar",
     "notice": "Aviso",
-    "delete_confirm_named": "¿Eliminar \"{{name}}\"?"
+    "delete_confirm_named": "¿Eliminar \"{{name}}\"?",
+    "no_repeat": "Sin repetición"
   },
   "types": {
     "expense": "Gasto",
@@ -524,7 +525,8 @@
     "export_and_reports": "Exportación e informes",
     "pdf_report": "Informe PDF",
     "excel_file": "Archivo Excel / CSV",
-    "settings_desc": "Idioma, moneda, PIN y copia de seguridad"
+    "settings_desc": "Idioma, moneda, PIN y copia de seguridad",
+    "recurring_desc": "Alquiler, salario, suscripciones"
   },
   "goals": {
     "enter_name_err": "Introduce un nombre para la meta",
@@ -624,5 +626,16 @@
     "title": "Algo salió mal",
     "data_safe": "Tus datos están en este dispositivo y no se han tocado.",
     "try_again": "Reintentar"
+  },
+  "recurring": {
+    "title": "Operaciones recurrentes",
+    "empty_title": "Aún no se repite nada",
+    "empty_body": "Al añadir una operación, elige su frecuencia y aparecerá aquí.",
+    "hint": "Se registran la próxima vez que abras la app, no mientras está cerrada.",
+    "next_on": "Siguiente: {{date}}",
+    "paused": "En pausa",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "posted": "Se añadieron {{count}} operaciones recurrentes"
   }
 }
