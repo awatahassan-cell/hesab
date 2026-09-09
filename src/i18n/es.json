@@ -637,5 +637,29 @@
     "pause": "Pausar",
     "resume": "Reanudar",
     "posted": "Se añadieron {{count}} operaciones recurrentes"
+  },
+  "import": {
+    "title": "Importar desde CSV",
+    "intro": "Trae tu historial desde otra app. Los registros se añaden a los tuyos; no se reemplaza nada.",
+    "choose_file": "Elegir un archivo CSV",
+    "choose_another": "Elegir otro archivo",
+    "empty_file": "Ese archivo no tiene filas",
+    "no_columns": "No se encontraron columnas de fecha e importe",
+    "found": "{{rows}} filas listas, {{skipped}} omitidas",
+    "col_date": "Fecha",
+    "col_amount": "Importe",
+    "col_type": "Tipo",
+    "col_category": "Categoría",
+    "col_note": "Nota",
+    "day_first": "El día antes del mes",
+    "day_first_hint": "03/04 significa 3 de abril. Desactívalo si tu archivo quiere decir 4 de marzo.",
+    "into_account": "Importar a qué cuenta",
+    "preview": "Vista previa",
+    "skipped_detail": "{{count}} filas no se pudieron leer (líneas {{lines}}) y no se importarán.",
+    "import_count": "Importar {{count}} registros",
+    "confirm_title": "¿Importar estos registros?",
+    "confirm_body": "Se añadirán {{count}} registros. Nada de lo que ya tienes cambia.",
+    "done": "Importación completada",
+    "done_body": "Se añadieron {{count}} registros"
   }
 }

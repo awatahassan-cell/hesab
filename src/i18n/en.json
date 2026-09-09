@@ -637,5 +637,29 @@
     "pause": "Pause",
     "resume": "Resume",
     "posted": "{{count}} repeating transactions were added"
+  },
+  "import": {
+    "title": "Import from CSV",
+    "intro": "Bring your history from another app. Imported records are added to what you already have — nothing is replaced.",
+    "choose_file": "Choose a CSV file",
+    "choose_another": "Choose a different file",
+    "empty_file": "That file has no rows to import",
+    "no_columns": "No date and amount columns were found in that file",
+    "found": "{{rows}} rows ready, {{skipped}} skipped",
+    "col_date": "Date",
+    "col_amount": "Amount",
+    "col_type": "Type",
+    "col_category": "Category",
+    "col_note": "Note",
+    "day_first": "Day comes before month",
+    "day_first_hint": "03/04 means 3 April. Turn this off if your file means 4 March.",
+    "into_account": "Import into which account",
+    "preview": "Preview",
+    "skipped_detail": "{{count}} rows could not be read (lines {{lines}}) and will not be imported.",
+    "import_count": "Import {{count}} records",
+    "confirm_title": "Import these records?",
+    "confirm_body": "{{count}} records will be added to your account. Nothing you already have is changed.",
+    "done": "Import finished",
+    "done_body": "{{count}} records were added"
   }
 }

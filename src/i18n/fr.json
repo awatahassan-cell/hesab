@@ -637,5 +637,29 @@
     "pause": "Mettre en pause",
     "resume": "Reprendre",
     "posted": "{{count}} opérations récurrentes ajoutées"
+  },
+  "import": {
+    "title": "Importer un CSV",
+    "intro": "Importez votre historique depuis une autre application. Les enregistrements s'ajoutent aux vôtres, rien n'est remplacé.",
+    "choose_file": "Choisir un fichier CSV",
+    "choose_another": "Choisir un autre fichier",
+    "empty_file": "Ce fichier ne contient aucune ligne",
+    "no_columns": "Aucune colonne date et montant trouvée",
+    "found": "{{rows}} lignes prêtes, {{skipped}} ignorées",
+    "col_date": "Date",
+    "col_amount": "Montant",
+    "col_type": "Type",
+    "col_category": "Catégorie",
+    "col_note": "Note",
+    "day_first": "Le jour avant le mois",
+    "day_first_hint": "03/04 signifie le 3 avril. Désactivez si votre fichier veut dire le 4 mars.",
+    "into_account": "Importer dans quel compte",
+    "preview": "Aperçu",
+    "skipped_detail": "{{count}} lignes illisibles (lignes {{lines}}) ne seront pas importées.",
+    "import_count": "Importer {{count}} enregistrements",
+    "confirm_title": "Importer ces enregistrements ?",
+    "confirm_body": "{{count}} enregistrements seront ajoutés. Rien de ce que vous avez ne change.",
+    "done": "Importation terminée",
+    "done_body": "{{count}} enregistrements ajoutés"
   }
 }

@@ -1,6 +1,7 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
+import { readPickedFile } from './pickedFile';
 import { getDatabase } from '../db';
 import { IDatabase } from '../db/types';
 import { getSchemaVersion, LATEST_SCHEMA_VERSION } from '../db/migrations';
@@ -144,9 +145,7 @@ export async function pickAndRestoreBackup(): Promise<RestoreResult> {
   }
 
   try {
-    const content = await FileSystem.readAsStringAsync(picked.assets[0].uri, {
-      encoding: FileSystem.EncodingType.UTF8
-    });
+    const content = await readPickedFile(picked.assets[0]);
     return await restoreBackup(content);
   } catch (error) {
     return {

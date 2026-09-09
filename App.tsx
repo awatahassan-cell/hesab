@@ -29,6 +29,7 @@ import { AccountsScreen } from './src/screens/AccountsScreen';
 import { CategoriesScreen } from './src/screens/CategoriesScreen';
 import { RemindersScreen } from './src/screens/RemindersScreen';
 import { RecurringScreen } from './src/screens/RecurringScreen';
+import { ImportScreen } from './src/screens/ImportScreen';
 import { SavingsGoalsScreen } from './src/screens/SavingsGoalsScreen';
 import { GoalsAndBudgetsScreen } from './src/screens/GoalsAndBudgetsScreen';
 import { MenuScreen } from './src/screens/MenuScreen';
@@ -161,6 +162,11 @@ function MainNavigation() {
         name="Transactions"
         component={TransactionsScreen}
         options={{ title: t('tabs.transactions') }}
+      />
+      <Stack.Screen
+        name="ImportScreen"
+        component={ImportScreen}
+        options={{ title: t('import.title') }}
       />
       <Stack.Screen
         name="Settings"

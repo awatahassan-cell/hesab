@@ -410,10 +410,18 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
 
           <TouchableOpacity
             onPress={handleRestoreBackup}
-            style={[styles.row, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}
+            style={[styles.row, { borderBottomColor: colors.divider, flexDirection: isRTL ? 'row-reverse' : 'row' }]}
           >
             <Text style={[typography.body, { color: colors.textPrimary }]}>{t('settings.restore_json')}</Text>
             <Ionicons name="cloud-upload-outline" size={20} color={colors.textMuted} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => navigation?.navigate('ImportScreen')}
+            style={[styles.row, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}
+          >
+            <Text style={[typography.body, { color: colors.textPrimary }]}>{t('import.title')}</Text>
+            <Ionicons name={isRTL ? 'chevron-back' : 'chevron-forward'} size={18} color={colors.textMuted} />
           </TouchableOpacity>
         </Card>
 

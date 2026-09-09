@@ -637,5 +637,29 @@
     "pause": "Pausar",
     "resume": "Retomar",
     "posted": "Foram adicionadas {{count}} operações recorrentes"
+  },
+  "import": {
+    "title": "Importar de CSV",
+    "intro": "Traga o seu histórico de outra app. Os registos são adicionados aos seus; nada é substituído.",
+    "choose_file": "Escolher um ficheiro CSV",
+    "choose_another": "Escolher outro ficheiro",
+    "empty_file": "Esse ficheiro não tem linhas",
+    "no_columns": "Não foram encontradas colunas de data e valor",
+    "found": "{{rows}} linhas prontas, {{skipped}} ignoradas",
+    "col_date": "Data",
+    "col_amount": "Valor",
+    "col_type": "Tipo",
+    "col_category": "Categoria",
+    "col_note": "Nota",
+    "day_first": "O dia antes do mês",
+    "day_first_hint": "03/04 significa 3 de abril. Desative se o seu ficheiro quer dizer 4 de março.",
+    "into_account": "Importar para que conta",
+    "preview": "Pré-visualização",
+    "skipped_detail": "{{count}} linhas não puderam ser lidas (linhas {{lines}}) e não serão importadas.",
+    "import_count": "Importar {{count}} registos",
+    "confirm_title": "Importar estes registos?",
+    "confirm_body": "Serão adicionados {{count}} registos. Nada do que já tem muda.",
+    "done": "Importação concluída",
+    "done_body": "Foram adicionados {{count}} registos"
   }
 }

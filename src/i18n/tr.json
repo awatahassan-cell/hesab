@@ -637,5 +637,29 @@
     "pause": "Duraklat",
     "resume": "Sürdür",
     "posted": "{{count}} tekrarlanan işlem eklendi"
+  },
+  "import": {
+    "title": "CSV'den içe aktar",
+    "intro": "Geçmişinizi başka bir uygulamadan getirin. İçe aktarılan kayıtlar mevcutlara eklenir, hiçbir şey silinmez.",
+    "choose_file": "Bir CSV dosyası seçin",
+    "choose_another": "Başka bir dosya seç",
+    "empty_file": "Bu dosyada içe aktarılacak satır yok",
+    "no_columns": "Dosyada tarih ve tutar sütunu bulunamadı",
+    "found": "{{rows}} satır hazır, {{skipped}} atlandı",
+    "col_date": "Tarih",
+    "col_amount": "Tutar",
+    "col_type": "Tür",
+    "col_category": "Kategori",
+    "col_note": "Not",
+    "day_first": "Gün aydan önce",
+    "day_first_hint": "03/04, 3 Nisan demektir. Dosyanız 4 Mart demek istiyorsa bunu kapatın.",
+    "into_account": "Hangi hesaba aktarılsın",
+    "preview": "Önizleme",
+    "skipped_detail": "{{count}} satır okunamadı ({{lines}}. satırlar) ve aktarılmayacak.",
+    "import_count": "{{count}} kaydı içe aktar",
+    "confirm_title": "Bu kayıtlar aktarılsın mı?",
+    "confirm_body": "{{count}} kayıt hesabınıza eklenecek. Mevcut verileriniz değişmez.",
+    "done": "İçe aktarma tamamlandı",
+    "done_body": "{{count}} kayıt eklendi"
   }
 }

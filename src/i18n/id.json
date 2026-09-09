@@ -637,5 +637,29 @@
     "pause": "Jeda",
     "resume": "Lanjutkan",
     "posted": "{{count}} transaksi berulang ditambahkan"
+  },
+  "import": {
+    "title": "Impor dari CSV",
+    "intro": "Bawa riwayat Anda dari aplikasi lain. Data yang diimpor ditambahkan, tidak ada yang diganti.",
+    "choose_file": "Pilih berkas CSV",
+    "choose_another": "Pilih berkas lain",
+    "empty_file": "Berkas itu tidak berisi baris",
+    "no_columns": "Kolom tanggal dan jumlah tidak ditemukan",
+    "found": "{{rows}} baris siap, {{skipped}} dilewati",
+    "col_date": "Tanggal",
+    "col_amount": "Jumlah",
+    "col_type": "Jenis",
+    "col_category": "Kategori",
+    "col_note": "Catatan",
+    "day_first": "Tanggal sebelum bulan",
+    "day_first_hint": "03/04 berarti 3 April. Matikan jika berkas Anda berarti 4 Maret.",
+    "into_account": "Impor ke akun mana",
+    "preview": "Pratinjau",
+    "skipped_detail": "{{count}} baris tidak terbaca (baris {{lines}}) dan tidak akan diimpor.",
+    "import_count": "Impor {{count}} catatan",
+    "confirm_title": "Impor catatan ini?",
+    "confirm_body": "{{count}} catatan akan ditambahkan. Data Anda yang ada tidak berubah.",
+    "done": "Impor selesai",
+    "done_body": "{{count}} catatan ditambahkan"
   }
 }
