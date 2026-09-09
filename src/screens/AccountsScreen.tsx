@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -33,7 +33,7 @@ export const AccountsScreen: React.FC = () => {
   const { t } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
-  const { accounts, refreshAll } = useFinanceStore();
+  const { accounts, totalBalancePrimary, refreshAll } = useFinanceStore();
 
   const [showModal, setShowModal] = useState(false);
   /** The account being edited, or null when adding a new one. */
@@ -148,11 +148,6 @@ export const AccountsScreen: React.FC = () => {
     );
   };
 
-  const total = useMemo(
-    () => accounts.reduce((sum, a) => sum + (a.currency === primaryCurrency ? a.current_balance : 0), 0),
-    [accounts, primaryCurrency]
-  );
-
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
       <AuroraBackground />
@@ -172,7 +167,7 @@ export const AccountsScreen: React.FC = () => {
                   { color: colors.textPrimary, fontSize: 24, textAlign: isRTL ? 'right' : 'left' }
                 ]}
               >
-                {formatCurrency(total, primaryCurrency, { isRTL })}
+                {formatCurrency(totalBalancePrimary, primaryCurrency, { isRTL })}
               </Text>
             </Card>
             <Button title={t('accounts.add_account')} onPress={openAdd} variant="primary" />
