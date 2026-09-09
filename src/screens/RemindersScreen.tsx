@@ -26,6 +26,7 @@ import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
+import { scheduleReminder, cancelReminder } from '../services/notifications';
 
 export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { colors, typography, radius } = useTheme();
@@ -64,12 +65,29 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
     setDueDay('1');
     setShowAddModal(false);
     await refreshAll();
+
+    // A reminder that never reminds is not a reminder. Scheduling is
+    // best-effort: a declined permission must not block saving.
+    const created = useFinanceStore
+      .getState()
+      .reminders.find((r) => r.title === title.trim() && r.due_day === parsedDay);
+    if (created) {
+      await scheduleReminder(
+        created,
+        t('reminders.notification_body', {
+          amount: formatCurrency(created.amount, created.currency)
+        })
+      );
+    }
   };
 
   const handlePay = async (item: Reminder) => {
     AppDialog.alert(
       t('reminders.pay_and_record'),
-      `ئایا دەتەوێت بڕی ${formatCurrency(item.amount, item.currency)} بۆ "${item.title}" تۆمار بکەیت وەک خەرجی؟`,
+      t('reminders.pay_confirm', {
+        amount: formatCurrency(item.amount, item.currency),
+        title: item.title
+      }),
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
@@ -86,6 +104,18 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
   const handleTogglePaid = async (item: Reminder) => {
     await toggleReminderPaidStatus(item.id, item.is_paid);
     await refreshAll();
+
+    // Paid this month: stop nagging until it is marked unpaid again.
+    if (item.is_paid) {
+      await scheduleReminder(
+        item,
+        t('reminders.notification_body', {
+          amount: formatCurrency(item.amount, item.currency)
+        })
+      );
+    } else {
+      await cancelReminder(item.id);
+    }
   };
 
   const handleDelete = (item: Reminder) => {
@@ -99,6 +129,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
           style: 'destructive',
           onPress: async () => {
             await deleteReminder(item.id);
+            await cancelReminder(item.id);
             await refreshAll();
           }
         }

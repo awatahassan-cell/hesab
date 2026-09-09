@@ -35,6 +35,8 @@ import { PinLockScreen } from './src/components/security/PinLockScreen';
 import { GlassTabBar } from './src/components/navigation/GlassTabBar';
 import { SplashScreen } from './src/screens/SplashScreen';
 import { DialogHost } from './src/components/common/AppDialog';
+import { UpdateGate } from './src/components/common/UpdateGate';
+import { ErrorBoundary } from './src/components/common/ErrorBoundary';
 
 // Hold the native splash until our own one is on screen, so the handoff
 // never flashes a blank frame.
@@ -274,6 +276,7 @@ export default function App() {
   }
 
   return (
+    <ErrorBoundary>
     <SafeAreaProvider>
       <ThemeProvider>
         <AppContent
@@ -282,6 +285,7 @@ export default function App() {
         />
       </ThemeProvider>
     </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
 
@@ -326,6 +330,7 @@ function AppContent({
       />
       {/* Mounted last so app dialogs sit above the navigator and onboarding. */}
       <DialogHost />
+      <UpdateGate />
     </NavigationContainer>
   );
 }

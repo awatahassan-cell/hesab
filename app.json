@@ -36,8 +36,13 @@
             "backgroundColor": "#07070B"
           }
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-notifications"
     ],
-    "backgroundColor": "#F5F3FC"
+    "backgroundColor": "#F5F3FC",
+    "extra": {
+      "updateManifestUrl": "https://raw.githubusercontent.com/awatahassan-cell/hesab/main/version.json"
+    }
   }
 }

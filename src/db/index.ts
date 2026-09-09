@@ -2,6 +2,7 @@ import * as SQLite from 'expo-sqlite';
 import { CREATE_TABLES_SQL } from './schema';
 import { seedInitialData, restoreDefaultCategories as seedRestoreDefaultCategories } from './seed';
 import { IDatabase } from './types';
+import { runMigrations } from './migrations';
 
 let databaseInstance: SQLite.SQLiteDatabase | null = null;
 
@@ -12,13 +13,17 @@ export async function getDatabase(): Promise<IDatabase> {
 
   databaseInstance = await SQLite.openDatabaseAsync('hesab_finance.db');
   
-  // Enable foreign keys
   await databaseInstance.execAsync('PRAGMA foreign_keys = ON;');
-  
-  // Create schema
-  await databaseInstance.execAsync(CREATE_TABLES_SQL);
 
-  return databaseInstance as unknown as IDatabase;
+  // Schema creation lives in migration 1, so a fresh install and an upgrade
+  // from any earlier version take the same path.
+  const db = databaseInstance as unknown as IDatabase;
+  const result = await runMigrations(db);
+  if (result.applied.length > 0) {
+    console.log(`[db] migrated v${result.from} -> v${result.to}:`, result.applied.join(', '));
+  }
+
+  return db;
 }
 
 export async function initDatabase(primaryCurrency: string = 'IQD'): Promise<IDatabase> {

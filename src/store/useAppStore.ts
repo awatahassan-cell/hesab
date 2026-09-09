@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n, { isRTLLanguage } from '../i18n';
+import { getPin, setPin as setSecurePin } from '../utils/secureStorage';
 
 interface AppState {
   language: string;
@@ -107,11 +108,8 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setPinCode: async (pin: string | null) => {
     set({ pinCode: pin });
-    if (pin) {
-      await AsyncStorage.setItem('app_pin_code', pin);
-    } else {
-      await AsyncStorage.removeItem('app_pin_code');
-    }
+    // Keychain / Keystore, not the plain AsyncStorage file.
+    await setSecurePin(pin);
   },
 
   setBiometricsEnabled: async (enabled: boolean) => {
@@ -137,7 +135,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         AsyncStorage.getItem('app_theme_mode'),
         AsyncStorage.getItem('app_month_start_day'),
         AsyncStorage.getItem('app_exchange_rates'),
-        AsyncStorage.getItem('app_pin_code'),
+        getPin(),
         AsyncStorage.getItem('app_biometrics_enabled'),
         AsyncStorage.getItem('app_onboarding_completed'),
         AsyncStorage.getItem('app_display_currency'),

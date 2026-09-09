@@ -8,13 +8,15 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
 import { useAppStore } from '../store/useAppStore';
 import { useFinanceStore } from '../store/useFinanceStore';
-import { COUNTRIES_CURRENCIES } from '../utils/currency';
-import { exportBackupJSON, restoreBackupFromJSON } from '../utils/export';
+import { COUNTRIES_CURRENCIES, formatCurrency } from '../utils/currency';
+import { exportBackup, pickAndRestoreBackup } from '../utils/backup';
 import { resetAllDatabaseData } from '../db';
 import { Card } from '../components/common/Card';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { PinSetupModal } from '../components/security/PinSetupModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { AppDialog } from '../components/common/AppDialog';
+import { rescheduleAll } from '../services/notifications';
 
 export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, isDark } = useTheme();
@@ -64,58 +66,70 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
 
   const handleExportBackup = async () => {
     try {
-      await exportBackupJSON();
-    } catch (e) {
-      setConfirmConfig({
-        visible: true,
-        title: t('common.error', t('common.error_short')),
-        message: t('settings.backup_export_failed'),
-        confirmText: t('common.ok'),
-        isDanger: false,
-        onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
+      const { counts } = await exportBackup();
+      const total = Object.values(counts).reduce((a, b) => a + b, 0);
+      AppDialog.alert(
+        t('backup.export_done'),
+        t('backup.export_summary', { count: total }),
+        undefined,
+        { tone: 'success', icon: 'wallet' }
+      );
+    } catch {
+      AppDialog.alert(t('common.error_short'), t('backup.export_failed'), undefined, {
+        tone: 'danger'
       });
     }
   };
 
-  const handleRestoreBackup = async () => {
-    try {
-      const res = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
-      if (!res.canceled && res.assets && res.assets.length > 0) {
-        const fileUri = res.assets[0].uri;
-        const content = await FileSystem.readAsStringAsync(fileUri);
-        const success = await restoreBackupFromJSON(content);
-        if (success) {
-          await refreshAll();
-          setConfirmConfig({
-            visible: true,
-            title: t('common.success', t('common.success')),
-            message: t('settings.restore_ok'),
-            confirmText: t('common.done'),
-            isDanger: false,
-            icon: 'checkmark-circle-outline',
-            onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
-          });
-        } else {
-          setConfirmConfig({
-            visible: true,
-            title: t('common.error', t('common.error_short')),
-            message: t('settings.backup_invalid'),
-            confirmText: t('common.ok'),
-            isDanger: false,
-            onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
-          });
+  const handleRestoreBackup = () => {
+    // Restoring wipes what is there, so it is confirmed before the picker
+    // opens rather than after a file is already chosen.
+    AppDialog.alert(
+      t('backup.restore_confirm_title'),
+      t('backup.restore_confirm_body'),
+      [
+        { style: 'cancel' },
+        {
+          text: t('common.restore'),
+          style: 'destructive',
+          onPress: async () => {
+            const result = await pickAndRestoreBackup();
+            if (result.ok) {
+              await refreshAll();
+              // The restore replaced the rows the old notifications pointed at,
+              // so the schedule has to be rebuilt from the new list.
+              const { reminders } = useFinanceStore.getState();
+              await rescheduleAll(reminders, (r) =>
+                t('reminders.notification_body', {
+                  amount: formatCurrency(r.amount, r.currency)
+                })
+              );
+              const total = Object.values(result.counts ?? {}).reduce((a, b) => a + b, 0);
+              AppDialog.alert(
+                t('backup.restore_done'),
+                t('backup.export_summary', { count: total }),
+                undefined,
+                { tone: 'success' }
+              );
+              return;
+            }
+            if (result.detail === 'cancelled') return;
+
+            const message =
+              result.problem === 'not-a-hesab-backup'
+                ? t('backup.restore_failed_format')
+                : result.problem === 'from-newer-app'
+                ? t('backup.restore_failed_newer')
+                : result.problem === 'write-failed'
+                ? t('backup.restore_failed_write')
+                : t('backup.restore_failed_unreadable');
+
+            AppDialog.alert(t('common.error_short'), message, undefined, { tone: 'danger' });
+          }
         }
-      }
-    } catch (e) {
-      setConfirmConfig({
-        visible: true,
-        title: t('common.error', t('common.error_short')),
-        message: t('settings.file_unreadable'),
-        confirmText: t('common.ok'),
-        isDanger: false,
-        onConfirm: () => setConfirmConfig((p) => ({ ...p, visible: false }))
-      });
-    }
+      ],
+      { tone: 'danger' }
+    );
   };
 
   const handleToggleBiometrics = async (value: boolean) => {
