@@ -24,7 +24,20 @@
     },
     "plugins": [
       "expo-sqlite",
-      "expo-sharing"
-    ]
+      "expo-sharing",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-mark.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#F5F3FC",
+          "dark": {
+            "backgroundColor": "#07070B"
+          }
+        }
+      ]
+    ],
+    "backgroundColor": "#F5F3FC"
   }
 }

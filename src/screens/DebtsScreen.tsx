@@ -13,6 +13,7 @@ import { Button } from '../components/common/Button';
 import { SegmentedControl } from '../components/common/SegmentedControl';
 import { EmptyState } from '../components/common/EmptyState';
 import { ConfirmModal } from '../components/common/ConfirmModal';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 export const DebtsScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -78,6 +79,7 @@ export const DebtsScreen: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <AuroraBackground />
       {/* Top Banner Totals */}
       <View style={[styles.banner, { backgroundColor: colors.surface, borderBottomColor: colors.cardBorder }]}>
         <View style={[styles.bannerRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>

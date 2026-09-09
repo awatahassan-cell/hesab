@@ -14,6 +14,7 @@ import { TransactionItem } from '../components/transactions/TransactionItem';
 import { generatePDFReport, exportTransactionsToCSV } from '../utils/export';
 import { Transaction } from '../db/schema';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 interface ReportsScreenProps {
   navigation: any;
@@ -101,6 +102,7 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: topSafeInset }]}>
+      <AuroraBackground />
       <ScrollView
         contentContainerStyle={{
           padding: 16,

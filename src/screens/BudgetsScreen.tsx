@@ -9,6 +9,7 @@ import { setBudget, deleteBudget, BudgetProgress } from '../db/queries/budgets';
 import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 export const BudgetsScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -39,6 +40,7 @@ export const BudgetsScreen: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <AuroraBackground />
       <FlatList
         data={budgetProgressList}
         keyExtractor={(i) => i.budget.id}

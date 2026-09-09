@@ -31,6 +31,7 @@ import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { SegmentedControl } from '../components/common/SegmentedControl';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 export const ShoppingScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -199,6 +200,7 @@ export const ShoppingScreen: React.FC = () => {
       style={[styles.screen, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <AuroraBackground />
       <View style={styles.topHeader}>
         <SegmentedControl
           options={[

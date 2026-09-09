@@ -10,6 +10,7 @@ import { createAccount, setAccountArchived, deleteAccount } from '../db/queries/
 import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 export const AccountsScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -62,6 +63,7 @@ export const AccountsScreen: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <AuroraBackground />
       <FlatList
         data={accounts}
         keyExtractor={(i) => i.id}

@@ -23,6 +23,7 @@ import { createSavingsGoal, updateSavingsGoal, deleteSavingsGoal } from '../db/q
 import { createReminder, toggleReminderPaidStatus, deleteReminder } from '../db/queries/reminders';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ConfirmModal } from '../components/common/ConfirmModal';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 export const GoalsAndBudgetsScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -151,6 +152,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: topSafeInset }]}>
+      <AuroraBackground />
       {/* Sekkeh Top Segmented Tabs: بودجەکان | ئامانجەکان | وەبیرهێنەرەوەکان */}
       <View style={[styles.tabSelectorRow, { backgroundColor: colors.surface, borderColor: colors.cardBorder, marginTop: 6 }]}>
         <TouchableOpacity

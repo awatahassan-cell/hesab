@@ -14,6 +14,7 @@ import { resetAllDatabaseData } from '../db';
 import { Card } from '../components/common/Card';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { PinSetupModal } from '../components/security/PinSetupModal';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, isDark } = useTheme();
@@ -228,6 +229,7 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <AuroraBackground />
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 60 }} showsVerticalScrollIndicator={false}>
         {/* Language Section */}
         <Text style={[typography.captionSmall, { color: colors.textMuted, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>

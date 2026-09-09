@@ -27,6 +27,7 @@ import { UpcomingBillBanner } from '../components/common/UpcomingBillBanner';
 import { DonutChart, DonutSlice } from '../components/charts/DonutChart';
 import { HeroDonutCard } from '../components/home/HeroDonutCard';
 import { FONT_FAMILY, FONT_FAMILY_MEDIUM, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_BOLD } from '../theme/typography';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 interface HomeScreenProps {
   navigation: any;
@@ -157,6 +158,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: topSafeInset }]}>
+      <AuroraBackground />
       <ScrollView
         contentContainerStyle={[
           styles.content,

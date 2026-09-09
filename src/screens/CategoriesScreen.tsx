@@ -12,6 +12,7 @@ import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { SegmentedControl } from '../components/common/SegmentedControl';
 import { ConfirmModal } from '../components/common/ConfirmModal';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 export const CategoriesScreen: React.FC = () => {
   const { colors, typography, radius, categoryPalette } = useTheme();
@@ -119,6 +120,7 @@ export const CategoriesScreen: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <AuroraBackground />
       <View style={{ marginHorizontal: 16, marginTop: 12, marginBottom: 8 }}>
         <SegmentedControl
           options={[

@@ -25,6 +25,7 @@ import {
 import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { colors, typography, radius } = useTheme();
@@ -117,6 +118,7 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <AuroraBackground />
       <FlatList
         data={reminders}
         keyExtractor={(i) => i.id}

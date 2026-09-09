@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Platform, AppState, AppStateStatus } from 'react-native';
+import { View, StyleSheet, Platform, AppState, AppStateStatus } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
+import * as NativeSplash from 'expo-splash-screen';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -32,6 +33,11 @@ import { MenuScreen } from './src/screens/MenuScreen';
 import { OnboardingModal } from './src/screens/OnboardingModal';
 import { PinLockScreen } from './src/components/security/PinLockScreen';
 import { GlassTabBar } from './src/components/navigation/GlassTabBar';
+import { SplashScreen } from './src/screens/SplashScreen';
+
+// Hold the native splash until our own one is on screen, so the handoff
+// never flashes a blank frame.
+NativeSplash.preventAutoHideAsync().catch(() => {});
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -80,9 +86,13 @@ function MainNavigation() {
   return (
     <Stack.Navigator
       screenOptions={{
+        // Matches the wash the screens sit on, with no divider, so a pushed
+        // page reads as one surface. Not transparent: these screens lay out
+        // from y=0 and would slide under the header.
         headerStyle: {
-          backgroundColor: colors.surface
+          backgroundColor: colors.background
         },
+        headerShadowVisible: false,
         headerTitleStyle: {
           color: colors.textPrimary,
           fontFamily: Platform.select({
@@ -166,7 +176,22 @@ export default function App() {
   const { refreshAll } = useFinanceStore();
 
   useEffect(() => {
+    // The splash animation runs ~1.1s; finishing sooner than that reads as a
+    // flash rather than an intro.
+    const MIN_SPLASH_MS = 1200;
+    const startedAt = Date.now();
+
+    async function finish() {
+      const elapsed = Date.now() - startedAt;
+      if (elapsed < MIN_SPLASH_MS) {
+        await new Promise((r) => setTimeout(r, MIN_SPLASH_MS - elapsed));
+      }
+      setReady(true);
+    }
+
     async function start() {
+      // Our own splash is already painted by the time this effect runs.
+      NativeSplash.hideAsync().catch(() => {});
       try {
         await loadInitialSettings();
 
@@ -234,21 +259,17 @@ export default function App() {
           `;
         }
 
-        setReady(true);
+        await finish();
       } catch (err) {
         console.error('Initialization error:', err);
-        setReady(true);
+        await finish();
       }
     }
     start();
   }, []);
 
   if (!ready) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <SplashScreen />;
   }
 
   return (

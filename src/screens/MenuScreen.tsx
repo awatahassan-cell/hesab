@@ -18,6 +18,7 @@ import { useFinanceStore } from '../store/useFinanceStore';
 import { getTransactions } from '../db/queries/transactions';
 import { exportTransactionsToCSV, generatePDFReport } from '../utils/export';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 interface MenuScreenProps {
   navigation: any;
@@ -130,6 +131,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: topSafeInset }]}>
+      <AuroraBackground />
       <ScrollView
         contentContainerStyle={[
           styles.content,

@@ -25,6 +25,7 @@ import {
 import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 const GOAL_ICONS = [
   'car-outline', 'shield-checkmark-outline', 'home-outline', 'airplane-outline',
@@ -128,6 +129,7 @@ export const SavingsGoalsScreen: React.FC<{ navigation: any }> = ({ navigation }
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <AuroraBackground />
       <FlatList
         data={savingsGoals}
         keyExtractor={(i) => i.id}

@@ -12,6 +12,7 @@ import { EmptyState } from '../components/common/EmptyState';
 import { formatTransactionDate } from '../utils/dates';
 import { exportTransactionsToCSV } from '../utils/export';
 import { ConfirmModal } from '../components/common/ConfirmModal';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 interface TransactionsScreenProps {
   navigation: any;
@@ -96,6 +97,7 @@ export const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ navigati
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <AuroraBackground />
       {/* Top Search & Filter Bar */}
       <View style={[styles.searchBarContainer, { backgroundColor: colors.surface, borderBottomColor: colors.cardBorder }]}>
         <View

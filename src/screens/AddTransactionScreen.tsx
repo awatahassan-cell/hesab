@@ -23,6 +23,7 @@ import { createCategory, createSubcategory } from '../db/queries/categories';
 import { SegmentedControl } from '../components/common/SegmentedControl';
 import { Button } from '../components/common/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AuroraBackground } from '../components/common/AuroraBackground';
 
 interface AddTransactionScreenProps {
   navigation: any;
@@ -233,6 +234,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: topSafeInset }]}>
+      <AuroraBackground />
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
