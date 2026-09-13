@@ -114,7 +114,9 @@
     "record_first_expense": "اولین هزینه را ثبت کنید",
     "edit_market_rate": "ویرایش نرخ دلار بازار",
     "rate_hint": "مثلاً ۱۰۰ دلار چند تومان است؟",
-    "budget_settings_link": "تنظیمات ›"
+    "budget_settings_link": "تنظیمات ›",
+    "highest_category": "بیشترین هزینه: ",
+    "budget_categories": "هزینه بر اساس دسته"
   },
   "transactions": {
     "title": "تراکنش‌ها",
@@ -150,7 +152,9 @@
     "recurring_yearly": "سالانه",
     "time": "ساعت",
     "enter_valid_amount": "لطفاً مبلغ معتبری وارد کنید",
-    "select_different_accounts": "برای انتقال، دو حساب متفاوت انتخاب کنید"
+    "select_different_accounts": "برای انتقال، دو حساب متفاوت انتخاب کنید",
+    "more_details": "جزئیات بیشتر (یادداشت، رسید، حساب)",
+    "fewer_details": "بستن جزئیات"
   },
   "accounts": {
     "title": "حساب‌ها",
@@ -670,5 +674,22 @@
     "done_body": "{{count}} رکورد افزوده شد",
     "failed": "ورود کامل نشد",
     "done_partial": "{{count}} رکورد افزوده شد، {{failed}} ذخیره نشد"
+  },
+  "wallets": {
+    "title": "کیف‌پول‌های شما",
+    "add": "کیف‌پول جدید"
+  },
+  "insights": {
+    "title_default": "راهنمای هوشمند مالی",
+    "body_default": "ثبت سریع روزانه هزینه‌ها به شما کمک می‌کند کنترل کامل پول خود را داشته باشید.",
+    "saving_well_title": "نرخ پس‌انداز عالی! 🌿",
+    "saving_well_body": "آفرین! {{percent}}٪ از درآمد این ماه را پس‌انداز کرده‌اید ({{amount}}).",
+    "over_budget_title": "هشدار هزینه ⚠️",
+    "over_budget_body": "این ماه {{amount}} بیش از درآمدتان خرج کرده‌اید.",
+    "balanced_title": "ماه متعادل 📊",
+    "balanced_body": "{{percent}}٪ از درآمدتان را خرج کرده‌اید. در بخش بودجه سقف تعیین کنید.",
+    "expense_only_title": "مجموع هزینه این ماه",
+    "expense_only_body": "این ماه {{amount}} خرج کرده‌اید. درآمدتان را هم وارد کنید.",
+    "view_reports": "مشاهده گزارش‌ها و بودجه"
   }
 }

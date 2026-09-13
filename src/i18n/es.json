@@ -114,7 +114,9 @@
     "record_first_expense": "Registra tu primer gasto",
     "edit_market_rate": "Editar el tipo de cambio del dólar",
     "rate_hint": "p. ej. ¿cuánto son 100 dólares?",
-    "budget_settings_link": "Ajustes ›"
+    "budget_settings_link": "Ajustes ›",
+    "highest_category": "Mayor gasto: ",
+    "budget_categories": "Gastos por categoría"
   },
   "transactions": {
     "title": "Movimientos",
@@ -150,7 +152,9 @@
     "recurring_yearly": "Anual",
     "time": "Hora",
     "enter_valid_amount": "Introduce un importe válido",
-    "select_different_accounts": "Elige dos cuentas distintas para la transferencia"
+    "select_different_accounts": "Elige dos cuentas distintas para la transferencia",
+    "more_details": "Más detalles (nota, recibo, cuenta)",
+    "fewer_details": "Ocultar detalles"
   },
   "accounts": {
     "title": "Cuentas",
@@ -670,5 +674,22 @@
     "done_body": "Se añadieron {{count}} registros",
     "failed": "No se pudo completar la importación",
     "done_partial": "Se añadieron {{count}} registros, {{failed}} no se pudieron guardar"
+  },
+  "wallets": {
+    "title": "Tus carteras",
+    "add": "Nueva cartera"
+  },
+  "insights": {
+    "title_default": "Consejo financiero",
+    "body_default": "Registrar los gastos cada día te da el control total de tu dinero.",
+    "saving_well_title": "¡Gran tasa de ahorro! 🌿",
+    "saving_well_body": "¡Bien hecho! Has ahorrado el {{percent}}% de los ingresos de este mes ({{amount}}).",
+    "over_budget_title": "Alerta de gasto ⚠️",
+    "over_budget_body": "Este mes has gastado {{amount}} más de lo que ingresaste.",
+    "balanced_title": "Mes equilibrado 📊",
+    "balanced_body": "Has gastado el {{percent}}% de tus ingresos. Fija límites en Presupuestos.",
+    "expense_only_title": "Gastos de este mes",
+    "expense_only_body": "Has gastado {{amount}} este mes. Añade tus ingresos para ver el panorama completo.",
+    "view_reports": "Ver informes y presupuestos"
   }
 }

@@ -114,7 +114,9 @@
     "record_first_expense": "سجّل أول مصروف",
     "edit_market_rate": "تعديل سعر صرف الدولار",
     "rate_hint": "مثال: 100 دولار كم دينارًا؟",
-    "budget_settings_link": "الإعدادات ›"
+    "budget_settings_link": "الإعدادات ›",
+    "highest_category": "أكبر مصروف: ",
+    "budget_categories": "المصروفات حسب الفئة"
   },
   "transactions": {
     "title": "المعاملات",
@@ -150,7 +152,9 @@
     "recurring_yearly": "سنوي",
     "time": "الوقت",
     "enter_valid_amount": "يرجى إدخال مبلغ صحيح",
-    "select_different_accounts": "يرجى اختيار حسابين مختلفين للتحويل"
+    "select_different_accounts": "يرجى اختيار حسابين مختلفين للتحويل",
+    "more_details": "تفاصيل أكثر (ملاحظة، إيصال، حساب)",
+    "fewer_details": "إخفاء التفاصيل"
   },
   "accounts": {
     "title": "الحسابات",
@@ -670,5 +674,22 @@
     "done_body": "تمت إضافة {{count}} سجل",
     "failed": "تعذّر إكمال الاستيراد",
     "done_partial": "تمت إضافة {{count}} سجل، وتعذّر حفظ {{failed}}"
+  },
+  "wallets": {
+    "title": "محافظك",
+    "add": "محفظة جديدة"
+  },
+  "insights": {
+    "title_default": "نصيحة مالية ذكية",
+    "body_default": "تسجيل المصروفات يوميًا بسرعة يساعدك على التحكم الكامل في أموالك.",
+    "saving_well_title": "معدل ادخار ممتاز! 🌿",
+    "saving_well_body": "أحسنت! ادّخرت {{percent}}٪ من دخل هذا الشهر ({{amount}}).",
+    "over_budget_title": "تنبيه إنفاق ⚠️",
+    "over_budget_body": "أنفقت هذا الشهر {{amount}} أكثر مما كسبت.",
+    "balanced_title": "شهر متوازن 📊",
+    "balanced_body": "أنفقت {{percent}}٪ من دخلك. حدّد سقوفًا للفئات في الميزانية.",
+    "expense_only_title": "إجمالي مصروفات هذا الشهر",
+    "expense_only_body": "أنفقت {{amount}} هذا الشهر. أضف دخلك لترى الصورة كاملة.",
+    "view_reports": "عرض التقارير والميزانية"
   }
 }

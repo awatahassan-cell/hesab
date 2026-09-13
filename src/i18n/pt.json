@@ -114,7 +114,9 @@
     "record_first_expense": "Registre sua primeira despesa",
     "edit_market_rate": "Editar a cotação do dólar",
     "rate_hint": "ex.: quanto valem 100 dólares?",
-    "budget_settings_link": "Configurações ›"
+    "budget_settings_link": "Configurações ›",
+    "highest_category": "Maior despesa: ",
+    "budget_categories": "Gastos por categoria"
   },
   "transactions": {
     "title": "Lançamentos",
@@ -150,7 +152,9 @@
     "recurring_yearly": "Anual",
     "time": "Hora",
     "enter_valid_amount": "Digite um valor válido",
-    "select_different_accounts": "Escolha duas contas diferentes para a transferência"
+    "select_different_accounts": "Escolha duas contas diferentes para a transferência",
+    "more_details": "Mais detalhes (nota, recibo, conta)",
+    "fewer_details": "Ocultar detalhes"
   },
   "accounts": {
     "title": "Contas",
@@ -670,5 +674,22 @@
     "done_body": "Foram adicionados {{count}} registos",
     "failed": "Não foi possível concluir a importação",
     "done_partial": "Foram adicionados {{count}} registos, {{failed}} não puderam ser guardados"
+  },
+  "wallets": {
+    "title": "As suas carteiras",
+    "add": "Nova carteira"
+  },
+  "insights": {
+    "title_default": "Dica financeira",
+    "body_default": "Registar as despesas todos os dias dá-lhe controlo total do seu dinheiro.",
+    "saving_well_title": "Ótima taxa de poupança! 🌿",
+    "saving_well_body": "Muito bem — poupou {{percent}}% do rendimento deste mês ({{amount}}).",
+    "over_budget_title": "Alerta de despesa ⚠️",
+    "over_budget_body": "Este mês gastou {{amount}} mais do que ganhou.",
+    "balanced_title": "Mês equilibrado 📊",
+    "balanced_body": "Gastou {{percent}}% do seu rendimento. Defina limites em Orçamentos.",
+    "expense_only_title": "Gastos deste mês",
+    "expense_only_body": "Gastou {{amount}} este mês. Adicione o seu rendimento para ver o quadro completo.",
+    "view_reports": "Ver relatórios e orçamentos"
   }
 }

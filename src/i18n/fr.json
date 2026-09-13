@@ -114,7 +114,9 @@
     "record_first_expense": "Enregistrez votre première dépense",
     "edit_market_rate": "Modifier le taux du dollar",
     "rate_hint": "ex. 100 dollars, cela fait combien ?",
-    "budget_settings_link": "Réglages ›"
+    "budget_settings_link": "Réglages ›",
+    "highest_category": "Plus grosse dépense : ",
+    "budget_categories": "Dépenses par catégorie"
   },
   "transactions": {
     "title": "Opérations",
@@ -150,7 +152,9 @@
     "recurring_yearly": "Annuel",
     "time": "Heure",
     "enter_valid_amount": "Veuillez saisir un montant valide",
-    "select_different_accounts": "Choisissez deux comptes différents pour le virement"
+    "select_different_accounts": "Choisissez deux comptes différents pour le virement",
+    "more_details": "Plus de détails (note, reçu, compte)",
+    "fewer_details": "Masquer les détails"
   },
   "accounts": {
     "title": "Comptes",
@@ -670,5 +674,22 @@
     "done_body": "{{count}} enregistrements ajoutés",
     "failed": "L'importation n'a pas pu être terminée",
     "done_partial": "{{count}} enregistrements ajoutés, {{failed}} n'ont pas pu être enregistrés"
+  },
+  "wallets": {
+    "title": "Vos portefeuilles",
+    "add": "Nouveau portefeuille"
+  },
+  "insights": {
+    "title_default": "Conseil financier",
+    "body_default": "Enregistrer vos dépenses chaque jour vous donne le contrôle total de votre argent.",
+    "saving_well_title": "Excellent taux d'épargne ! 🌿",
+    "saving_well_body": "Bravo — vous avez épargné {{percent}} % du revenu de ce mois ({{amount}}).",
+    "over_budget_title": "Alerte dépenses ⚠️",
+    "over_budget_body": "Ce mois-ci, vous avez dépensé {{amount}} de plus que vos revenus.",
+    "balanced_title": "Mois équilibré 📊",
+    "balanced_body": "Vous avez dépensé {{percent}} % de vos revenus. Fixez des limites dans Budgets.",
+    "expense_only_title": "Dépenses de ce mois",
+    "expense_only_body": "Vous avez dépensé {{amount}} ce mois-ci. Ajoutez vos revenus pour la vue complète.",
+    "view_reports": "Voir les rapports et budgets"
   }
 }

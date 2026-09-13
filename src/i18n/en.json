@@ -114,7 +114,9 @@
     "record_first_expense": "Record your first expense",
     "edit_market_rate": "Edit the market dollar rate",
     "rate_hint": "e.g. 100 dollars is how many dinars?",
-    "budget_settings_link": "Settings ›"
+    "budget_settings_link": "Settings ›",
+    "highest_category": "Biggest expense: ",
+    "budget_categories": "Spending by category"
   },
   "transactions": {
     "title": "Transactions",
@@ -150,7 +152,9 @@
     "recurring_yearly": "Yearly",
     "time": "Time",
     "enter_valid_amount": "Please enter a valid amount",
-    "select_different_accounts": "Please select two different accounts for transfer"
+    "select_different_accounts": "Please select two different accounts for transfer",
+    "more_details": "More details (note, receipt, account)",
+    "fewer_details": "Hide details"
   },
   "accounts": {
     "title": "Accounts",
@@ -670,5 +674,22 @@
     "done_body": "{{count}} records were added",
     "failed": "The import could not be completed",
     "done_partial": "{{count}} records were added, {{failed}} could not be saved"
+  },
+  "wallets": {
+    "title": "Your wallets",
+    "add": "New wallet"
+  },
+  "insights": {
+    "title_default": "Smart money tip",
+    "body_default": "Recording expenses quickly each day helps you stay fully in control of your money.",
+    "saving_well_title": "Great savings rate! 🌿",
+    "saving_well_body": "Well done — you have saved {{percent}}% of this month's income ({{amount}}).",
+    "over_budget_title": "Spending alert ⚠️",
+    "over_budget_body": "This month you have spent {{amount}} more than you earned.",
+    "balanced_title": "Balanced month 📊",
+    "balanced_body": "You have spent {{percent}}% of your income. Set category limits in Budgets.",
+    "expense_only_title": "This month's spending",
+    "expense_only_body": "You have spent {{amount}} this month. Add your income to see the full picture.",
+    "view_reports": "View reports and budgets"
   }
 }

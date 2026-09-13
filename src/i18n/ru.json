@@ -114,7 +114,9 @@
     "record_first_expense": "Записать первый расход",
     "edit_market_rate": "Изменить рыночный курс доллара",
     "rate_hint": "напр. сколько стоят 100 долларов в вашей валюте?",
-    "budget_settings_link": "Настройки ›"
+    "budget_settings_link": "Настройки ›",
+    "highest_category": "Крупнейший расход: ",
+    "budget_categories": "Расходы по категориям"
   },
   "transactions": {
     "title": "Операции",
@@ -150,7 +152,9 @@
     "recurring_yearly": "Ежегодно",
     "time": "Время",
     "enter_valid_amount": "Введите корректную сумму",
-    "select_different_accounts": "Для перевода выберите два разных счёта"
+    "select_different_accounts": "Для перевода выберите два разных счёта",
+    "more_details": "Подробнее (заметка, чек, счёт)",
+    "fewer_details": "Скрыть подробности"
   },
   "accounts": {
     "title": "Счета",
@@ -670,5 +674,22 @@
     "done_body": "Добавлено записей: {{count}}",
     "failed": "Не удалось завершить импорт",
     "done_partial": "Добавлено записей: {{count}}, не удалось сохранить: {{failed}}"
+  },
+  "wallets": {
+    "title": "Ваши кошельки",
+    "add": "Новый кошелёк"
+  },
+  "insights": {
+    "title_default": "Финансовый совет",
+    "body_default": "Ежедневная быстрая запись расходов даёт полный контроль над деньгами.",
+    "saving_well_title": "Отличная норма сбережений! 🌿",
+    "saving_well_body": "Отлично — вы отложили {{percent}}% дохода за этот месяц ({{amount}}).",
+    "over_budget_title": "Предупреждение о расходах ⚠️",
+    "over_budget_body": "В этом месяце вы потратили на {{amount}} больше, чем заработали.",
+    "balanced_title": "Сбалансированный месяц 📊",
+    "balanced_body": "Вы потратили {{percent}}% дохода. Задайте лимиты в бюджетах.",
+    "expense_only_title": "Расходы за этот месяц",
+    "expense_only_body": "В этом месяце вы потратили {{amount}}. Добавьте доход, чтобы увидеть картину целиком.",
+    "view_reports": "Отчёты и бюджеты"
   }
 }

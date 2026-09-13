@@ -114,7 +114,9 @@
     "record_first_expense": "پہلا خرچ درج کریں",
     "edit_market_rate": "مارکیٹ ڈالر ریٹ میں ترمیم",
     "rate_hint": "مثلاً 100 ڈالر کتنے روپے کے ہیں؟",
-    "budget_settings_link": "ترتیبات ›"
+    "budget_settings_link": "ترتیبات ›",
+    "highest_category": "سب سے بڑا خرچ: ",
+    "budget_categories": "زمرے کے حساب سے خرچ"
   },
   "transactions": {
     "title": "لین دین",
@@ -150,7 +152,9 @@
     "recurring_yearly": "سالانہ",
     "time": "وقت",
     "enter_valid_amount": "براہِ کرم درست رقم درج کریں",
-    "select_different_accounts": "منتقلی کے لیے دو مختلف اکاؤنٹ منتخب کریں"
+    "select_different_accounts": "منتقلی کے لیے دو مختلف اکاؤنٹ منتخب کریں",
+    "more_details": "مزید تفصیلات (نوٹ، رسید، اکاؤنٹ)",
+    "fewer_details": "تفصیلات چھپائیں"
   },
   "accounts": {
     "title": "اکاؤنٹس",
@@ -670,5 +674,22 @@
     "done_body": "{{count}} ریکارڈ شامل ہوئے",
     "failed": "درآمد مکمل نہ ہو سکی",
     "done_partial": "{{count}} ریکارڈ شامل ہوئے، {{failed}} محفوظ نہ ہو سکے"
+  },
+  "wallets": {
+    "title": "آپ کے والٹ",
+    "add": "نیا والٹ"
+  },
+  "insights": {
+    "title_default": "سمارٹ مالی مشورہ",
+    "body_default": "روزانہ تیزی سے اخراجات درج کرنا آپ کو اپنے پیسے پر مکمل کنٹرول دیتا ہے۔",
+    "saving_well_title": "بچت کی شرح بہترین! 🌿",
+    "saving_well_body": "شاباش! آپ نے اس ماہ کی آمدنی کا {{percent}}٪ بچایا ({{amount}})۔",
+    "over_budget_title": "خرچ کی وارننگ ⚠️",
+    "over_budget_body": "اس ماہ آپ نے آمدنی سے {{amount}} زیادہ خرچ کیا۔",
+    "balanced_title": "متوازن مہینہ 📊",
+    "balanced_body": "آپ نے آمدنی کا {{percent}}٪ خرچ کیا۔ بجٹ میں حد مقرر کریں۔",
+    "expense_only_title": "اس ماہ کے اخراجات",
+    "expense_only_body": "اس ماہ آپ نے {{amount}} خرچ کیا۔ مکمل تصویر کے لیے آمدنی بھی شامل کریں۔",
+    "view_reports": "رپورٹس اور بجٹ دیکھیں"
   }
 }

@@ -14,6 +14,8 @@ interface WebState {
   reminders: Reminder[];
   savings_goals: SavingsGoal[];
   recurring_rules: RecurringRule[];
+  /** Set on a brand new store, cleared once initDatabase names the defaults. */
+  needsDefaultNaming?: boolean;
 }
 
 const STORAGE_KEY = 'hesab_web_database_v3';
@@ -70,7 +72,11 @@ function getStoredState(): WebState {
       if (c && c.subcategories) initialSubs.push(...c.subcategories);
     }
     loadedState = {
+      // Named in initDatabase, not here: this module is imported before a
+      // language is chosen, so translating now would give every fresh install
+      // the default language's name whatever the phone is set to.
       accounts: getDefaultAccounts(),
+      needsDefaultNaming: true,
       categories: [...DEFAULT_CATEGORIES],
       subcategories: initialSubs,
       transactions: [],
@@ -539,6 +545,19 @@ export async function getDatabase(): Promise<IDatabase> {
 }
 
 export async function initDatabase(primaryCurrency: string = 'IQD'): Promise<IDatabase> {
+  // By now loadInitialSettings has run, so the language is the one the person
+  // will actually see. A fresh store's default account is named here rather
+  // than at import time, when i18n is still on its built-in default.
+  if (state.needsDefaultNaming) {
+    const named = getDefaultAccounts();
+    state.accounts = state.accounts.map((account) => {
+      const match = named.find((n) => n.id === account.id);
+      return match ? { ...account, name: match.name, currency: primaryCurrency } : account;
+    });
+    delete state.needsDefaultNaming;
+    persistState();
+  }
+
   return webDbInstance;
 }
 

@@ -114,7 +114,9 @@
     "record_first_expense": "İlk gideri kaydet",
     "edit_market_rate": "Piyasa dolar kurunu düzenle",
     "rate_hint": "örn. 100 dolar kaç lira?",
-    "budget_settings_link": "Ayarlar ›"
+    "budget_settings_link": "Ayarlar ›",
+    "highest_category": "En büyük gider: ",
+    "budget_categories": "Kategoriye göre harcama"
   },
   "transactions": {
     "title": "İşlemler",
@@ -150,7 +152,9 @@
     "recurring_yearly": "Yıllık",
     "time": "Saat",
     "enter_valid_amount": "Lütfen geçerli bir tutar girin",
-    "select_different_accounts": "Transfer için iki farklı hesap seçin"
+    "select_different_accounts": "Transfer için iki farklı hesap seçin",
+    "more_details": "Daha fazla ayrıntı (not, fiş, hesap)",
+    "fewer_details": "Ayrıntıları gizle"
   },
   "accounts": {
     "title": "Hesaplar",
@@ -670,5 +674,22 @@
     "done_body": "{{count}} kayıt eklendi",
     "failed": "İçe aktarma tamamlanamadı",
     "done_partial": "{{count}} kayıt eklendi, {{failed}} tanesi kaydedilemedi"
+  },
+  "wallets": {
+    "title": "Cüzdanlarınız",
+    "add": "Yeni cüzdan"
+  },
+  "insights": {
+    "title_default": "Akıllı finans ipucu",
+    "body_default": "Giderleri her gün hızlıca kaydetmek paranız üzerinde tam kontrol sağlar.",
+    "saving_well_title": "Harika bir birikim oranı! 🌿",
+    "saving_well_body": "Tebrikler! Bu ayki gelirinizin %{{percent}} kadarını biriktirdiniz ({{amount}}).",
+    "over_budget_title": "Harcama uyarısı ⚠️",
+    "over_budget_body": "Bu ay kazandığınızdan {{amount}} daha fazla harcadınız.",
+    "balanced_title": "Dengeli bir ay 📊",
+    "balanced_body": "Gelirinizin %{{percent}} kadarını harcadınız. Bütçe bölümünde limit belirleyin.",
+    "expense_only_title": "Bu ayın harcaması",
+    "expense_only_body": "Bu ay {{amount}} harcadınız. Tam tabloyu görmek için gelirinizi de ekleyin.",
+    "view_reports": "Raporları ve bütçeyi gör"
   }
 }

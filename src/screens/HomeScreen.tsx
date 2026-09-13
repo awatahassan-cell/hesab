@@ -24,7 +24,12 @@ import { Button } from '../components/common/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UpcomingBillBanner } from '../components/common/UpcomingBillBanner';
 import { DonutChart, DonutSlice } from '../components/charts/DonutChart';
+import { CategoryBarChart } from '../components/charts/CategoryBarChart';
 import { HeroDonutCard } from '../components/home/HeroDonutCard';
+import { BentoFullHeader } from '../components/home/BentoFullHeader';
+import { PastelBentoCards } from '../components/home/PastelBentoCards';
+import { SmartInsightCard } from '../components/home/SmartInsightCard';
+import { MultiWalletCards } from '../components/home/MultiWalletCards';
 import { FONT_FAMILY, FONT_FAMILY_MEDIUM, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_BOLD } from '../theme/typography';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
@@ -46,6 +51,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const exchangeRates = useAppStore((state) => state.exchangeRates);
 
   const {
+    accounts,
     totalBalancePrimary,
     monthIncome,
     monthExpense,
@@ -158,167 +164,144 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const categoryBudgets = budgetProgressList.filter((b) => Boolean(b.budget.category_id));
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: topSafeInset }]}>
+    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <RNStatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       <AuroraBackground />
       <ScrollView
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: 4,
+            paddingTop: 0,
             paddingBottom: Platform.OS === 'android' ? Math.max(insets.bottom, 48) + 85 : Math.max(insets.bottom, 16) + 70
           }
         ]}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FFFFFF" />}
       >
-        {/* Top Header: Date, Notification & Profile Avatar (Sekkeh Top Bar) */}
-        <View style={[styles.topBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('Settings')}
-            style={[styles.profileAvatar, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder }]}
-          >
-            <Ionicons name="person" size={17} color={colors.accent} />
-          </TouchableOpacity>
-
-          <View style={styles.dateBadge}>
-            <Ionicons name="calendar-outline" size={13} color={colors.textMuted} style={{ marginHorizontal: 4 }} />
-            <Text style={[styles.dateText, { color: colors.textPrimary }]}>
-              {formatLocalDate(new Date(), i18n.language)}
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('RemindersScreen')}
-            style={[styles.notifBtn, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder }]}
-          >
-            <Ionicons name="notifications-outline" size={18} color={colors.textPrimary} />
-            {unpaidReminders.length > 0 && (
-              <View style={[styles.notifDot, { backgroundColor: colors.warning }]}>
-                <Text style={styles.notifDotText}>{unpaidReminders.length}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
-
-        {/* Upcoming Bill / Installment Warning Banner (Sekkeh Top Alert) */}
-        <UpcomingBillBanner
-          reminders={reminders}
-          onPress={() => navigation.navigate('RemindersScreen')}
-        />
-
-        {/* Royal Violet & Glowing Donut Hero Card */}
-        <HeroDonutCard
+        {/* Full-Bleed Sky Ocean Bento Hero Header */}
+        <BentoFullHeader
+          topInset={topSafeInset}
           monthNetBalance={displayMonthBalance}
           monthIncome={displayIncome}
           monthExpense={displayExpense}
           activeCurrency={activeCurrency}
           primaryCurrency={primaryCurrency}
+          referenceCurrency={referenceCurrency}
           exchangeRates={exchangeRates}
           marketRate100USD={marketRate100USD}
           isRTL={isRTL}
-          referenceCurrency={referenceCurrency}
+          unpaidRemindersCount={unpaidReminders.length}
           onToggleCurrency={toggleDisplayCurrency}
           onOpenRateModal={() => {
-            // Seed from the live rate: the stored value loads after this
-            // screen first renders, so initialising the field once would
-            // leave the modal empty.
             setTempRate(String(marketRate100USD || per100Usd(primaryCurrency, exchangeRates)));
             setShowRateModal(true);
           }}
+          onOpenProfile={() => navigation.navigate('Settings')}
+          onOpenNotifications={() => navigation.navigate('RemindersScreen')}
         />
 
-        {/* Royal Violet Quick Action 4-Grid */}
-        <View style={[styles.quickActionGrid, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate('Add', { type: 'income' })}
-            style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
-          >
-            <View style={[styles.actionTileIconWrap, { backgroundColor: colors.incomeMuted }]}>
-              <Ionicons name="add" size={22} color={colors.income} />
-            </View>
-            <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.income')}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate('Add', { type: 'expense' })}
-            style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
-          >
-            <View style={[styles.actionTileIconWrap, { backgroundColor: colors.expenseMuted }]}>
-              <Ionicons name="remove" size={22} color={colors.expense} />
-            </View>
-            <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.expense')}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate('DebtsScreen')}
-            style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
-          >
-            <View style={[styles.actionTileIconWrap, { backgroundColor: colors.accentMuted }]}>
-              <Ionicons name="people-outline" size={20} color={colors.accent} />
-            </View>
-            <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('debts.title')}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
+        <View style={styles.bodyWrapper}>
+          {/* Upcoming Bill / Installment Warning Banner */}
+          <UpcomingBillBanner
+            reminders={reminders}
             onPress={() => navigation.navigate('RemindersScreen')}
-            style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
-          >
-            <View style={[styles.actionTileIconWrap, { backgroundColor: colors.warningMuted }]}>
-              <Ionicons name="time-outline" size={20} color={colors.warning} />
-            </View>
-            <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('home.instalments')}</Text>
-          </TouchableOpacity>
-        </View>
+          />
 
-        {/* Sekkeh Donut Spending Breakdown Chart */}
+          {/* Smart AI Financial Insight Card */}
+          <SmartInsightCard
+            monthIncome={displayIncome}
+            monthExpense={displayExpense}
+            currency={activeCurrency}
+            isRTL={isRTL}
+            onPressDetails={() => navigation.navigate('BudgetsScreen')}
+          />
+
+          {/* Multi-Wallet Carousel Cards */}
+          {accounts && accounts.length > 0 && (
+            <MultiWalletCards
+              accounts={accounts}
+              currency={activeCurrency}
+              isRTL={isRTL}
+              onPressAccount={() => navigation.navigate('AccountsScreen')}
+              onAddAccount={() => navigation.navigate('AccountsScreen')}
+            />
+          )}
+
+          {/* Quick Action 4-Grid */}
+          <View style={[styles.quickActionGrid, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('Add', { type: 'income' })}
+              style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
+            >
+              <View style={[styles.actionTileIconWrap, { backgroundColor: colors.incomeMuted }]}>
+                <Ionicons name="add" size={22} color={colors.income} />
+              </View>
+              <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.income')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('Add', { type: 'expense' })}
+              style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
+            >
+              <View style={[styles.actionTileIconWrap, { backgroundColor: colors.expenseMuted }]}>
+                <Ionicons name="remove" size={22} color={colors.expense} />
+              </View>
+              <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('types.expense')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('DebtsScreen')}
+              style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
+            >
+              <View style={[styles.actionTileIconWrap, { backgroundColor: colors.accentMuted }]}>
+                <Ionicons name="people-outline" size={20} color={colors.accent} />
+              </View>
+              <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('debts.title')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('RemindersScreen')}
+              style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
+            >
+              <View style={[styles.actionTileIconWrap, { backgroundColor: colors.warningMuted }]}>
+                <Ionicons name="time-outline" size={20} color={colors.warning} />
+              </View>
+              <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('home.instalments')}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Pastel Bento Category Cards Carousel */}
+          {donutSlices.length > 0 && (
+            <PastelBentoCards
+              slices={donutSlices}
+              currency={activeCurrency}
+              isRTL={isRTL}
+              onSeeAll={() => navigation.navigate('BudgetsScreen')}
+              onSelectCategory={() => navigation.navigate('BudgetsScreen')}
+            />
+          )}
+
+        {/* Category Expenses Breakdown (Vertical Bar Chart matching the reference design) */}
         {donutSlices.length > 0 && (
-          <DonutChart
+          <CategoryBarChart
             slices={donutSlices}
             totalAmount={displayExpense}
             currency={activeCurrency}
-            title={t('home.spend_breakdown_monthly')}
-            onSlicePress={() => navigation.navigate('Reports')}
+            onPress={() => navigation.navigate('Reports')}
+            isRTL={isRTL}
           />
         )}
 
-        {/* Feature Shortcut Pills (4 Grid Items) */}
+        {/* Feature Shortcuts: Budgets, Goals, Shopping, Accounts */}
         <View style={[styles.shortcutGrid, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => navigation.navigate('RemindersScreen')}
-            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 10 }]}
-          >
-            <View style={[styles.shortcutIconWrap, { backgroundColor: '#F59E0B18' }]}>
-              <Ionicons name="time" size={18} color="#F59E0B" />
-            </View>
-            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              {t('home.reminders')}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('SavingsGoalsScreen')}
-            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 10 }]}
-          >
-            <View style={[styles.shortcutIconWrap, { backgroundColor: '#3A86FF18' }]}>
-              <Ionicons name="flag" size={18} color="#3A86FF" />
-            </View>
-            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              {t('home.goal_fund')}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
             onPress={() => navigation.navigate('BudgetsScreen')}
-            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 10 }]}
+            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}
           >
             <View style={[styles.shortcutIconWrap, { backgroundColor: '#10B98118' }]}>
               <Ionicons name="pie-chart" size={18} color="#10B981" />
@@ -330,14 +313,40 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
           <TouchableOpacity
             activeOpacity={0.7}
+            onPress={() => navigation.navigate('SavingsGoalsScreen')}
+            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}
+          >
+            <View style={[styles.shortcutIconWrap, { backgroundColor: '#3A86FF18' }]}>
+              <Ionicons name="flag" size={18} color="#3A86FF" />
+            </View>
+            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
+              {t('home.goal_fund')}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
             onPress={() => navigation.navigate('ShoppingScreen')}
-            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 10 }]}
+            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}
           >
             <View style={[styles.shortcutIconWrap, { backgroundColor: '#FB850018' }]}>
               <Ionicons name="cart" size={18} color="#FB8500" />
             </View>
             <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
               {t('home.shopping_list')}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate('AccountsScreen')}
+            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}
+          >
+            <View style={[styles.shortcutIconWrap, { backgroundColor: '#8B5CF618' }]}>
+              <Ionicons name="wallet-outline" size={18} color="#8B5CF6" />
+            </View>
+            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
+              {t('accounts.title')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -457,6 +466,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <TransactionItem key={tx.id} transaction={tx} showDate={true} />
           ))
         )}
+        </View>
       </ScrollView>
 
       {/* Modal: Edit Market Exchange Rate */}
@@ -510,8 +520,12 @@ const styles = StyleSheet.create({
     flex: 1
   },
   content: {
-    padding: 16,
+    padding: 0,
     paddingBottom: 60
+  },
+  bodyWrapper: {
+    paddingHorizontal: 16,
+    paddingTop: 8
   },
   topBar: {
     alignItems: 'center',

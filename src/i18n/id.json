@@ -114,7 +114,9 @@
     "record_first_expense": "Catat pengeluaran pertama",
     "edit_market_rate": "Ubah kurs dolar pasar",
     "rate_hint": "mis. 100 dolar sama dengan berapa dalam mata uang Anda?",
-    "budget_settings_link": "Pengaturan ›"
+    "budget_settings_link": "Pengaturan ›",
+    "highest_category": "Pengeluaran terbesar: ",
+    "budget_categories": "Pengeluaran per kategori"
   },
   "transactions": {
     "title": "Transaksi",
@@ -150,7 +152,9 @@
     "recurring_yearly": "Tahunan",
     "time": "Waktu",
     "enter_valid_amount": "Masukkan jumlah yang valid",
-    "select_different_accounts": "Pilih dua akun berbeda untuk transfer"
+    "select_different_accounts": "Pilih dua akun berbeda untuk transfer",
+    "more_details": "Detail lainnya (catatan, struk, akun)",
+    "fewer_details": "Sembunyikan detail"
   },
   "accounts": {
     "title": "Akun",
@@ -670,5 +674,22 @@
     "done_body": "{{count}} catatan ditambahkan",
     "failed": "Impor tidak dapat diselesaikan",
     "done_partial": "{{count}} catatan ditambahkan, {{failed}} gagal disimpan"
+  },
+  "wallets": {
+    "title": "Dompet Anda",
+    "add": "Dompet baru"
+  },
+  "insights": {
+    "title_default": "Tips keuangan",
+    "body_default": "Mencatat pengeluaran setiap hari membuat Anda sepenuhnya menguasai uang Anda.",
+    "saving_well_title": "Rasio menabung bagus! 🌿",
+    "saving_well_body": "Bagus! Anda menabung {{percent}}% dari pemasukan bulan ini ({{amount}}).",
+    "over_budget_title": "Peringatan pengeluaran ⚠️",
+    "over_budget_body": "Bulan ini Anda membelanjakan {{amount}} lebih banyak dari pemasukan.",
+    "balanced_title": "Bulan seimbang 📊",
+    "balanced_body": "Anda memakai {{percent}}% pemasukan. Tetapkan batas di Anggaran.",
+    "expense_only_title": "Pengeluaran bulan ini",
+    "expense_only_body": "Anda memakai {{amount}} bulan ini. Tambahkan pemasukan untuk gambaran utuh.",
+    "view_reports": "Lihat laporan dan anggaran"
   }
 }
