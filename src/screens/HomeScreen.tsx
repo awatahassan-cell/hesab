@@ -28,6 +28,8 @@ import { CategoryBarChart } from '../components/charts/CategoryBarChart';
 import { HeroDonutCard } from '../components/home/HeroDonutCard';
 import { BentoFullHeader } from '../components/home/BentoFullHeader';
 import { PastelBentoCards } from '../components/home/PastelBentoCards';
+import { SmartInsightCard } from '../components/home/SmartInsightCard';
+import { MultiWalletCards } from '../components/home/MultiWalletCards';
 import { FONT_FAMILY, FONT_FAMILY_MEDIUM, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_BOLD } from '../theme/typography';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
@@ -49,6 +51,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const exchangeRates = useAppStore((state) => state.exchangeRates);
 
   const {
+    accounts,
     totalBalancePrimary,
     monthIncome,
     monthExpense,
@@ -203,6 +206,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             reminders={reminders}
             onPress={() => navigation.navigate('RemindersScreen')}
           />
+
+          {/* Smart AI Financial Insight Card */}
+          <SmartInsightCard
+            monthIncome={displayIncome}
+            monthExpense={displayExpense}
+            currency={activeCurrency}
+            isRTL={isRTL}
+            onPressDetails={() => navigation.navigate('BudgetsScreen')}
+          />
+
+          {/* Multi-Wallet Carousel Cards */}
+          {accounts && accounts.length > 0 && (
+            <MultiWalletCards
+              accounts={accounts}
+              currency={activeCurrency}
+              isRTL={isRTL}
+              onPressAccount={() => navigation.navigate('AccountsScreen')}
+              onAddAccount={() => navigation.navigate('AccountsScreen')}
+            />
+          )}
 
           {/* Quick Action 4-Grid */}
           <View style={[styles.quickActionGrid, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
