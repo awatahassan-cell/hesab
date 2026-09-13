@@ -662,11 +662,13 @@
     "day_first_hint": "03/04 signifie le 3 avril. Désactivez si votre fichier veut dire le 4 mars.",
     "into_account": "Importer dans quel compte",
     "preview": "Aperçu",
-    "skipped_detail": "{{count}} lignes illisibles (lignes {{lines}}) ne seront pas importées.",
+    "skipped_detail": "Ces lignes sont illisibles et ne seront pas importées : {{lines}}",
     "import_count": "Importer {{count}} enregistrements",
     "confirm_title": "Importer ces enregistrements ?",
     "confirm_body": "{{count}} enregistrements seront ajoutés. Rien de ce que vous avez ne change.",
     "done": "Importation terminée",
-    "done_body": "{{count}} enregistrements ajoutés"
+    "done_body": "{{count}} enregistrements ajoutés",
+    "failed": "L'importation n'a pas pu être terminée",
+    "done_partial": "{{count}} enregistrements ajoutés, {{failed}} n'ont pas pu être enregistrés"
   }
 }

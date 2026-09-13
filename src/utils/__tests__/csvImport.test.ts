@@ -1,9 +1,11 @@
 import {
   buildRows,
   detectColumns,
+  detectDelimiter,
   parseAmount,
   parseCsv,
   parseDate,
+  parseRows,
   resolveType
 } from '../csvImport';
 
@@ -180,5 +182,77 @@ describe('buildRows', () => {
     const { rows } = buildRows([['2026-03-09', '100']], mapping);
     expect(rows[0]).toMatchObject({ amount: 100, type: 'income' });
     expect(rows[0].note).toBeUndefined();
+  });
+});
+
+// ── Regressions found in review ────────────────────────────────────────────
+
+describe('detectDelimiter', () => {
+  it('picks the semicolon in a European export', () => {
+    // Counting all three at once split "1.234,56" into two columns.
+    expect(detectDelimiter('Date;Amount;Note\n09/03/2026;1.234,56;x')).toBe(';');
+  });
+
+  it('picks the comma in a plain export', () => {
+    expect(detectDelimiter('Date,Amount\n2026-03-09,100')).toBe(',');
+  });
+
+  it('ignores delimiters inside a quoted header', () => {
+    expect(detectDelimiter('"Date;time",Amount\n2026-03-09,100')).toBe(',');
+  });
+});
+
+describe('semicolon files', () => {
+  it('keeps a comma decimal intact', () => {
+    expect(parseCsv('Date;Amount\n09/03/2026;1.234,56')).toEqual([
+      ['Date', 'Amount'],
+      ['09/03/2026', '1.234,56']
+    ]);
+  });
+});
+
+describe('resolveType word matching', () => {
+  it('does not read a category containing "in" as income', () => {
+    // "in" matched as a substring turned Dining, Shopping, Insurance and
+    // Training into income.
+    for (const word of ['Dining', 'Shopping', 'Insurance', 'Training', 'Clothing']) {
+      expect(resolveType(word, -100)).toBe('expense');
+    }
+  });
+
+  it('still recognises a real income column', () => {
+    expect(resolveType('Income', -100)).toBe('income');
+    expect(resolveType('in', -100)).toBe('income');
+    expect(resolveType('Credit', -100)).toBe('income');
+  });
+});
+
+describe('parseDate rejects impossible days', () => {
+  it('refuses 31 February rather than rolling into March', () => {
+    expect(parseDate('31/02/2026', true)).toBeNull();
+    expect(parseDate('2026-02-31')).toBeNull();
+  });
+
+  it('refuses 31 April but accepts 30 April', () => {
+    expect(parseDate('31/04/2026', true)).toBeNull();
+    expect(parseDate('30/04/2026', true)).not.toBeNull();
+  });
+
+  it('accepts 29 February in a leap year only', () => {
+    expect(parseDate('29/02/2024', true)).not.toBeNull();
+    expect(parseDate('29/02/2026', true)).toBeNull();
+  });
+});
+
+describe('source line numbers', () => {
+  it('reports the real file line despite blank rows', () => {
+    const rows = parseRows('Date,Amount\n\n2026-03-09,100\n\n\nbad,50');
+    const { errors } = buildRows(rows.slice(1), { date: 0, amount: 1 });
+    expect(errors).toEqual([{ line: 6, reason: 'date', value: 'bad' }]);
+  });
+
+  it('counts the newlines inside a quoted field', () => {
+    const rows = parseRows('Date,Note,Amount\n2026-03-09,"two\nlines",10\nbad,x,10');
+    expect(rows.map((r) => r.line)).toEqual([1, 2, 4]);
   });
 });

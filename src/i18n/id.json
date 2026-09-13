@@ -662,11 +662,13 @@
     "day_first_hint": "03/04 berarti 3 April. Matikan jika berkas Anda berarti 4 Maret.",
     "into_account": "Impor ke akun mana",
     "preview": "Pratinjau",
-    "skipped_detail": "{{count}} baris tidak terbaca (baris {{lines}}) dan tidak akan diimpor.",
+    "skipped_detail": "Baris ini tidak terbaca dan tidak akan diimpor: {{lines}}",
     "import_count": "Impor {{count}} catatan",
     "confirm_title": "Impor catatan ini?",
     "confirm_body": "{{count}} catatan akan ditambahkan. Data Anda yang ada tidak berubah.",
     "done": "Impor selesai",
-    "done_body": "{{count}} catatan ditambahkan"
+    "done_body": "{{count}} catatan ditambahkan",
+    "failed": "Impor tidak dapat diselesaikan",
+    "done_partial": "{{count}} catatan ditambahkan, {{failed}} gagal disimpan"
   }
 }

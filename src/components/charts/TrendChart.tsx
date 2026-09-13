@@ -30,9 +30,15 @@ export const TrendChart: React.FC<TrendChartProps> = ({ totals, isRTL, variant, 
   const { colors, typography } = useTheme();
   const { t } = useTranslation();
 
-  // RTL reads right to left, so the newest month belongs on the left there.
+  // The running total has to accumulate oldest-to-newest whatever the reading
+  // direction, so it is computed on the chronological series and only then
+  // mirrored for display. Accumulating over the reversed list gave every point
+  // in Kurdish, Arabic, Persian and Urdu a different, wrong value.
   const series = useMemo(() => (isRTL ? [...totals].reverse() : totals), [totals, isRTL]);
-  const net = useMemo(() => runningNet(series), [series]);
+  const net = useMemo(() => {
+    const chronological = runningNet(totals);
+    return isRTL ? chronological.reverse() : chronological;
+  }, [totals, isRTL]);
 
   const plotHeight = HEIGHT - PAD_BOTTOM - PAD_TOP;
   const slot = series.length > 0 ? width / series.length : width;

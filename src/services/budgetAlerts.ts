@@ -100,10 +100,26 @@ async function readMarkers(): Promise<string[]> {
  * `describe` turns an alert into the notification's title and body, so this
  * module never touches translations directly.
  */
-export async function runBudgetAlerts(
+let inFlight: Promise<BudgetAlert[]> = Promise.resolve([]);
+
+export function runBudgetAlerts(
   progress: BudgetProgress[],
   describe: (alert: BudgetAlert) => { title: string; body: string },
   now: Date = new Date()
+): Promise<BudgetAlert[]> {
+  // Serialised: the fired-marker list is a read-modify-write, and two
+  // overlapping refreshes would each read the same list, notify twice and
+  // leave only one marker behind.
+  inFlight = inFlight
+    .catch(() => [])
+    .then(() => runBudgetAlertsOnce(progress, describe, now));
+  return inFlight;
+}
+
+async function runBudgetAlertsOnce(
+  progress: BudgetProgress[],
+  describe: (alert: BudgetAlert) => { title: string; body: string },
+  now: Date
 ): Promise<BudgetAlert[]> {
   const monthKey = monthKeyOf(now);
   const markers = await readMarkers();

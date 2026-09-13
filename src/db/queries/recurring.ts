@@ -1,6 +1,6 @@
 import { getDatabase } from '../index';
 import { RecurringRule } from '../schema';
-import { Frequency, dueOccurrences, firstRun } from '../../utils/recurrence';
+import { Frequency, addStep, dueOccurrences, firstRun } from '../../utils/recurrence';
 import { createTransaction } from './transactions';
 
 export async function getAllRecurringRules(): Promise<RecurringRule[]> {
@@ -31,15 +31,25 @@ export async function createRecurringRule(data: {
   frequency: Frequency;
   interval_count?: number;
   start_date: string;
+  /**
+   * When the rule first posts. Defaults to `start_date`.
+   *
+   * Kept separate because `start_date` also anchors the day of the month: a
+   * rule set up on the 31st must keep 31 as its anchor even when its first
+   * posting lands on the 28th of February.
+   */
+  first_run?: string;
   end_date?: string;
 }): Promise<string> {
   const db = await getDatabase();
   const id = 'rec_' + Date.now().toString() + '_' + Math.random().toString(36).slice(2, 6);
   const now = new Date().toISOString();
 
-  // The rule's first posting is its start date. A rule created today for the
-  // 1st of next month therefore posts nothing today.
-  const next = firstRun(new Date(data.start_date)).toISOString();
+  // A rule created today for the 1st of next month posts nothing today.
+  const next = (data.first_run
+    ? new Date(data.first_run)
+    : firstRun(new Date(data.start_date))
+  ).toISOString();
 
   await db.runAsync(
     `INSERT INTO recurring_rules (
@@ -103,6 +113,35 @@ export async function runDueRecurringRules(now: Date = new Date()): Promise<Recu
   for (const rule of rules) {
     if (!rule.is_active) continue;
 
+    // Each rule is isolated: one broken rule — an account deleted out from
+    // under it, say — must not stop every other rule from catching up, and
+    // must not do so again on every future launch.
+    try {
+      created += await runOneRule(db, rule, now, () => {
+        finished++;
+      });
+    } catch (error) {
+      console.warn(`Recurring rule ${rule.id} skipped:`, error);
+    }
+  }
+
+  return { created, finished };
+}
+
+/**
+ * Posts one rule's due occurrences and advances it.
+ *
+ * The cursor is advanced after each posting rather than once at the end, so a
+ * failure halfway through a long catch-up does not re-post what it already
+ * wrote the next time the app opens.
+ */
+async function runOneRule(
+  db: Awaited<ReturnType<typeof getDatabase>>,
+  rule: RecurringRule,
+  now: Date,
+  onFinished: () => void
+): Promise<number> {
+  {
     const result = dueOccurrences(
       {
         frequency: rule.frequency,
@@ -113,6 +152,8 @@ export async function runDueRecurringRules(now: Date = new Date()): Promise<Recu
       },
       now
     );
+
+    let created = 0;
 
     for (const date of result.dates) {
       await createTransaction({
@@ -128,19 +169,23 @@ export async function runDueRecurringRules(now: Date = new Date()): Promise<Recu
         recurring_id: rule.id
       });
       created++;
+
+      // Move the cursor past what was just written, so a failure on the next
+      // occurrence cannot cause this one to be posted twice.
+      await db.runAsync('UPDATE recurring_rules SET next_run = ?, last_run = ? WHERE id = ?', [
+        addStep(date, rule.frequency, rule.interval_count, new Date(rule.start_date).getDate()).toISOString(),
+        date.toISOString(),
+        rule.id
+      ]);
     }
 
-    const lastRun = result.dates.length
-      ? result.dates[result.dates.length - 1].toISOString()
-      : rule.last_run ?? null;
+    await db.runAsync('UPDATE recurring_rules SET next_run = ?, is_active = ? WHERE id = ?', [
+      result.nextRun.toISOString(),
+      result.finished ? 0 : 1,
+      rule.id
+    ]);
 
-    await db.runAsync(
-      'UPDATE recurring_rules SET next_run = ?, last_run = ?, is_active = ? WHERE id = ?',
-      [result.nextRun.toISOString(), lastRun, result.finished ? 0 : 1, rule.id]
-    );
-
-    if (result.finished) finished++;
+    if (result.finished) onFinished();
+    return created;
   }
-
-  return { created, finished };
 }

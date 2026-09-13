@@ -662,11 +662,13 @@
     "day_first_hint": "03/04 significa 3 de abril. Desative se o seu ficheiro quer dizer 4 de março.",
     "into_account": "Importar para que conta",
     "preview": "Pré-visualização",
-    "skipped_detail": "{{count}} linhas não puderam ser lidas (linhas {{lines}}) e não serão importadas.",
+    "skipped_detail": "Estas linhas não puderam ser lidas e não serão importadas: {{lines}}",
     "import_count": "Importar {{count}} registos",
     "confirm_title": "Importar estes registos?",
     "confirm_body": "Serão adicionados {{count}} registos. Nada do que já tem muda.",
     "done": "Importação concluída",
-    "done_body": "Foram adicionados {{count}} registos"
+    "done_body": "Foram adicionados {{count}} registos",
+    "failed": "Não foi possível concluir a importação",
+    "done_partial": "Foram adicionados {{count}} registos, {{failed}} não puderam ser guardados"
   }
 }

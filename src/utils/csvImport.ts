@@ -28,6 +28,12 @@ export interface RowError {
   value: string;
 }
 
+export interface CsvRow {
+  /** 1-based line in the file, so an error can point at the right place. */
+  line: number;
+  cells: string[];
+}
+
 export interface ColumnMapping {
   date: number;
   amount: number;
@@ -38,18 +44,63 @@ export interface ColumnMapping {
 }
 
 /**
- * Splits CSV text into rows of fields.
+ * Works out which character separates the fields.
  *
- * Written by hand rather than split(',') because every real export quotes
- * fields that contain commas, and a note like "rent, March" would otherwise
- * shift every later column by one.
+ * Counting all three at once broke European exports, where a semicolon
+ * separates fields and a comma is the decimal point: `1.234,56` split into two
+ * columns and shifted everything after it. Only the delimiter that actually
+ * structures the header is used.
  */
-export function parseCsv(text: string): string[][] {
-  const clean = text.replace(/^﻿/, '');
-  const rows: string[][] = [];
-  let row: string[] = [];
+export function detectDelimiter(text: string): string {
+  const firstLine = text.replace(/^\ufeff/, '').split(/\r?\n/)[0] ?? '';
+  let best = ',';
+  let bestCount = -1;
+
+  for (const candidate of [',', ';', '\t']) {
+    // Count only outside quotes, so a quoted note cannot cast a vote.
+    let count = 0;
+    let inQuotes = false;
+    for (let i = 0; i < firstLine.length; i++) {
+      const ch = firstLine[i];
+      if (ch === '"') inQuotes = !inQuotes;
+      else if (!inQuotes && ch === candidate) count++;
+    }
+    if (count > bestCount) {
+      best = candidate;
+      bestCount = count;
+    }
+  }
+
+  return best;
+}
+
+/**
+ * Splits CSV text into rows of fields, each tagged with its source line.
+ *
+ * Written by hand rather than split() because every real export quotes fields
+ * that contain the delimiter, and a note like "rent, March" would otherwise
+ * shift every later column by one. A quoted field may also span lines, which
+ * is why the line number is tracked here rather than counted afterwards.
+ */
+export function parseRows(text: string, delimiter?: string): CsvRow[] {
+  const clean = text.replace(/^\ufeff/, '');
+  const sep = delimiter ?? detectDelimiter(clean);
+
+  const rows: CsvRow[] = [];
+  let cells: string[] = [];
   let field = '';
   let inQuotes = false;
+  let line = 1;
+  let rowStartLine = 1;
+
+  const pushRow = () => {
+    cells.push(field);
+    field = '';
+    if (cells.some((cell) => cell.trim() !== '')) {
+      rows.push({ line: rowStartLine, cells });
+    }
+    cells = [];
+  };
 
   for (let i = 0; i < clean.length; i++) {
     const ch = clean[i];
@@ -63,6 +114,7 @@ export function parseCsv(text: string): string[][] {
           inQuotes = false;
         }
       } else {
+        if (ch === '\n') line++;
         field += ch;
       }
       continue;
@@ -70,26 +122,26 @@ export function parseCsv(text: string): string[][] {
 
     if (ch === '"') {
       inQuotes = true;
-    } else if (ch === ',' || ch === ';' || ch === '\t') {
-      row.push(field);
+    } else if (ch === sep) {
+      cells.push(field);
       field = '';
     } else if (ch === '\n') {
-      row.push(field);
-      rows.push(row);
-      row = [];
-      field = '';
+      pushRow();
+      line++;
+      rowStartLine = line;
     } else if (ch !== '\r') {
       field += ch;
     }
   }
 
-  if (field.length > 0 || row.length > 0) {
-    row.push(field);
-    rows.push(row);
-  }
+  if (field.length > 0 || cells.length > 0) pushRow();
 
-  // Trailing newlines leave an empty row behind.
-  return rows.filter((r) => r.some((cell) => cell.trim() !== ''));
+  return rows;
+}
+
+/** Cells only, for callers that do not need the line numbers. */
+export function parseCsv(text: string, delimiter?: string): string[][] {
+  return parseRows(text, delimiter).map((row) => row.cells);
 }
 
 /** Header names the common exports use, lower-cased. */
@@ -196,6 +248,7 @@ export function parseDate(raw: string, dayFirst = true): Date | null {
   const isoMatch = text.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?/);
   if (isoMatch) {
     const [, y, m, d, hh = '12', mm = '00', ss = '00'] = isoMatch;
+    if (+m < 1 || +m > 12 || +d < 1 || +d > new Date(+y, +m, 0).getDate()) return null;
     const date = new Date(+y, +m - 1, +d, +hh, +mm, +ss);
     return Number.isNaN(date.getTime()) ? null : date;
   }
@@ -223,7 +276,11 @@ export function parseDate(raw: string, dayFirst = true): Date | null {
       }
     }
 
-    if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+    // Checked against the real length of that month: 31/02 used to roll over
+    // into 3 March instead of being reported as an unreadable row.
+    if (month < 1 || month > 12 || day < 1) return null;
+    if (day > new Date(year, month, 0).getDate()) return null;
+
     const date = new Date(year, month - 1, day, +hh, +mm);
     return Number.isNaN(date.getTime()) ? null : date;
   }
@@ -231,8 +288,18 @@ export function parseDate(raw: string, dayFirst = true): Date | null {
   return null;
 }
 
-const INCOME_WORDS = ['income', 'deposit', 'credit', 'in', 'داهات', 'دخل', 'إيراد'];
-const TRANSFER_WORDS = ['transfer', 'گواستنەوە', 'تحويل'];
+/**
+ * Matched as whole words, never as substrings.
+ *
+ * "in" used to be in this list and matched with includes(), so "Dining",
+ * "Shopping", "Insurance" and "Training" all imported as income.
+ */
+const INCOME_WORDS = ['income', 'deposit', 'credit', 'in', 'داهات', 'دخل', 'إيراد', 'وارد'];
+const TRANSFER_WORDS = ['transfer', 'گواستنەوە', 'تحويل', 'حواله'];
+
+function containsWord(haystack: string, word: string): boolean {
+  return haystack.split(/[^\p{L}\p{N}]+/u).includes(word);
+}
 
 /**
  * Works out whether a row is money in or out.
@@ -243,8 +310,8 @@ const TRANSFER_WORDS = ['transfer', 'گواستنەوە', 'تحويل'];
 export function resolveType(typeCell: string | undefined, amount: number): ImportType {
   const text = (typeCell ?? '').trim().toLowerCase();
   if (text) {
-    if (TRANSFER_WORDS.some((w) => text.includes(w))) return 'transfer';
-    if (INCOME_WORDS.some((w) => text === w || text.includes(w))) return 'income';
+    if (TRANSFER_WORDS.some((w) => containsWord(text, w))) return 'transfer';
+    if (INCOME_WORDS.some((w) => containsWord(text, w))) return 'income';
     return 'expense';
   }
   return amount >= 0 ? 'income' : 'expense';
@@ -257,7 +324,7 @@ export interface BuildResult {
 
 /** Turns raw cells into rows ready to insert, collecting what it could not read. */
 export function buildRows(
-  dataRows: string[][],
+  dataRows: (string[] | CsvRow)[],
   mapping: ColumnMapping,
   options: { dayFirst?: boolean; startLine?: number } = {}
 ): BuildResult {
@@ -266,8 +333,12 @@ export function buildRows(
   const rows: ParsedRow[] = [];
   const errors: RowError[] = [];
 
-  dataRows.forEach((cells, index) => {
-    const line = startLine + index;
+  dataRows.forEach((entry, index) => {
+    // Rows from parseRows carry their true source line; blank lines and
+    // multi-line quoted fields make a running count wrong otherwise.
+    const isTagged = !Array.isArray(entry);
+    const cells = isTagged ? entry.cells : entry;
+    const line = isTagged ? entry.line : startLine + index;
     const cell = (at: number | undefined) => (at === undefined ? undefined : (cells[at] ?? '').trim());
 
     const rawAmount = cell(mapping.amount) ?? '';

@@ -217,9 +217,13 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
       });
 
       if (repeat) {
-        // The transaction just saved covers today, so the rule starts at the
-        // next occurrence — otherwise opening the app would post it twice.
-        const next = addStep(new Date(), repeat, 1);
+        // The transaction just saved covers today, so the rule first posts at
+        // the next occurrence — otherwise opening the app would post it twice.
+        // `start_date` stays today so it anchors the day of the month: storing
+        // the clamped next date instead would pin a rule set up on the 31st to
+        // the 28th for good.
+        const anchor = new Date();
+        const next = addStep(anchor, repeat, 1, anchor.getDate());
         await createRecurringRule({
           type,
           amount: finalAmount,
@@ -231,7 +235,8 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
             type !== 'transfer' && selectedSubcategoryId ? selectedSubcategoryId : undefined,
           note: note.trim() || undefined,
           frequency: repeat,
-          start_date: next.toISOString()
+          start_date: anchor.toISOString(),
+          first_run: next.toISOString()
         });
       }
 

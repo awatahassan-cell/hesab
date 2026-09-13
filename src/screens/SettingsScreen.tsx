@@ -26,7 +26,11 @@ import {
   setReminderEnabled,
   clearBackupRecord
 } from '../services/backupHealth';
-import { cancelBackupReminder, scheduleBackupReminder } from '../services/notifications';
+import {
+  cancelBackupReminder,
+  hasNotificationPermission,
+  scheduleBackupReminder
+} from '../services/notifications';
 import { LANGUAGES } from '../i18n';
 import { formatLocalDate } from '../utils/dates';
 import { getCountryLanguages } from '../utils/currencyData';
@@ -91,18 +95,28 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
   });
   const [backupReminder, setBackupReminder] = React.useState(true);
 
-  const refreshBackupStatus = React.useCallback(async () => {
-    const [status, reminderOn] = await Promise.all([getBackupStatus(), isReminderEnabled()]);
-    setBackup(status);
-    setBackupReminder(reminderOn);
+  /**
+   * `ask` is true only when the person just turned the switch on. Opening
+   * Settings used to request notification permission on its own, which pops
+   * the OS dialog out of nowhere and spends the single chance to ask.
+   */
+  const refreshBackupStatus = React.useCallback(
+    async (ask = false) => {
+      const [status, reminderOn] = await Promise.all([getBackupStatus(), isReminderEnabled()]);
+      setBackup(status);
+      setBackupReminder(reminderOn);
 
-    // The nudge exists only while there is something to nudge about.
-    if (reminderOn && status.health !== 'fresh') {
-      await scheduleBackupReminder(t('backup.reminder_title'), t('backup.reminder_body'));
-    } else {
-      await cancelBackupReminder();
-    }
-  }, [t]);
+      // The nudge exists only while there is something to nudge about.
+      if (reminderOn && status.health !== 'fresh') {
+        if (ask || (await hasNotificationPermission())) {
+          await scheduleBackupReminder(t('backup.reminder_title'), t('backup.reminder_body'));
+        }
+      } else {
+        await cancelBackupReminder();
+      }
+    },
+    [t]
+  );
 
   React.useEffect(() => {
     refreshBackupStatus();
@@ -499,7 +513,7 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
               onValueChange={async (value) => {
                 setBackupReminder(value);
                 await setReminderEnabled(value);
-                await refreshBackupStatus();
+                await refreshBackupStatus(value);
               }}
             />
           </View>

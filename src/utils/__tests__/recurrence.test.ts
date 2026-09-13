@@ -110,3 +110,25 @@ describe('isFrequency', () => {
     expect(isFrequency('fortnightly')).toBe(false);
   });
 });
+
+describe('month anchor survives the first clamped step (regression)', () => {
+  it('keeps the 31st after a rule set up on 31 January', () => {
+    // The add screen stored the already-clamped next date as start_date, so
+    // the anchor became 28 and a rent day set for the 31st stayed on the 28th
+    // for good — the exact drift addStep exists to prevent.
+    const anchorDate = at(2026, 1, 31);
+    const anchor = anchorDate.getDate();
+    const firstRun = addStep(anchorDate, 'monthly', 1, anchor);
+    expect(firstRun).toEqual(at(2026, 2, 28));
+
+    const result = dueOccurrences(
+      { frequency: 'monthly', next_run: iso(firstRun), start_date: iso(anchorDate) },
+      at(2026, 5, 1)
+    );
+    expect(result.dates.map((d) => `${d.getMonth() + 1}-${d.getDate()}`)).toEqual([
+      '2-28',
+      '3-31',
+      '4-30'
+    ]);
+  });
+});

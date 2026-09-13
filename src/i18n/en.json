@@ -662,11 +662,13 @@
     "day_first_hint": "03/04 means 3 April. Turn this off if your file means 4 March.",
     "into_account": "Import into which account",
     "preview": "Preview",
-    "skipped_detail": "{{count}} rows could not be read (lines {{lines}}) and will not be imported.",
+    "skipped_detail": "These lines could not be read and will not be imported: {{lines}}",
     "import_count": "Import {{count}} records",
     "confirm_title": "Import these records?",
     "confirm_body": "{{count}} records will be added to your account. Nothing you already have is changed.",
     "done": "Import finished",
-    "done_body": "{{count}} records were added"
+    "done_body": "{{count}} records were added",
+    "failed": "The import could not be completed",
+    "done_partial": "{{count}} records were added, {{failed}} could not be saved"
   }
 }

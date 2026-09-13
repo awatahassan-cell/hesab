@@ -662,11 +662,13 @@
     "day_first_hint": "03/04, 3 Nisan demektir. Dosyanız 4 Mart demek istiyorsa bunu kapatın.",
     "into_account": "Hangi hesaba aktarılsın",
     "preview": "Önizleme",
-    "skipped_detail": "{{count}} satır okunamadı ({{lines}}. satırlar) ve aktarılmayacak.",
+    "skipped_detail": "Şu satırlar okunamadı ve aktarılmayacak: {{lines}}",
     "import_count": "{{count}} kaydı içe aktar",
     "confirm_title": "Bu kayıtlar aktarılsın mı?",
     "confirm_body": "{{count}} kayıt hesabınıza eklenecek. Mevcut verileriniz değişmez.",
     "done": "İçe aktarma tamamlandı",
-    "done_body": "{{count}} kayıt eklendi"
+    "done_body": "{{count}} kayıt eklendi",
+    "failed": "İçe aktarma tamamlanamadı",
+    "done_partial": "{{count}} kayıt eklendi, {{failed}} tanesi kaydedilemedi"
   }
 }

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
 import { useAppStore } from '../store/useAppStore';
 import { useFinanceStore } from '../store/useFinanceStore';
-import { buildRows, detectColumns, parseCsv, ColumnMapping, ParsedRow, RowError } from '../utils/csvImport';
+import { buildRows, detectColumns, parseRows, ColumnMapping, CsvRow, ParsedRow, RowError } from '../utils/csvImport';
 import { importRows, pickCsvFile } from '../services/csvImportService';
 import { formatCurrency } from '../utils/currency';
 import { formatLocalDate } from '../utils/dates';
@@ -32,7 +32,7 @@ export const ImportScreen: React.FC<{ navigation?: any }> = ({ navigation }) => 
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [headers, setHeaders] = useState<string[]>([]);
-  const [dataRows, setDataRows] = useState<string[][]>([]);
+  const [dataRows, setDataRows] = useState<CsvRow[]>([]);
   const [mapping, setMapping] = useState<ColumnMapping | null>(null);
   const [dayFirst, setDayFirst] = useState(true);
   const [accountId, setAccountId] = useState<string>('');
@@ -48,20 +48,20 @@ export const ImportScreen: React.FC<{ navigation?: any }> = ({ navigation }) => 
       const file = await pickCsvFile();
       if (!file) return;
 
-      const table = parseCsv(file.content);
+      const table = parseRows(file.content);
       if (table.length < 2) {
         AppDialog.alert(t('common.error'), t('import.empty_file'));
         return;
       }
 
-      const detected = detectColumns(table[0]);
+      const detected = detectColumns(table[0].cells);
       if (!detected) {
         AppDialog.alert(t('common.error'), t('import.no_columns'));
         return;
       }
 
       setFileName(file.name);
-      setHeaders(table[0]);
+      setHeaders(table[0].cells);
       setDataRows(table.slice(1));
       setMapping(detected);
       setAccountId((current) => current || accounts[0]?.id || '');
@@ -91,11 +91,21 @@ export const ImportScreen: React.FC<{ navigation?: any }> = ({ navigation }) => 
               await refreshAll();
               AppDialog.alert(
                 t('import.done'),
-                t('import.done_body', { count: outcome.imported }),
+                // Rows that failed to write are reported rather than dropped:
+                // a silent shortfall is the kind of thing someone only notices
+                // months later.
+                outcome.failed > 0
+                  ? t('import.done_partial', {
+                      count: outcome.imported,
+                      failed: outcome.failed
+                    })
+                  : t('import.done_body', { count: outcome.imported }),
                 undefined,
                 { tone: 'success', icon: 'wallet' }
               );
               navigation?.goBack();
+            } catch {
+              AppDialog.alert(t('common.error'), t('import.failed'), undefined, { tone: 'danger' });
             } finally {
               setBusy(false);
             }
@@ -222,8 +232,7 @@ export const ImportScreen: React.FC<{ navigation?: any }> = ({ navigation }) => 
                   <Ionicons name="alert-circle-outline" size={18} color={colors.danger} />
                   <Text style={[typography.captionSmall, { color: colors.textSecondary, flex: 1, marginHorizontal: 8 }, align]}>
                     {t('import.skipped_detail', {
-                      count: parsed.errors.length,
-                      lines: parsed.errors.slice(0, 5).map((e) => e.line).join(', ')
+                      lines: parsed.errors.slice(0, 8).map((e) => e.line).join(', ')
                     })}
                   </Text>
                 </View>

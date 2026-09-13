@@ -120,3 +120,24 @@ describe('runningNet', () => {
     ]);
   });
 });
+
+describe('runningNet direction (regression)', () => {
+  it('accumulates oldest to newest regardless of how the chart mirrors it', () => {
+    // The trend chart reversed the series for RTL and then accumulated, which
+    // gave Kurdish, Arabic, Persian and Urdu users different, wrong numbers.
+    const totals = [
+      { key: '2026-01', income: 100, expense: 0 },
+      { key: '2026-02', income: 0, expense: 60 },
+      { key: '2026-03', income: 0, expense: 10 }
+    ];
+    const chronological = runningNet(totals);
+    expect(chronological.map((p) => p.value)).toEqual([100, 40, 30]);
+
+    // Mirroring for display must not change any value, only their order.
+    const mirrored = [...chronological].reverse();
+    expect(mirrored.map((p) => p.value)).toEqual([30, 40, 100]);
+
+    // Accumulating over the reversed input is what produced the wrong figures.
+    expect(runningNet([...totals].reverse()).map((p) => p.value)).not.toEqual(mirrored.map((p) => p.value));
+  });
+});

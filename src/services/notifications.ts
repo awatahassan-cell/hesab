@@ -44,6 +44,21 @@ export async function ensureNotificationPermission(): Promise<boolean> {
   }
 }
 
+/**
+ * Whether permission is already granted, without ever asking for it.
+ *
+ * Used where the app is only keeping its own schedule tidy. Opening a screen
+ * should not pop the OS permission dialog, and a refusal there would burn the
+ * one chance to ask at a moment the person understands why.
+ */
+export async function hasNotificationPermission(): Promise<boolean> {
+  try {
+    return (await Notifications.getPermissionsAsync()).granted;
+  } catch {
+    return false;
+  }
+}
+
 /** Identifier prefix, so the app only ever cancels its own reminders. */
 const ID_PREFIX = 'reminder:';
 
