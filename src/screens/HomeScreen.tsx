@@ -270,7 +270,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               ]}
             >
               <View style={[styles.actionTileIconWrap, { backgroundColor: colors.warningMuted }]}>
-                <Ionicons name="time-outline" size={20} color={colors.warning} />
+                <Ionicons name="calendar-outline" size={20} color={colors.warning} />
               </View>
               <Text numberOfLines={2} style={[styles.actionTileText, { color: colors.textPrimary }]}>{t('home.instalments')}</Text>
             </TouchableOpacity>
@@ -345,7 +345,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               ]}
             >
               <View style={[styles.shortcutIconWrap, { backgroundColor: colors.accentMuted }]}>
-                <Ionicons name="cart-outline" size={18} color={colors.accent} />
+                <Ionicons name="bag-handle-outline" size={18} color={colors.accent} />
               </View>
               <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
                 {t('home.shopping_list')}
