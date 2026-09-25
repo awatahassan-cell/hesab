@@ -1,13 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path, Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../theme';
 import { formatCurrency, convertCurrency, formatNumber, getCurrencySymbol } from '../../utils/currency';
 import { FONT_FAMILY, FONT_FAMILY_BOLD, FONT_FAMILY_MEDIUM, FONT_FAMILY_SEMIBOLD } from '../../theme/typography';
 import { useTranslation } from 'react-i18next';
 import { formatLocalDate } from '../../utils/dates';
+import { elevation } from '../../theme/spacing';
 
 interface BentoFullHeaderProps {
   topInset: number;
@@ -27,6 +26,14 @@ interface BentoFullHeaderProps {
   onOpenNotifications: () => void;
 }
 
+/**
+ * The quiet-light home header — "ڕووناکی".
+ *
+ * No gradient, no blur, no aurora: the balance is the only thing asking for
+ * attention, set large and in the app's one accent colour. Everything else
+ * (period, currency, cashflow, market rate) sits at a lower register so nothing
+ * competes with the number a person actually opened the app to see.
+ */
 export const BentoFullHeader: React.FC<BentoFullHeaderProps> = ({
   topInset,
   monthNetBalance,
@@ -44,197 +51,162 @@ export const BentoFullHeader: React.FC<BentoFullHeaderProps> = ({
   onOpenProfile,
   onOpenNotifications
 }) => {
-  const { colors, isDark } = useTheme();
+  const { colors, radius } = useTheme();
   const { t, i18n } = useTranslation();
 
   const altCurrency = activeCurrency === primaryCurrency ? referenceCurrency : primaryCurrency;
-  const altBalance = convertCurrency(
-    monthNetBalance,
-    activeCurrency,
-    altCurrency,
-    exchangeRates
-  );
+  const altBalance = convertCurrency(monthNetBalance, activeCurrency, altCurrency, exchangeRates);
+  const isPositive = monthNetBalance >= 0;
+  const row = isRTL ? 'row-reverse' : ('row' as const);
 
   return (
-    <LinearGradient
-      colors={colors.heroGradient || ['#1E40AF', '#2563EB', '#06B6D4']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0.3, y: 1 }}
-      style={[styles.headerContainer, { paddingTop: topInset }]}
-    >
-      {/* Top Bar: Profile Avatar, Date/Period Badge, Notifications */}
-      <View style={[styles.topBarRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+    <View style={[styles.container, { backgroundColor: colors.background, paddingTop: topInset }]}>
+      {/* Top Bar: Profile, period badge, notifications */}
+      <View style={[styles.topBarRow, { flexDirection: row }]}>
         <TouchableOpacity
-          activeOpacity={0.75}
+          activeOpacity={0.7}
           onPress={onOpenProfile}
-          style={styles.glassBtn}
+          style={[styles.iconBtn, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
         >
-          <Ionicons name="person" size={16} color="#FFFFFF" />
+          <Ionicons name="person-outline" size={16} color={colors.textSecondary} />
         </TouchableOpacity>
 
-        <View style={[styles.periodPill, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <Text style={styles.periodTextMuted}>{t('reports.period_day')}</Text>
-          <View style={styles.periodActivePill}>
-            <Text style={styles.periodTextActive}>{t('reports.period_month')}</Text>
+        <View style={[styles.periodPill, { backgroundColor: colors.surfaceSecondary, flexDirection: row }]}>
+          <Text style={[styles.periodTextMuted, { color: colors.textMuted }]}>{t('reports.period_day')}</Text>
+          <View style={[styles.periodActivePill, { backgroundColor: colors.surface }, elevation.sm(colors.shadowColor)]}>
+            <Text style={[styles.periodTextActive, { color: colors.accent }]}>{t('reports.period_month')}</Text>
           </View>
-          <Text style={styles.periodTextMuted}>{t('reports.period_year')}</Text>
+          <Text style={[styles.periodTextMuted, { color: colors.textMuted }]}>{t('reports.period_year')}</Text>
         </View>
 
         <TouchableOpacity
-          activeOpacity={0.75}
+          activeOpacity={0.7}
           onPress={onOpenNotifications}
-          style={styles.glassBtn}
+          style={[styles.iconBtn, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
         >
-          <Ionicons name="notifications-outline" size={17} color="#FFFFFF" />
+          <Ionicons name="notifications-outline" size={16} color={colors.textSecondary} />
           {unpaidRemindersCount > 0 && (
-            <View style={styles.notifBadge}>
+            <View style={[styles.notifBadge, { backgroundColor: colors.warning, borderColor: colors.background }]}>
               <Text style={styles.notifBadgeText}>{unpaidRemindersCount}</Text>
             </View>
           )}
         </TouchableOpacity>
       </View>
 
-      {/* Currency Switcher Pill & Date */}
-      <View style={[styles.subRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-        <Text style={styles.dateLabel}>
+      {/* Date & currency switcher */}
+      <View style={[styles.subRow, { flexDirection: row }]}>
+        <Text style={[styles.dateLabel, { color: colors.textMuted }]}>
           {formatLocalDate(new Date(), i18n.language)}
         </Text>
 
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={onToggleCurrency}
-          style={[styles.currencyPill, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}
+          style={[styles.currencyPill, { backgroundColor: colors.surfaceSecondary, flexDirection: row }]}
         >
-          {[primaryCurrency, referenceCurrency].map((code) => (
-            <View
-              key={code}
-              style={[styles.currencySegment, activeCurrency === code && styles.currencySegmentActive]}
-            >
-              <Text
+          {[primaryCurrency, referenceCurrency].map((code) => {
+            const active = activeCurrency === code;
+            return (
+              <View
+                key={code}
                 style={[
-                  styles.currencyCodeText,
-                  activeCurrency === code ? styles.currencyCodeActive : styles.currencyCodeMuted
+                  styles.currencySegment,
+                  active && { backgroundColor: colors.surface },
+                  active && elevation.sm(colors.shadowColor)
                 ]}
               >
-                {getCurrencySymbol(code)} {code}
-              </Text>
-            </View>
-          ))}
+                <Text
+                  style={[
+                    styles.currencyCodeText,
+                    { fontFamily: active ? FONT_FAMILY_BOLD : FONT_FAMILY, color: active ? colors.accent : colors.textMuted }
+                  ]}
+                >
+                  {getCurrencySymbol(code)} {code}
+                </Text>
+              </View>
+            );
+          })}
         </TouchableOpacity>
       </View>
 
-      {/* Central Balance Display */}
-      <View style={styles.balanceCenter}>
-        <Text style={styles.balanceSuperTitle}>
+      {/* Central balance display — the one thing on this screen asking to be read */}
+      <View style={[styles.balanceCenter, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+        <Text style={[styles.balanceSuperTitle, { color: colors.textMuted }]}>
           {t('home.net_balance_month')}
         </Text>
-        <Text style={styles.balanceAmountText} numberOfLines={1} adjustsFontSizeToFit>
+        <Text
+          style={[styles.balanceAmountText, { color: colors.textPrimary }]}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {formatCurrency(monthNetBalance, activeCurrency, { isRTL })}
         </Text>
-        <Text style={styles.altBalanceText}>
+        <Text style={[styles.altBalanceText, { color: colors.textMuted }]}>
           ≈ {formatCurrency(altBalance, altCurrency, { isRTL })}
         </Text>
       </View>
 
-      {/* Glowing Spline Wave Curve */}
-      <View style={styles.waveWrapper}>
-        <Svg width="100%" height={56} viewBox="0 0 320 56" preserveAspectRatio="none">
-          <Defs>
-            <SvgGradient id="waveGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-              <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.45" />
-              <Stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
-            </SvgGradient>
-          </Defs>
-          {/* Subtle filled area beneath the wave */}
-          <Path
-            d="M0 45 Q 50 14, 100 32 T 200 18 T 260 8 T 320 25 L 320 56 L 0 56 Z"
-            fill="url(#waveGlow)"
-          />
-          {/* Main luminous spline line */}
-          <Path
-            d="M0 45 Q 50 14, 100 32 T 200 18 T 260 8 T 320 25"
-            fill="none"
-            stroke="#FFFFFF"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-          {/* Glowing Peak Dot */}
-          <Circle cx="260" cy="8" r="4.5" fill="#FFFFFF" />
-          <Circle cx="260" cy="8" r="8" fill="#FFFFFF" fillOpacity="0.3" />
-        </Svg>
-      </View>
-
-      {/* Cashflow Glass Bar (Income vs Expense) */}
-      <View style={[styles.cashflowGlassBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-        <View style={[styles.cashflowCol, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <View style={[styles.flowIconBadge, { backgroundColor: 'rgba(52, 211, 153, 0.22)' }]}>
-            <Ionicons name="arrow-down" size={13} color="#34D399" />
+      {/* Cashflow: income vs expense, as plain columns under a hairline */}
+      <View style={[styles.cashflowRow, { borderTopColor: colors.divider, flexDirection: row }]}>
+        <View style={[styles.cashflowCol, { flexDirection: row }]}>
+          <View style={[styles.flowIconBadge, { backgroundColor: colors.incomeMuted, borderRadius: radius.sm }]}>
+            <Ionicons name="arrow-down" size={13} color={colors.income} />
           </View>
-          <View style={{ marginHorizontal: 6 }}>
-            <Text style={styles.cashflowLabel}>{t('home.month_income')}</Text>
-            <Text style={[styles.cashflowAmount, { color: '#34D399' }]}>
+          <View style={styles.flowTextWrap}>
+            <Text style={[styles.cashflowLabel, { color: colors.textMuted }]}>{t('home.month_income')}</Text>
+            <Text style={[styles.cashflowAmount, { color: colors.income }]}>
               +{formatCurrency(monthIncome, activeCurrency, { isRTL })}
             </Text>
           </View>
         </View>
 
-        <View style={styles.glassDivider} />
+        <View style={[styles.vDivider, { backgroundColor: colors.divider }]} />
 
-        <View style={[styles.cashflowCol, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <View style={[styles.flowIconBadge, { backgroundColor: 'rgba(251, 113, 133, 0.22)' }]}>
-            <Ionicons name="arrow-up" size={13} color="#FB7185" />
+        <View style={[styles.cashflowCol, { flexDirection: row }]}>
+          <View style={[styles.flowIconBadge, { backgroundColor: colors.expenseMuted, borderRadius: radius.sm }]}>
+            <Ionicons name="arrow-up" size={13} color={colors.expense} />
           </View>
-          <View style={{ marginHorizontal: 6 }}>
-            <Text style={styles.cashflowLabel}>{t('home.monthly_expense')}</Text>
-            <Text style={[styles.cashflowAmount, { color: '#FB7185' }]}>
+          <View style={styles.flowTextWrap}>
+            <Text style={[styles.cashflowLabel, { color: colors.textMuted }]}>{t('home.monthly_expense')}</Text>
+            <Text style={[styles.cashflowAmount, { color: colors.expense }]}>
               -{formatCurrency(monthExpense, activeCurrency, { isRTL })}
             </Text>
           </View>
         </View>
       </View>
 
-      {/* Market Rate Glass Row */}
+      {/* Market rate — a quiet, tappable line, not a competing headline */}
       <TouchableOpacity
-        activeOpacity={0.8}
+        activeOpacity={0.7}
         onPress={onOpenRateModal}
-        style={[styles.marketRateRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}
+        style={[styles.marketRateRow, { backgroundColor: colors.surfaceSecondary, flexDirection: row }]}
       >
-        <Ionicons name="swap-horizontal" size={13} color="rgba(255, 255, 255, 0.85)" />
-        <Text style={styles.marketRateText}>
+        <Ionicons name="swap-horizontal" size={13} color={colors.textMuted} />
+        <Text style={[styles.marketRateText, { color: colors.textSecondary }]}>
           {t('common.market_rate')}: 100$ = {formatNumber(marketRate100USD || 0)}{' '}
           {getCurrencySymbol(primaryCurrency)}
         </Text>
-        <Ionicons name="pencil" size={11} color="rgba(255, 255, 255, 0.65)" />
+        <Ionicons name="pencil" size={11} color={colors.textMuted} />
       </TouchableOpacity>
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    borderBottomLeftRadius: 36,
-    borderBottomRightRadius: 36,
+  container: {
     paddingHorizontal: 16,
-    paddingBottom: 22,
-    shadowColor: '#1E40AF',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.28,
-    shadowRadius: 18,
-    elevation: 8,
-    overflow: 'hidden'
+    paddingBottom: 18
   },
   topBarRow: {
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 14
   },
-  glassBtn: {
+  iconBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.18)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.25)',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -242,15 +214,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -2,
     right: -2,
-    backgroundColor: '#F59E0B',
     minWidth: 16,
     height: 16,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 3,
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF'
+    borderWidth: 1.5
   },
   notifBadgeText: {
     color: '#FFFFFF',
@@ -258,154 +228,113 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY_BOLD
   },
   periodPill: {
-    backgroundColor: 'rgba(0, 0, 0, 0.18)',
     borderRadius: 18,
     padding: 3,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.18)',
     alignItems: 'center',
-    gap: 4
+    gap: 2
   },
   periodTextMuted: {
-    color: 'rgba(255, 255, 255, 0.75)',
     fontSize: 11,
     fontFamily: FONT_FAMILY_MEDIUM,
     paddingHorizontal: 8,
-    paddingVertical: 3
+    paddingVertical: 4
   },
   periodActivePill: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     paddingHorizontal: 10,
-    paddingVertical: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-    elevation: 2
+    paddingVertical: 4
   },
   periodTextActive: {
-    color: '#1E40AF',
     fontSize: 11,
     fontFamily: FONT_FAMILY_BOLD
   },
   subRow: {
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 18
   },
   dateLabel: {
-    color: 'rgba(255, 255, 255, 0.85)',
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: FONT_FAMILY_MEDIUM
   },
   currencyPill: {
-    backgroundColor: 'rgba(0, 0, 0, 0.18)',
     borderRadius: 12,
     padding: 2,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
     alignItems: 'center'
   },
   currencySegment: {
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: 10
   },
-  currencySegmentActive: {
-    backgroundColor: 'rgba(255, 255, 255, 0.28)'
-  },
   currencyCodeText: {
-    fontSize: 10
-  },
-  currencyCodeActive: {
-    color: '#FFFFFF',
-    fontFamily: FONT_FAMILY_BOLD
-  },
-  currencyCodeMuted: {
-    color: 'rgba(255, 255, 255, 0.65)',
-    fontFamily: FONT_FAMILY
+    fontSize: 10.5
   },
   balanceCenter: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 2,
-    marginBottom: 4
+    marginBottom: 18
   },
   balanceSuperTitle: {
-    color: 'rgba(255, 255, 255, 0.82)',
-    fontSize: 12,
+    fontSize: 12.5,
     fontFamily: FONT_FAMILY_MEDIUM,
-    marginBottom: 2
+    marginBottom: 4
   },
   balanceAmountText: {
-    color: '#FFFFFF',
-    fontSize: 34,
+    fontSize: 40,
     fontFamily: FONT_FAMILY_BOLD,
-    letterSpacing: -0.5
+    letterSpacing: -0.8,
+    fontVariant: ['tabular-nums']
   },
   altBalanceText: {
-    color: 'rgba(255, 255, 255, 0.75)',
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: FONT_FAMILY_SEMIBOLD,
-    marginTop: 2
+    marginTop: 3,
+    fontVariant: ['tabular-nums']
   },
-  waveWrapper: {
-    height: 54,
-    marginVertical: 4
-  },
-  cashflowGlassBar: {
-    backgroundColor: 'rgba(0, 0, 0, 0.16)',
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.16)',
-    paddingVertical: 9,
-    paddingHorizontal: 12,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginTop: 4
+  cashflowRow: {
+    borderTopWidth: 1,
+    paddingTop: 14,
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   cashflowCol: {
-    alignItems: 'center',
     flex: 1,
-    justifyContent: 'center'
+    alignItems: 'center'
   },
   flowIconBadge: {
     width: 26,
     height: 26,
-    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center'
   },
+  flowTextWrap: {
+    marginHorizontal: 8
+  },
   cashflowLabel: {
-    color: 'rgba(255, 255, 255, 0.75)',
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: FONT_FAMILY
   },
   cashflowAmount: {
-    fontSize: 12,
-    fontFamily: FONT_FAMILY_BOLD
+    fontSize: 14,
+    fontFamily: FONT_FAMILY_BOLD,
+    marginTop: 1,
+    fontVariant: ['tabular-nums']
   },
-  glassDivider: {
+  vDivider: {
     width: 1,
-    height: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)'
+    height: 30,
+    marginHorizontal: 8
   },
   marketRateRow: {
     alignSelf: 'center',
     alignItems: 'center',
     gap: 6,
-    marginTop: 10,
+    marginTop: 14,
     paddingHorizontal: 12,
-    paddingVertical: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)'
+    paddingVertical: 6,
+    borderRadius: 14
   },
   marketRateText: {
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: FONT_FAMILY_MEDIUM
   }
 });

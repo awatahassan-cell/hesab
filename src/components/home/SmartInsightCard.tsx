@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../theme';
 import { FONT_FAMILY_BOLD, FONT_FAMILY_SEMIBOLD, FONT_FAMILY } from '../../theme/typography';
+import { elevation } from '../../theme/spacing';
 import { formatCurrency } from '../../utils/currency';
 
 interface SmartInsightCardProps {
@@ -37,8 +38,8 @@ export const SmartInsightCard: React.FC<SmartInsightCardProps> = ({
 
     if (savingsRate >= 25) {
       iconName = 'leaf';
-      iconBg = '#10B98120';
-      iconColor = '#10B981';
+      iconBg = colors.incomeMuted;
+      iconColor = colors.income;
       title = t('insights.saving_well_title');
       message = t('insights.saving_well_body', {
         percent: savingsRate,
@@ -46,23 +47,23 @@ export const SmartInsightCard: React.FC<SmartInsightCardProps> = ({
       });
     } else if (savingsRate < 0) {
       iconName = 'warning-outline';
-      iconBg = '#EF444420';
-      iconColor = '#EF4444';
+      iconBg = colors.expenseMuted;
+      iconColor = colors.expense;
       title = t('insights.over_budget_title');
       message = t('insights.over_budget_body', {
         amount: formatCurrency(Math.abs(savings), currency, { isRTL })
       });
     } else {
       iconName = 'trending-up';
-      iconBg = '#3B82F620';
-      iconColor = '#3B82F6';
+      iconBg = colors.accentMuted;
+      iconColor = colors.accent;
       title = t('insights.balanced_title');
       message = t('insights.balanced_body', { percent: 100 - savingsRate });
     }
   } else if (monthExpense > 0 && monthIncome === 0) {
     iconName = 'wallet-outline';
-    iconBg = '#F59E0B20';
-    iconColor = '#F59E0B';
+    iconBg = colors.warningMuted;
+    iconColor = colors.warning;
     title = t('insights.expense_only_title');
     message = t('insights.expense_only_body', {
       amount: formatCurrency(monthExpense, currency, { isRTL })
@@ -79,7 +80,8 @@ export const SmartInsightCard: React.FC<SmartInsightCardProps> = ({
           backgroundColor: colors.surface,
           borderColor: colors.cardBorder,
           borderRadius: radius.lg
-        }
+        },
+        elevation.sm(colors.shadowColor)
       ]}
     >
       <View style={[styles.headerRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
@@ -94,7 +96,7 @@ export const SmartInsightCard: React.FC<SmartInsightCardProps> = ({
       </Text>
 
       {onPressDetails && (
-        <View style={[styles.footerRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+        <View style={[styles.footerRow, { borderTopColor: colors.divider, flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
           <Text style={[styles.linkText, { color: colors.accent }]}>{t('insights.view_reports')}</Text>
           <Ionicons
             name={isRTL ? 'chevron-back' : 'chevron-forward'}
@@ -111,14 +113,8 @@ export const SmartInsightCard: React.FC<SmartInsightCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     padding: 14,
-    marginHorizontal: 16,
     marginBottom: 14,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 3,
-    elevation: 1
+    borderWidth: 1
   },
   headerRow: {
     alignItems: 'center',
@@ -146,8 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
     paddingTop: 8,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#E2E8F060'
+    borderTopWidth: StyleSheet.hairlineWidth
   },
   linkText: {
     fontFamily: FONT_FAMILY_SEMIBOLD,

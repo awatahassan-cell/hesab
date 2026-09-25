@@ -24,6 +24,22 @@ interface MultiWalletCardsProps {
   onAddAccount?: () => void;
 }
 
+const TYPE_LABEL_KEYS: Record<string, string> = {
+  cash: 'accounts.type_cash',
+  bank: 'accounts.type_bank',
+  ewallet: 'accounts.type_wallet',
+  savings: 'accounts.type_savings',
+  custom: 'accounts.type_custom'
+};
+
+const FALLBACK_ICON: Record<string, string> = {
+  cash: 'cash-outline',
+  bank: 'card-outline',
+  ewallet: 'phone-portrait-outline',
+  savings: 'wallet-outline',
+  custom: 'ellipsis-horizontal-outline'
+};
+
 export const MultiWalletCards: React.FC<MultiWalletCardsProps> = ({
   accounts,
   currency,
@@ -38,46 +54,19 @@ export const MultiWalletCards: React.FC<MultiWalletCardsProps> = ({
     return null;
   }
 
-  // Predefined palette for wallets to give them a premium card look
-  const getWalletTheme = (index: number, type?: string) => {
-    if (type === 'bank' || index === 1) {
-      return {
-        bg: '#0284C715',
-        border: '#0284C735',
-        text: '#0284C7',
-        iconBg: '#0284C725',
-        icon: 'card-outline'
-      };
-    }
-    if (type === 'cash' || index === 0) {
-      return {
-        bg: '#10B98115',
-        border: '#10B98135',
-        text: '#10B981',
-        iconBg: '#10B98125',
-        icon: 'cash-outline'
-      };
-    }
-    return {
-      bg: '#F59E0B15',
-      border: '#F59E0B35',
-      text: '#F59E0B',
-      iconBg: '#F59E0B25',
-      icon: 'wallet-outline'
-    };
-  };
+  const row = isRTL ? 'row-reverse' : ('row' as const);
 
   return (
     <View style={styles.container}>
-      <View style={[styles.headerRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-        <View style={styles.titleWithBadge}>
+      <View style={[styles.headerRow, { flexDirection: row }]}>
+        <View style={[styles.titleWithBadge, { flexDirection: row }]}>
           <Text style={[styles.title, { color: colors.textPrimary }]}>{t('wallets.title')}</Text>
           <View style={[styles.countBadge, { backgroundColor: colors.surfaceSecondary }]}>
             <Text style={[styles.countBadgeText, { color: colors.textSecondary }]}>{accounts.length}</Text>
           </View>
         </View>
         {onAddAccount && (
-          <TouchableOpacity activeOpacity={0.7} onPress={onAddAccount} style={styles.addBtn}>
+          <TouchableOpacity activeOpacity={0.7} onPress={onAddAccount} style={[styles.addBtn, { flexDirection: row }]}>
             <Ionicons name="add-circle-outline" size={18} color={colors.accent} />
             <Text style={[styles.addBtnText, { color: colors.accent }]}>{t('wallets.add')}</Text>
           </TouchableOpacity>
@@ -87,16 +76,22 @@ export const MultiWalletCards: React.FC<MultiWalletCardsProps> = ({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollList,
-          { flexDirection: isRTL ? 'row-reverse' : 'row' }
-        ]}
+        contentContainerStyle={[styles.scrollList, { flexDirection: row }]}
       >
         {accounts.map((acc, index) => {
-          const theme = getWalletTheme(index, acc.type);
-          const iconName = (acc.icon as any) || theme.icon;
-          const displayBalance = typeof (acc as any).current_balance === 'number' ? (acc as any).current_balance : (typeof acc.balance === 'number' ? acc.balance : 0);
+          // Every account already carries its own icon and colour, chosen
+          // when it was created — read those first, and only fall back to a
+          // type default for older rows that predate that choice.
+          const tint = acc.color || colors.accent;
+          const iconName = (acc.icon as any) || FALLBACK_ICON[acc.type || ''] || 'wallet-outline';
+          const displayBalance =
+            typeof (acc as any).current_balance === 'number'
+              ? (acc as any).current_balance
+              : typeof acc.balance === 'number'
+              ? acc.balance
+              : 0;
           const accCurrency = acc.currency || currency;
+          const typeLabelKey = TYPE_LABEL_KEYS[acc.type || ''] || 'accounts.type_wallet';
 
           return (
             <TouchableOpacity
@@ -105,36 +100,30 @@ export const MultiWalletCards: React.FC<MultiWalletCardsProps> = ({
               onPress={() => onPressAccount && onPressAccount(acc)}
               style={[
                 styles.walletCard,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: theme.border,
-                  borderRadius: radius.lg
-                }
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg }
               ]}
             >
-              <View style={[styles.cardTopRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-                <View style={[styles.iconWrap, { backgroundColor: theme.iconBg }]}>
-                  <Ionicons name={iconName} size={18} color={theme.text} />
+              <View style={[styles.cardTopRow, { flexDirection: row }]}>
+                <View style={[styles.iconWrap, { backgroundColor: tint + '1F', borderRadius: radius.sm }]}>
+                  <Ionicons name={iconName} size={18} color={tint} />
                 </View>
-                <View style={[styles.typeBadge, { backgroundColor: theme.bg }]}>
-                  <Text style={[styles.typeBadgeText, { color: theme.text }]}>
-                    {t(
-                  acc.type === 'cash'
-                    ? 'accounts.type_cash'
-                    : acc.type === 'bank'
-                      ? 'accounts.type_bank'
-                      : 'accounts.type_wallet'
-                )}
-                  </Text>
+                <View style={[styles.typeBadge, { backgroundColor: tint + '14' }]}>
+                  <Text style={[styles.typeBadgeText, { color: tint }]}>{t(typeLabelKey)}</Text>
                 </View>
               </View>
 
               <View style={styles.cardBottom}>
-                <Text numberOfLines={1} style={[styles.accountName, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left' }]}>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.accountName, { color: colors.textSecondary, textAlign: isRTL ? 'right' : 'left' }]}
+                >
                   {acc.name}
                 </Text>
-                <Text style={[styles.balanceText, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left' }]}>
-                  {formatCurrency(displayBalance, accCurrency)}
+                <Text
+                  style={[styles.balanceText, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left' }]}
+                  numberOfLines={1}
+                >
+                  {formatCurrency(displayBalance, accCurrency, { isRTL })}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -152,18 +141,15 @@ const styles = StyleSheet.create({
   headerRow: {
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 8
+    marginBottom: 10
   },
   titleWithBadge: {
-    flexDirection: 'row',
     alignItems: 'center',
     gap: 6
   },
   title: {
     fontFamily: FONT_FAMILY_BOLD,
-    fontSize: 15,
-    fontWeight: '700'
+    fontSize: 15
   },
   countBadge: {
     paddingHorizontal: 6,
@@ -172,67 +158,56 @@ const styles = StyleSheet.create({
   },
   countBadgeText: {
     fontFamily: FONT_FAMILY_SEMIBOLD,
-    fontSize: 11,
-    fontWeight: '600'
+    fontSize: 11
   },
   addBtn: {
-    flexDirection: 'row',
     alignItems: 'center',
     gap: 4
   },
   addBtnText: {
     fontFamily: FONT_FAMILY_MEDIUM,
-    fontSize: 12,
-    fontWeight: '500'
+    fontSize: 12
   },
   scrollList: {
-    paddingHorizontal: 16,
-    gap: 10
+    gap: 10,
+    paddingBottom: 2
   },
   walletCard: {
-    width: 175,
-    padding: 12,
-    borderWidth: 1.2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 2,
-    elevation: 1,
+    width: 172,
+    padding: 14,
+    borderWidth: 1,
     justifyContent: 'space-between'
   },
   cardTopRow: {
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 14
   },
   iconWrap: {
     width: 32,
     height: 32,
-    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center'
   },
   typeBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
     borderRadius: 6
   },
   typeBadgeText: {
     fontFamily: FONT_FAMILY_BOLD,
-    fontSize: 10,
-    fontWeight: '700'
+    fontSize: 10
   },
   cardBottom: {
-    gap: 2
+    gap: 3
   },
   accountName: {
     fontFamily: FONT_FAMILY_MEDIUM,
-    fontSize: 12,
-    fontWeight: '500'
+    fontSize: 12
   },
   balanceText: {
     fontFamily: FONT_FAMILY_BOLD,
-    fontSize: 15,
-    fontWeight: '700'
+    fontSize: 16,
+    fontVariant: ['tabular-nums']
   }
 });

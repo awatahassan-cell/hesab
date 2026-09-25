@@ -17,21 +17,18 @@ import { useTheme } from '../theme';
 import { useFinanceStore } from '../store/useFinanceStore';
 import { useAppStore } from '../store/useAppStore';
 import { formatCurrency, convertCurrency, getCurrencySymbol, per100Usd } from '../utils/currency';
-import { formatLocalDate } from '../utils/dates';
 import { TransactionItem } from '../components/transactions/TransactionItem';
-import { EmptyState } from '../components/common/EmptyState';
 import { Button } from '../components/common/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UpcomingBillBanner } from '../components/common/UpcomingBillBanner';
-import { DonutChart, DonutSlice } from '../components/charts/DonutChart';
+import { DonutSlice } from '../components/charts/DonutChart';
 import { CategoryBarChart } from '../components/charts/CategoryBarChart';
-import { HeroDonutCard } from '../components/home/HeroDonutCard';
 import { BentoFullHeader } from '../components/home/BentoFullHeader';
 import { PastelBentoCards } from '../components/home/PastelBentoCards';
 import { SmartInsightCard } from '../components/home/SmartInsightCard';
 import { MultiWalletCards } from '../components/home/MultiWalletCards';
-import { FONT_FAMILY, FONT_FAMILY_MEDIUM, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_BOLD } from '../theme/typography';
-import { AuroraBackground } from '../components/common/AuroraBackground';
+import { elevation } from '../theme/spacing';
+import { FONT_FAMILY, FONT_FAMILY_BOLD, FONT_FAMILY_SEMIBOLD } from '../theme/typography';
 import { AppDialog } from '../components/common/AppDialog';
 
 interface HomeScreenProps {
@@ -39,8 +36,8 @@ interface HomeScreenProps {
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { colors, typography, radius } = useTheme();
-  const { t, i18n } = useTranslation();
+  const { colors, typography, radius, isDark } = useTheme();
+  const { t } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
   const displayCurrency = useAppStore((state) => state.displayCurrency);
@@ -60,7 +57,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     recentTransactions,
     budgetProgressList,
     reminders,
-    savingsGoals,
     categories,
     refreshAll
   } = useFinanceStore();
@@ -99,43 +95,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     activeCurrency,
     exchangeRates
   );
-  const displayBalance = convertCurrency(
-    totalBalancePrimary,
-    primaryCurrency,
-    activeCurrency,
-    exchangeRates
-  );
-  const displayIncome = convertCurrency(
-    monthIncome,
-    primaryCurrency,
-    activeCurrency,
-    exchangeRates
-  );
-  const displayExpense = convertCurrency(
-    monthExpense,
-    primaryCurrency,
-    activeCurrency,
-    exchangeRates
-  );
+  const displayIncome = convertCurrency(monthIncome, primaryCurrency, activeCurrency, exchangeRates);
+  const displayExpense = convertCurrency(monthExpense, primaryCurrency, activeCurrency, exchangeRates);
 
   const unpaidReminders = (reminders || []).filter((r) => !r.is_paid);
 
-  // Compute category expense slices for Donut Chart
+  // Compute category expense slices for the category cards and bar chart
   const donutSlices: DonutSlice[] = useMemo(() => {
     const expenseTx = recentTransactions.filter((tx) => tx.type === 'expense');
     if (expenseTx.length === 0) return [];
 
-    const catMap: Record<string, { name: string; color: string; amount: number }> = {};
+    const catMap: Record<string, { name: string; color: string; icon?: string; amount: number }> = {};
 
     expenseTx.forEach((tx) => {
       const catId = tx.category_id || 'other';
       const cat = (categories || []).find((c) => c.id === catId);
       const name = tx.category_custom_name || (tx.category_name_key ? t(`categories.names.${tx.category_name_key}`, tx.category_name_key) : t('types.expense'));
-      const color = tx.category_color || cat?.color || '#00A896';
+      const color = tx.category_color || cat?.color || colors.accent;
+      const icon = tx.category_icon || cat?.icon;
       const amt = convertCurrency(tx.amount, tx.currency || primaryCurrency, activeCurrency, exchangeRates);
 
       if (!catMap[catId]) {
-        catMap[catId] = { name, color, amount: 0 };
+        catMap[catId] = { name, color, icon, amount: 0 };
       }
       catMap[catId].amount += amt;
     });
@@ -151,12 +132,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         name: item.name,
         amount: Math.round(item.amount),
         percentage: pct,
-        color: item.color
+        color: item.color,
+        icon: item.icon
       };
     });
-  }, [recentTransactions, categories, activeCurrency, primaryCurrency, exchangeRates]);
+  }, [recentTransactions, categories, activeCurrency, primaryCurrency, exchangeRates, colors.accent, t]);
 
-  // Top category budgets
   const insets = useSafeAreaInsets();
   const topSafeInset = Platform.OS === 'android'
     ? Math.max(RNStatusBar.currentHeight || 0, insets.top, 48) + 8
@@ -165,20 +146,25 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <RNStatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-      <AuroraBackground />
+      <RNStatusBar barStyle={isDark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
       <ScrollView
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: 0,
             paddingBottom: Platform.OS === 'android' ? Math.max(insets.bottom, 48) + 85 : Math.max(insets.bottom, 16) + 70
           }
         ]}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FFFFFF" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.accent}
+            colors={[colors.accent]}
+          />
+        }
       >
-        {/* Full-Bleed Sky Ocean Bento Hero Header */}
+        {/* Quiet header: balance first, everything else at a lower register */}
         <BentoFullHeader
           topInset={topSafeInset}
           monthNetBalance={displayMonthBalance}
@@ -201,13 +187,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         />
 
         <View style={styles.bodyWrapper}>
-          {/* Upcoming Bill / Installment Warning Banner */}
+          {/* Upcoming bill / instalment warning */}
           <UpcomingBillBanner
             reminders={reminders}
             onPress={() => navigation.navigate('RemindersScreen')}
           />
 
-          {/* Smart AI Financial Insight Card */}
+          {/* Smart financial insight */}
           <SmartInsightCard
             monthIncome={displayIncome}
             monthExpense={displayExpense}
@@ -216,7 +202,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             onPressDetails={() => navigation.navigate('BudgetsScreen')}
           />
 
-          {/* Multi-Wallet Carousel Cards */}
+          {/* Wallet carousel */}
           {accounts && accounts.length > 0 && (
             <MultiWalletCards
               accounts={accounts}
@@ -227,12 +213,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             />
           )}
 
-          {/* Quick Action 4-Grid */}
+          {/* Quick action grid */}
           <View style={[styles.quickActionGrid, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => navigation.navigate('Add', { type: 'income' })}
-              style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
+              style={[
+                styles.actionTile,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
+              ]}
             >
               <View style={[styles.actionTileIconWrap, { backgroundColor: colors.incomeMuted }]}>
                 <Ionicons name="add" size={22} color={colors.income} />
@@ -243,7 +233,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => navigation.navigate('Add', { type: 'expense' })}
-              style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
+              style={[
+                styles.actionTile,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
+              ]}
             >
               <View style={[styles.actionTileIconWrap, { backgroundColor: colors.expenseMuted }]}>
                 <Ionicons name="remove" size={22} color={colors.expense} />
@@ -254,7 +248,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => navigation.navigate('DebtsScreen')}
-              style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
+              style={[
+                styles.actionTile,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
+              ]}
             >
               <View style={[styles.actionTileIconWrap, { backgroundColor: colors.accentMuted }]}>
                 <Ionicons name="people-outline" size={20} color={colors.accent} />
@@ -265,7 +263,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => navigation.navigate('RemindersScreen')}
-              style={[styles.actionTile, { backgroundColor: colors.surface, borderColor: colors.cardBorder }]}
+              style={[
+                styles.actionTile,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
+              ]}
             >
               <View style={[styles.actionTileIconWrap, { backgroundColor: colors.warningMuted }]}>
                 <Ionicons name="time-outline" size={20} color={colors.warning} />
@@ -274,7 +276,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* Pastel Bento Category Cards Carousel */}
+          {/* Category glance cards */}
           {donutSlices.length > 0 && (
             <PastelBentoCards
               slices={donutSlices}
@@ -285,194 +287,217 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             />
           )}
 
-        {/* Category Expenses Breakdown (Vertical Bar Chart matching the reference design) */}
-        {donutSlices.length > 0 && (
-          <CategoryBarChart
-            slices={donutSlices}
-            totalAmount={displayExpense}
-            currency={activeCurrency}
-            onPress={() => navigation.navigate('Reports')}
-            isRTL={isRTL}
-          />
-        )}
+          {/* Category expense breakdown */}
+          {donutSlices.length > 0 && (
+            <CategoryBarChart
+              slices={donutSlices}
+              totalAmount={displayExpense}
+              currency={activeCurrency}
+              onPress={() => navigation.navigate('Reports')}
+              isRTL={isRTL}
+            />
+          )}
 
-        {/* Feature Shortcuts: Budgets, Goals, Shopping, Accounts */}
-        <View style={[styles.shortcutGrid, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('BudgetsScreen')}
-            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}
-          >
-            <View style={[styles.shortcutIconWrap, { backgroundColor: '#10B98118' }]}>
-              <Ionicons name="pie-chart" size={18} color="#10B981" />
-            </View>
-            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              {t('home.budgeting')}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('SavingsGoalsScreen')}
-            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}
-          >
-            <View style={[styles.shortcutIconWrap, { backgroundColor: '#3A86FF18' }]}>
-              <Ionicons name="flag" size={18} color="#3A86FF" />
-            </View>
-            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              {t('home.goal_fund')}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('ShoppingScreen')}
-            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}
-          >
-            <View style={[styles.shortcutIconWrap, { backgroundColor: '#FB850018' }]}>
-              <Ionicons name="cart" size={18} color="#FB8500" />
-            </View>
-            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              {t('home.shopping_list')}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('AccountsScreen')}
-            style={[styles.shortcutCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}
-          >
-            <View style={[styles.shortcutIconWrap, { backgroundColor: '#8B5CF618' }]}>
-              <Ionicons name="wallet-outline" size={18} color="#8B5CF6" />
-            </View>
-            <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
-              {t('accounts.title')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Budget Status Section (Sekkeh Style: دۆخی بودجەکان) */}
-        {categoryBudgets.length > 0 && (
-          <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}>
-            <View style={[styles.sectionCardHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-                {t('home.budget_status')}
+          {/* Feature shortcuts: Budgets, Goals, Shopping, Accounts — one quiet
+              accent, distinguished only by icon and label. */}
+          <View style={[styles.shortcutGrid, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('BudgetsScreen')}
+              style={[
+                styles.shortcutCard,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
+              ]}
+            >
+              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.accentMuted }]}>
+                <Ionicons name="pie-chart-outline" size={18} color={colors.accent} />
+              </View>
+              <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
+                {t('home.budgeting')}
               </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('BudgetsScreen')}>
-                <Text style={[styles.seeAllText, { color: colors.accent }]}>
-                  {t('home.budget_settings_link')}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
 
-            {categoryBudgets.slice(0, 3).map((item) => {
-              const catName = item.budget.category_custom_name ||
-                (item.budget.category_name_key ? t(`categories.names.${item.budget.category_name_key}`) : t('common.category'));
-              const pct = Math.min(100, item.percentage);
-              const barColor = item.isOverBudget ? colors.danger : item.isWarning ? colors.warning : colors.income;
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('SavingsGoalsScreen')}
+              style={[
+                styles.shortcutCard,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
+              ]}
+            >
+              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.accentMuted }]}>
+                <Ionicons name="flag-outline" size={18} color={colors.accent} />
+              </View>
+              <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
+                {t('home.goal_fund')}
+              </Text>
+            </TouchableOpacity>
 
-              return (
-                <View key={item.budget.id} style={styles.budgetItemRow}>
-                  <View style={[styles.budgetMetaRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-                    <Text style={[styles.budgetName, { color: colors.textPrimary }]}>{catName}</Text>
-                    <Text style={[styles.budgetAmount, { color: barColor }]}>
-                      {formatCurrency(item.spent, activeCurrency, { isRTL })} / {formatCurrency(item.budget.amount, activeCurrency, { isRTL })} ({item.percentage}%)
-                    </Text>
-                  </View>
-                  <View style={[styles.progressTrack, { backgroundColor: colors.surfaceSecondary }]}>
-                    <View style={[styles.progressBar, { width: `${pct}%`, backgroundColor: barColor }]} />
-                  </View>
-                </View>
-              );
-            })}
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('ShoppingScreen')}
+              style={[
+                styles.shortcutCard,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
+              ]}
+            >
+              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.accentMuted }]}>
+                <Ionicons name="cart-outline" size={18} color={colors.accent} />
+              </View>
+              <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
+                {t('home.shopping_list')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('AccountsScreen')}
+              style={[
+                styles.shortcutCard,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
+              ]}
+            >
+              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.accentMuted }]}>
+                <Ionicons name="wallet-outline" size={18} color={colors.accent} />
+              </View>
+              <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
+                {t('accounts.title')}
+              </Text>
+            </TouchableOpacity>
           </View>
-        )}
 
-        {/* Debts Summary Banner if any */}
-        {(debtLentTotal > 0 || debtBorrowedTotal > 0) && (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('DebtsScreen')}
-            style={[
-              styles.debtCard,
-              {
-                backgroundColor: colors.surfaceSecondary,
-                borderColor: colors.cardBorder,
-                borderRadius: 10
-              }
-            ]}
-          >
-            <View style={[styles.debtRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-              <View style={[styles.debtCol, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
-                <Text style={[typography.captionSmall, { color: colors.debtLent, fontWeight: '700' }]}>
-                  {t('home.owed_to_me')}
+          {/* Budget status */}
+          {categoryBudgets.length > 0 && (
+            <View
+              style={[
+                styles.sectionCard,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
+              ]}
+            >
+              <View style={[styles.sectionCardHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                  {t('home.budget_status')}
                 </Text>
-                <Text style={[styles.debtAmount, { color: colors.textPrimary }]}>
-                  {formatCurrency(debtLentTotal, activeCurrency, { isRTL })}
-                </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('BudgetsScreen')}>
+                  <Text style={[styles.seeAllText, { color: colors.accent }]}>
+                    {t('home.budget_settings_link')}
+                  </Text>
+                </TouchableOpacity>
               </View>
 
-              <View style={[styles.vDivider, { backgroundColor: colors.cardBorder }]} />
+              {categoryBudgets.slice(0, 3).map((item) => {
+                const catName = item.budget.category_custom_name ||
+                  (item.budget.category_name_key ? t(`categories.names.${item.budget.category_name_key}`) : t('common.category'));
+                const pct = Math.min(100, item.percentage);
+                const barColor = item.isOverBudget ? colors.danger : item.isWarning ? colors.warning : colors.income;
 
-              <View style={[styles.debtCol, { alignItems: isRTL ? 'flex-start' : 'flex-end' }]}>
-                <Text style={[typography.captionSmall, { color: colors.debtBorrowed, fontWeight: '700' }]}>
-                  {t('home.i_owe')}
-                </Text>
-                <Text style={[styles.debtAmount, { color: colors.textPrimary }]}>
-                  {formatCurrency(debtBorrowedTotal, activeCurrency, { isRTL })}
-                </Text>
-              </View>
+                return (
+                  <View key={item.budget.id} style={styles.budgetItemRow}>
+                    <View style={[styles.budgetMetaRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                      <Text style={[styles.budgetName, { color: colors.textPrimary }]}>{catName}</Text>
+                      <Text style={[styles.budgetAmount, { color: barColor }]}>
+                        {formatCurrency(item.spent, activeCurrency, { isRTL })} / {formatCurrency(item.budget.amount, activeCurrency, { isRTL })} ({item.percentage}%)
+                      </Text>
+                    </View>
+                    <View style={[styles.progressTrack, { backgroundColor: colors.surfaceSecondary }]}>
+                      <View style={[styles.progressBar, { width: `${pct}%`, backgroundColor: barColor }]} />
+                    </View>
+                  </View>
+                );
+              })}
             </View>
-          </TouchableOpacity>
-        )}
+          )}
 
-        {/* Recent Transactions Section */}
-        <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {t('home.recent_transactions')}
-          </Text>
-          {recentTransactions.length > 0 && (
-            <TouchableOpacity onPress={() => navigation.navigate('Transactions')}>
-              <Text style={[styles.seeAllText, { color: colors.accent }]}>
-                {t('home.see_all')}
-              </Text>
+          {/* Debts summary */}
+          {(debtLentTotal > 0 || debtBorrowedTotal > 0) && (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('DebtsScreen')}
+              style={[
+                styles.debtCard,
+                { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder, borderRadius: radius.lg }
+              ]}
+            >
+              <View style={[styles.debtRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                <View style={[styles.debtCol, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+                  <Text style={[typography.captionSmall, { color: colors.debtLent }]}>
+                    {t('home.owed_to_me')}
+                  </Text>
+                  <Text style={[styles.debtAmount, { color: colors.textPrimary }]}>
+                    {formatCurrency(debtLentTotal, activeCurrency, { isRTL })}
+                  </Text>
+                </View>
+
+                <View style={[styles.vDivider, { backgroundColor: colors.cardBorder }]} />
+
+                <View style={[styles.debtCol, { alignItems: isRTL ? 'flex-start' : 'flex-end' }]}>
+                  <Text style={[typography.captionSmall, { color: colors.debtBorrowed }]}>
+                    {t('home.i_owe')}
+                  </Text>
+                  <Text style={[styles.debtAmount, { color: colors.textPrimary }]}>
+                    {formatCurrency(debtBorrowedTotal, activeCurrency, { isRTL })}
+                  </Text>
+                </View>
+              </View>
             </TouchableOpacity>
           )}
-        </View>
 
-        {/* Recent Transactions List or Sekkeh Friendly Empty State */}
-        {recentTransactions.length === 0 ? (
-          <View style={[styles.emptyCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 14 }]}>
-            <View style={[styles.emptyIconWrap, { backgroundColor: colors.accentMuted }]}>
-              <Ionicons name="sparkles" size={32} color={colors.accent} />
-            </View>
-            <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
-              {t('home.empty_title')}
+          {/* Recent transactions */}
+          <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              {t('home.recent_transactions')}
             </Text>
-            <Text style={[styles.emptyDesc, { color: colors.textMuted }]}>
-              {t('home.empty_body')}
-            </Text>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate('Add', { type: 'expense' })}
-              style={[styles.emptyActionBtn, { backgroundColor: colors.accent, borderRadius: 8 }]}
-            >
-              <Ionicons name="add" size={18} color="#FFFFFF" />
-              <Text style={styles.emptyActionBtnText}>{t('home.record_first_expense')}</Text>
-            </TouchableOpacity>
+            {recentTransactions.length > 0 && (
+              <TouchableOpacity onPress={() => navigation.navigate('Transactions')}>
+                <Text style={[styles.seeAllText, { color: colors.accent }]}>
+                  {t('home.see_all')}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
-        ) : (
-          recentTransactions.slice(0, 5).map((tx) => (
-            <TransactionItem key={tx.id} transaction={tx} showDate={true} />
-          ))
-        )}
+
+          {recentTransactions.length === 0 ? (
+            <View
+              style={[
+                styles.emptyCard,
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg }
+              ]}
+            >
+              <View style={[styles.emptyIconWrap, { backgroundColor: colors.accentMuted }]}>
+                <Ionicons name="sparkles" size={32} color={colors.accent} />
+              </View>
+              <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
+                {t('home.empty_title')}
+              </Text>
+              <Text style={[styles.emptyDesc, { color: colors.textMuted }]}>
+                {t('home.empty_body')}
+              </Text>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate('Add', { type: 'expense' })}
+                style={[styles.emptyActionBtn, { backgroundColor: colors.accent, borderRadius: radius.md }]}
+              >
+                <Ionicons name="add" size={18} color={colors.textInverse} />
+                <Text style={[styles.emptyActionBtnText, { color: colors.textInverse }]}>{t('home.record_first_expense')}</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            recentTransactions.slice(0, 5).map((tx) => (
+              <TransactionItem key={tx.id} transaction={tx} showDate={true} />
+            ))
+          )}
         </View>
       </ScrollView>
 
       {/* Modal: Edit Market Exchange Rate */}
       <Modal visible={showRateModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 14 }]}>
+          <View style={[styles.modalBox, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg }]}>
             <Text style={[typography.titleSmall, { color: colors.textPrimary, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
               {t('home.edit_market_rate')}
             </Text>
@@ -488,7 +513,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 value={tempRate}
                 onChangeText={setTempRate}
                 keyboardType="numeric"
-                style={[styles.modalInput, { flex: 1, backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder, color: colors.textPrimary, borderRadius: 8 }]}
+                style={[
+                  styles.modalInput,
+                  { flex: 1, backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder, color: colors.textPrimary, borderRadius: radius.md }
+                ]}
                 autoFocus
               />
               <Text style={[styles.rateLabel, { color: colors.textPrimary, marginHorizontal: 6 }]}>{getCurrencySymbol(primaryCurrency)}</Text>
@@ -499,13 +527,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 title={t('common.cancel')}
                 onPress={() => setShowRateModal(false)}
                 variant="secondary"
-                style={{ flex: 1, borderRadius: 8 }}
+                style={{ flex: 1 }}
               />
               <Button
                 title={t('common.save')}
                 onPress={handleSaveRate}
                 variant="primary"
-                style={{ flex: 1, borderRadius: 8 }}
+                style={{ flex: 1 }}
               />
             </View>
           </View>
@@ -520,180 +548,61 @@ const styles = StyleSheet.create({
     flex: 1
   },
   content: {
-    padding: 0,
     paddingBottom: 60
   },
   bodyWrapper: {
     paddingHorizontal: 16,
     paddingTop: 8
   },
-  topBar: {
+  sectionHeader: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 14
+    marginTop: 6,
+    marginBottom: 10
   },
-  profileAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  dateBadge: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  dateText: {
-    fontSize: 13,
-    fontWeight: '700',
+  sectionTitle: {
+    fontSize: 14,
     fontFamily: FONT_FAMILY_BOLD
   },
-  notifBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative'
-  },
-  notifDot: {
-    position: 'absolute',
-    top: -2,
-    right: -2,
-    minWidth: 16,
-    height: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 3
-  },
-  notifDotText: {
-    color: '#FFFFFF',
-    fontSize: 9,
-    fontWeight: '800',
-    fontFamily: FONT_FAMILY_BOLD
-  },
-  heroCard: {
-    padding: 18,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    marginBottom: 12
-  },
-  heroHeader: {
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  heroBadgeIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  currencyTogglePill: {
-    padding: 2,
-    borderRadius: 6,
-    borderWidth: 1
-  },
-  currencyToggleItem: {
-    paddingHorizontal: 8,
-    paddingVertical: 4
-  },
-  currencyToggleText: {
-    fontSize: 11,
-    fontWeight: '700',
-    fontFamily: FONT_FAMILY_BOLD
-  },
-  heroBalanceText: {
-    marginVertical: 6,
-    fontSize: 32,
-    fontWeight: '800',
-    fontFamily: FONT_FAMILY_BOLD
-  },
-  marketRateChip: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 6,
-    borderWidth: 1,
-    alignItems: 'center',
-    marginBottom: 14
-  },
-  marketRateText: {
-    fontSize: 11,
-    fontWeight: '600',
+  seeAllText: {
+    fontSize: 12,
     fontFamily: FONT_FAMILY_SEMIBOLD
   },
-  cashflowRow: {
-    borderTopWidth: 1,
-    paddingTop: 12,
-    alignItems: 'center',
-    justifyContent: 'space-between'
+  quickActionGrid: {
+    justifyContent: 'space-between',
+    marginVertical: 10,
+    gap: 8
   },
-  cashflowCol: {
-    flex: 1
-  },
-  flowBadge: {
-    alignItems: 'center',
-    marginBottom: 2
-  },
-  cashflowValue: {
-    fontSize: 14,
-    fontWeight: '700',
-    marginTop: 2,
-    fontFamily: FONT_FAMILY_BOLD
-  },
-  vDivider: {
-    width: 1,
-    height: 28,
-    marginHorizontal: 12
-  },
-  primaryActionRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 12
-  },
-  bigActionBtn: {
+  actionTile: {
     flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 2
+    borderWidth: 1
   },
-  bigActionBtnText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-    fontSize: 14,
-    marginHorizontal: 6,
-    fontFamily: FONT_FAMILY_BOLD
+  actionTileIconWrap: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4
+  },
+  actionTileText: {
+    fontFamily: FONT_FAMILY_BOLD,
+    fontSize: 11
   },
   shortcutGrid: {
-    flexDirection: 'row',
     gap: 8,
     marginBottom: 12
   },
   shortcutCard: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 4,
     borderWidth: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1.5 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1.5
+    justifyContent: 'center'
   },
   shortcutIconWrap: {
     width: 34,
@@ -701,38 +610,22 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4
+    marginBottom: 6
   },
   shortcutText: {
     fontSize: 11,
-    fontWeight: '700',
     textAlign: 'center',
     fontFamily: FONT_FAMILY_BOLD
   },
   sectionCard: {
-    padding: 14,
+    padding: 16,
     borderWidth: 1,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2
+    marginBottom: 12
   },
   sectionCardHeader: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    fontFamily: FONT_FAMILY_BOLD
-  },
-  seeAllText: {
-    fontSize: 12,
-    fontWeight: '700',
-    fontFamily: FONT_FAMILY_SEMIBOLD
+    marginBottom: 12
   },
   budgetItemRow: {
     marginVertical: 6
@@ -740,17 +633,16 @@ const styles = StyleSheet.create({
   budgetMetaRow: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 4
+    marginBottom: 5
   },
   budgetName: {
     fontSize: 12,
-    fontWeight: '600',
     fontFamily: FONT_FAMILY_SEMIBOLD
   },
   budgetAmount: {
     fontSize: 11,
-    fontWeight: '700',
-    fontFamily: FONT_FAMILY_BOLD
+    fontFamily: FONT_FAMILY_BOLD,
+    fontVariant: ['tabular-nums']
   },
   progressTrack: {
     height: 6,
@@ -762,14 +654,9 @@ const styles = StyleSheet.create({
     borderRadius: 3
   },
   debtCard: {
-    padding: 12,
+    padding: 14,
     borderWidth: 1,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1.5 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1.5
+    marginBottom: 12
   },
   debtRow: {
     alignItems: 'center',
@@ -779,16 +666,15 @@ const styles = StyleSheet.create({
     flex: 1
   },
   debtAmount: {
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: 2,
-    fontFamily: FONT_FAMILY_BOLD
+    fontSize: 14,
+    marginTop: 3,
+    fontFamily: FONT_FAMILY_BOLD,
+    fontVariant: ['tabular-nums']
   },
-  sectionHeader: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 6,
-    marginBottom: 10
+  vDivider: {
+    width: 1,
+    height: 28,
+    marginHorizontal: 14
   },
   emptyCard: {
     padding: 24,
@@ -807,7 +693,6 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 16,
-    fontWeight: '700',
     marginBottom: 6,
     textAlign: 'center',
     fontFamily: FONT_FAMILY_BOLD
@@ -824,13 +709,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 10
+    paddingVertical: 11,
+    gap: 6
   },
   emptyActionBtnText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
     fontSize: 13,
-    marginHorizontal: 6,
     fontFamily: FONT_FAMILY_BOLD
   },
   modalOverlay: {
@@ -853,7 +736,6 @@ const styles = StyleSheet.create({
   },
   rateLabel: {
     fontSize: 14,
-    fontWeight: '700',
     fontFamily: FONT_FAMILY_BOLD,
     flexShrink: 0
   },
@@ -870,37 +752,5 @@ const styles = StyleSheet.create({
   },
   modalActions: {
     gap: 10
-  },
-  quickActionGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 10,
-    gap: 8
-  },
-  actionTile: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 18,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2
-  },
-  actionTileIconWrap: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4
-  },
-  actionTileText: {
-    fontFamily: FONT_FAMILY_BOLD,
-    fontSize: 11,
-    fontWeight: '700'
   }
 });
