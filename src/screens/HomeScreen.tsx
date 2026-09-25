@@ -27,6 +27,8 @@ import { BentoFullHeader } from '../components/home/BentoFullHeader';
 import { PastelBentoCards } from '../components/home/PastelBentoCards';
 import { SmartInsightCard } from '../components/home/SmartInsightCard';
 import { MultiWalletCards } from '../components/home/MultiWalletCards';
+import { InsightStories } from '../components/home/InsightStories';
+import { buildStories } from '../utils/stories';
 import { elevation } from '../theme/spacing';
 import { FONT_FAMILY, FONT_FAMILY_BOLD, FONT_FAMILY_SEMIBOLD } from '../theme/typography';
 import { AppDialog } from '../components/common/AppDialog';
@@ -36,7 +38,7 @@ interface HomeScreenProps {
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { colors, typography, radius, isDark } = useTheme();
+  const { colors, typography, radius } = useTheme();
   const { t } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
   const primaryCurrency = useAppStore((state) => state.primaryCurrency);
@@ -55,8 +57,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     debtLentTotal,
     debtBorrowedTotal,
     recentTransactions,
+    transactions,
     budgetProgressList,
     reminders,
+    savingsGoals,
     categories,
     refreshAll
   } = useFinanceStore();
@@ -138,6 +142,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     });
   }, [recentTransactions, categories, activeCurrency, primaryCurrency, exchangeRates, colors.accent, t]);
 
+  const stories = useMemo(
+    () =>
+      buildStories({
+        transactions,
+        reminders,
+        savingsGoals,
+        now: new Date(),
+        convert: (amount, currency) =>
+          convertCurrency(amount, currency || primaryCurrency, activeCurrency, exchangeRates),
+        // The store loads the latest 200 — at that size older days may be cut off.
+        truncated: transactions.length >= 200
+      }),
+    [transactions, reminders, savingsGoals, primaryCurrency, activeCurrency, exchangeRates]
+  );
+
   const insets = useSafeAreaInsets();
   const topSafeInset = Platform.OS === 'android'
     ? Math.max(RNStatusBar.currentHeight || 0, insets.top, 48) + 8
@@ -146,7 +165,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <RNStatusBar barStyle={isDark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
+      <RNStatusBar barStyle={colors.heroIsDark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
       <ScrollView
         contentContainerStyle={[
           styles.content,
@@ -187,6 +206,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         />
 
         <View style={styles.bodyWrapper}>
+          {/* This week at a glance — tap through like stories */}
+          <InsightStories stories={stories} currency={activeCurrency} isRTL={isRTL} />
+
           {/* Upcoming bill / instalment warning */}
           <UpcomingBillBanner
             reminders={reminders}
@@ -298,8 +320,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             />
           )}
 
-          {/* Feature shortcuts: Budgets, Goals, Shopping, Accounts — one quiet
-              accent, distinguished only by icon and label. */}
+          {/* Feature shortcuts: Budgets, Goals, Shopping, Accounts — each on its
+              scheme tile, so single-accent schemes stay one quiet colour and
+              the multi-colour schemes give every shortcut its own tone. */}
           <View style={[styles.shortcutGrid, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
             <TouchableOpacity
               activeOpacity={0.7}
@@ -310,8 +333,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 elevation.sm(colors.shadowColor)
               ]}
             >
-              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.accentMuted }]}>
-                <Ionicons name="pie-chart-outline" size={18} color={colors.accent} />
+              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.tiles[0].bg }]}>
+                <Ionicons name="pie-chart-outline" size={18} color={colors.tiles[0].fg} />
               </View>
               <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
                 {t('home.budgeting')}
@@ -327,8 +350,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 elevation.sm(colors.shadowColor)
               ]}
             >
-              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.accentMuted }]}>
-                <Ionicons name="flag-outline" size={18} color={colors.accent} />
+              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.tiles[1].bg }]}>
+                <Ionicons name="flag-outline" size={18} color={colors.tiles[1].fg} />
               </View>
               <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
                 {t('home.goal_fund')}
@@ -344,8 +367,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 elevation.sm(colors.shadowColor)
               ]}
             >
-              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.accentMuted }]}>
-                <Ionicons name="bag-handle-outline" size={18} color={colors.accent} />
+              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.tiles[2].bg }]}>
+                <Ionicons name="bag-handle-outline" size={18} color={colors.tiles[2].fg} />
               </View>
               <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
                 {t('home.shopping_list')}
@@ -361,8 +384,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 elevation.sm(colors.shadowColor)
               ]}
             >
-              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.accentMuted }]}>
-                <Ionicons name="wallet-outline" size={18} color={colors.accent} />
+              <View style={[styles.shortcutIconWrap, { backgroundColor: colors.tiles[3].bg }]}>
+                <Ionicons name="wallet-outline" size={18} color={colors.tiles[3].fg} />
               </View>
               <Text numberOfLines={2} style={[styles.shortcutText, { color: colors.textPrimary }]}>
                 {t('accounts.title')}

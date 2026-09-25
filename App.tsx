@@ -214,6 +214,10 @@ export default function App() {
         // Load IBM Plex Sans Arabic fonts natively
         try {
           await Font.loadAsync({
+            // Preloaded with the text fonts so an icon that mounts on the
+            // very first frame (the home header's profile button) never
+            // renders blank while the icon font is still arriving.
+            ...Ionicons.font,
             'IBMPlexSansArabic-Regular': require('./assets/fonts/IBMPlexSansArabic-Regular.ttf'),
             'IBMPlexSansArabic-Medium': require('./assets/fonts/IBMPlexSansArabic-Medium.ttf'),
             'IBMPlexSansArabic-SemiBold': require('./assets/fonts/IBMPlexSansArabic-SemiBold.ttf'),

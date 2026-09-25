@@ -32,8 +32,8 @@ interface BentoFullHeaderProps {
  * A warm four-stop gradient (plum through dusk-rose and terracotta to gold —
  * dawn read in reverse for dark mode, midday cream through terracotta for
  * light) carries the balance, with every chip on it a translucent overlay
- * rather than an opaque surface colour, so the same markup works over either
- * theme's gradient without a light/dark fork per chip.
+ * rather than an opaque surface colour, so the same markup works over every
+ * scheme's gradient — pale or deep — without a fork per chip.
  */
 export const BentoFullHeader: React.FC<BentoFullHeaderProps> = ({
   topInset,
@@ -60,12 +60,18 @@ export const BentoFullHeader: React.FC<BentoFullHeaderProps> = ({
   const row = isRTL ? 'row-reverse' : ('row' as const);
   const ink = colors.heroOnGradient;
 
-  // One translucent overlay family, tuned per theme so a pale (light-mode)
-  // and a deep (dark-mode) gradient both still read as "frosted chip" rather
-  // than disappearing into the gradient or turning opaque.
-  const chipBg = isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(58, 35, 24, 0.10)';
-  const chipBorder = isDark ? 'rgba(255, 255, 255, 0.22)' : 'rgba(58, 35, 24, 0.16)';
-  const chipActiveBg = isDark ? 'rgba(255, 255, 255, 0.92)' : 'rgba(255, 255, 255, 0.85)';
+  // One translucent overlay family, tuned to the gradient's own depth (not
+  // the app theme — some schemes run a deep gradient even in light mode) so
+  // a pale and a deep gradient both still read as "frosted chip" rather than
+  // disappearing into the gradient or turning opaque.
+  const deep = colors.heroIsDark;
+  const chipBg = deep ? 'rgba(255, 255, 255, 0.14)' : 'rgba(58, 35, 24, 0.10)';
+  const chipBorder = deep ? 'rgba(255, 255, 255, 0.22)' : 'rgba(58, 35, 24, 0.16)';
+  const chipActiveBg = deep ? 'rgba(255, 255, 255, 0.92)' : 'rgba(255, 255, 255, 0.85)';
+  // The active chip is near-white in every scheme; in dark mode the accent is
+  // tuned to read on dark surfaces, so use the gradient's deep second stop
+  // there for contrast.
+  const activeInk = isDark ? colors.heroGradientRich[1] : colors.accent;
 
   return (
     <LinearGradient
@@ -87,7 +93,7 @@ export const BentoFullHeader: React.FC<BentoFullHeaderProps> = ({
         <View style={[styles.periodPill, { backgroundColor: chipBg, borderColor: chipBorder, flexDirection: row }]}>
           <Text style={[styles.periodTextMuted, { color: ink, opacity: 0.72 }]}>{t('reports.period_day')}</Text>
           <View style={[styles.periodActivePill, { backgroundColor: chipActiveBg }]}>
-            <Text style={[styles.periodTextActive, { color: colors.accent }]}>{t('reports.period_month')}</Text>
+            <Text style={[styles.periodTextActive, { color: activeInk }]}>{t('reports.period_month')}</Text>
           </View>
           <Text style={[styles.periodTextMuted, { color: ink, opacity: 0.72 }]}>{t('reports.period_year')}</Text>
         </View>
@@ -127,7 +133,7 @@ export const BentoFullHeader: React.FC<BentoFullHeaderProps> = ({
                 <Text
                   style={[
                     styles.currencyCodeText,
-                    { fontFamily: active ? FONT_FAMILY_BOLD : FONT_FAMILY, color: active ? colors.accent : ink, opacity: active ? 1 : 0.78 }
+                    { fontFamily: active ? FONT_FAMILY_BOLD : FONT_FAMILY, color: active ? activeInk : ink, opacity: active ? 1 : 0.78 }
                   ]}
                 >
                   {getCurrencySymbol(code)} {code}

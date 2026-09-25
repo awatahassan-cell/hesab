@@ -180,7 +180,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
         </Text>
 
         <View style={styles.gridContainer}>
-          {services.map((item) => (
+          {services.map((item, i) => (
             <TouchableOpacity
               key={item.id}
               activeOpacity={0.7}
@@ -191,8 +191,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
                 elevation.sm(colors.shadowColor)
               ]}
             >
-              <View style={[styles.serviceIconWrap, { backgroundColor: colors.accentMuted }]}>
-                <Ionicons name={item.icon as any} size={22} color={colors.accent} />
+              <View style={[styles.serviceIconWrap, { backgroundColor: colors.tiles[i % 4].bg }]}>
+                <Ionicons name={item.icon as any} size={22} color={colors.tiles[i % 4].fg} />
               </View>
               <Text style={[styles.serviceTitle, { color: colors.textPrimary }]}>
                 {item.title}

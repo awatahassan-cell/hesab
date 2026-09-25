@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../theme';
 import { FONT_FAMILY_BOLD, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_MEDIUM } from '../../theme/typography';
@@ -93,6 +94,45 @@ export const MultiWalletCards: React.FC<MultiWalletCardsProps> = ({
           const accCurrency = acc.currency || currency;
           const typeLabelKey = TYPE_LABEL_KEYS[acc.type || ''] || 'accounts.type_wallet';
 
+          // The scheme decides the card's look: a plain surface card tinted by
+          // the account's own colour, a solid/gradient colour card, or a soft
+          // pastel card — colours cycled from the scheme so neighbours differ.
+          const tile = colors.walletCards[index % colors.walletCards.length];
+          const look =
+            colors.walletStyle === 'filled'
+              ? {
+                  bg: tile.bg,
+                  ink: tile.fg,
+                  subInk: tile.fg,
+                  subOpacity: 0.78,
+                  chipBg: 'rgba(255, 255, 255, 0.2)',
+                  iconColor: tile.fg,
+                  badgeBg: 'rgba(255, 255, 255, 0.18)',
+                  badgeInk: tile.fg
+                }
+              : colors.walletStyle === 'pastel'
+              ? {
+                  bg: tile.bg,
+                  ink: colors.textPrimary,
+                  subInk: colors.textSecondary,
+                  subOpacity: 1,
+                  chipBg: colors.isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.7)',
+                  iconColor: tile.fg,
+                  badgeBg: colors.isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.6)',
+                  badgeInk: tile.fg
+                }
+              : {
+                  bg: colors.surface,
+                  border: colors.cardBorder,
+                  ink: colors.textPrimary,
+                  subInk: colors.textSecondary,
+                  subOpacity: 1,
+                  chipBg: tint + '1F',
+                  iconColor: tint,
+                  badgeBg: tint + '14',
+                  badgeInk: tint
+                };
+
           return (
             <TouchableOpacity
               key={acc.id || index}
@@ -100,27 +140,48 @@ export const MultiWalletCards: React.FC<MultiWalletCardsProps> = ({
               onPress={() => onPressAccount && onPressAccount(acc)}
               style={[
                 styles.walletCard,
-                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg }
+                {
+                  backgroundColor: look.bg,
+                  borderColor: look.border,
+                  borderWidth: colors.walletStyle === 'plain' ? 1 : 0,
+                  borderRadius: radius.lg
+                }
               ]}
             >
+              {colors.walletStyle === 'filled' && (
+                <>
+                  <LinearGradient
+                    colors={[tile.bg, tile.bg2 || tile.bg]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={StyleSheet.absoluteFill}
+                  />
+                  {/* A soft disc in the corner — just enough depth that a solid
+                      card reads as a card rather than a colour swatch. */}
+                  <View
+                    pointerEvents="none"
+                    style={[styles.shine, isRTL ? { left: -28 } : { right: -28 }]}
+                  />
+                </>
+              )}
               <View style={[styles.cardTopRow, { flexDirection: row }]}>
-                <View style={[styles.iconWrap, { backgroundColor: tint + '1F', borderRadius: radius.sm }]}>
-                  <Ionicons name={iconName} size={18} color={tint} />
+                <View style={[styles.iconWrap, { backgroundColor: look.chipBg, borderRadius: radius.sm }]}>
+                  <Ionicons name={iconName} size={18} color={look.iconColor} />
                 </View>
-                <View style={[styles.typeBadge, { backgroundColor: tint + '14' }]}>
-                  <Text style={[styles.typeBadgeText, { color: tint }]}>{t(typeLabelKey)}</Text>
+                <View style={[styles.typeBadge, { backgroundColor: look.badgeBg }]}>
+                  <Text style={[styles.typeBadgeText, { color: look.badgeInk }]}>{t(typeLabelKey)}</Text>
                 </View>
               </View>
 
               <View style={styles.cardBottom}>
                 <Text
                   numberOfLines={1}
-                  style={[styles.accountName, { color: colors.textSecondary, textAlign: isRTL ? 'right' : 'left' }]}
+                  style={[styles.accountName, { color: look.subInk, opacity: look.subOpacity, textAlign: isRTL ? 'right' : 'left' }]}
                 >
                   {acc.name}
                 </Text>
                 <Text
-                  style={[styles.balanceText, { color: colors.textPrimary, textAlign: isRTL ? 'right' : 'left' }]}
+                  style={[styles.balanceText, { color: look.ink, textAlign: isRTL ? 'right' : 'left' }]}
                   numberOfLines={1}
                 >
                   {formatCurrency(displayBalance, accCurrency, { isRTL })}
@@ -176,7 +237,16 @@ const styles = StyleSheet.create({
     width: 172,
     padding: 14,
     borderWidth: 1,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    overflow: 'hidden'
+  },
+  shine: {
+    position: 'absolute',
+    top: -34,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: 'rgba(255, 255, 255, 0.14)'
   },
   cardTopRow: {
     justifyContent: 'space-between',

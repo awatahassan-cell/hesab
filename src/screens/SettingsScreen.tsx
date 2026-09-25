@@ -40,7 +40,10 @@ const SCHEME_OPTIONS: { id: ColorSchemeId; nameKey: string; descKey: string }[] 
   { id: 'sefeq', nameKey: 'settings.scheme_sefeq', descKey: 'settings.scheme_sefeq_desc' },
   { id: 'kani', nameKey: 'settings.scheme_kani', descKey: 'settings.scheme_kani_desc' },
   { id: 'zumurrud', nameKey: 'settings.scheme_zumurrud', descKey: 'settings.scheme_zumurrud_desc' },
-  { id: 'mor', nameKey: 'settings.scheme_mor', descKey: 'settings.scheme_mor_desc' }
+  { id: 'mor', nameKey: 'settings.scheme_mor', descKey: 'settings.scheme_mor_desc' },
+  { id: 'dureng', nameKey: 'settings.scheme_dureng', descKey: 'settings.scheme_dureng_desc' },
+  { id: 'bento', nameKey: 'settings.scheme_bento', descKey: 'settings.scheme_bento_desc' },
+  { id: 'sunset', nameKey: 'settings.scheme_sunset', descKey: 'settings.scheme_sunset_desc' }
 ];
 
 export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
@@ -448,7 +451,12 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
                   ]}
                 >
                   <View style={[styles.schemeSwatchRow, { borderRadius: radius.sm }]}>
-                    {preview.heroGradientRich.map((c, idx) => (
+                    {/* The pastel scheme's identity is its tiles, not its
+                        header wash — preview those instead. */}
+                    {(preview.walletStyle === 'pastel'
+                      ? preview.tiles.map((tile) => tile.bg)
+                      : preview.heroGradientRich
+                    ).map((c, idx) => (
                       <View key={idx} style={[styles.schemeSwatchStop, { backgroundColor: c }]} />
                     ))}
                   </View>
