@@ -5,6 +5,7 @@ import { getPin, setPin as setSecurePin } from '../utils/secureStorage';
 import { DEFAULT_RATES, buildRates, per100Usd, rateFromPer100Usd, setNumberLocale } from '../utils/currency';
 import { getReferenceCurrency } from '../utils/currencyData';
 import { detectRegion } from '../utils/region';
+import { ColorSchemeId, DEFAULT_SCHEME, COLOR_SCHEMES } from '../theme/colors';
 
 interface AppState {
   language: string;
@@ -12,6 +13,9 @@ interface AppState {
   countryCode: string;
   primaryCurrency: string;
   themeMode: 'system' | 'light' | 'dark';
+  /** Which accent identity the app is wearing — Şefeq (default), Kanî,
+   *  Zumurrud or Mor. Independent of light/dark: each has both. */
+  colorScheme: ColorSchemeId;
   monthStartDay: number;
   exchangeRates: Record<string, number>;
   /** When a rate was last set by hand, so the UI can show how stale it is. */
@@ -35,6 +39,7 @@ interface AppState {
   setMarketRate100USD: (rate: number) => Promise<void>;
   toggleDisplayCurrency: () => Promise<void>;
   setThemeMode: (mode: 'system' | 'light' | 'dark') => Promise<void>;
+  setColorScheme: (scheme: ColorSchemeId) => Promise<void>;
   setMonthStartDay: (day: number) => Promise<void>;
   setExchangeRate: (currency: string, rateToUSD: number) => Promise<void>;
   setPinCode: (pin: string | null) => Promise<void>;
@@ -50,6 +55,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   countryCode: 'IQ',
   primaryCurrency: 'IQD',
   themeMode: 'system',
+  colorScheme: DEFAULT_SCHEME,
   monthStartDay: 1,
   exchangeRates: { ...DEFAULT_RATES },
   ratesUpdatedAt: null,
@@ -126,6 +132,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     await AsyncStorage.setItem('app_theme_mode', mode);
   },
 
+  setColorScheme: async (scheme: ColorSchemeId) => {
+    set({ colorScheme: scheme });
+    await AsyncStorage.setItem('app_color_scheme', scheme);
+  },
+
   setMonthStartDay: async (day: number) => {
     set({ monthStartDay: day });
     await AsyncStorage.setItem('app_month_start_day', day.toString());
@@ -161,11 +172,12 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   loadInitialSettings: async () => {
     try {
-      const [lang, country, curr, theme, startDay, rates, pin, bio, onboard, dispCurr, mktRate, ratesAt] = await Promise.all([
+      const [lang, country, curr, theme, colorSchemeStored, startDay, rates, pin, bio, onboard, dispCurr, mktRate, ratesAt] = await Promise.all([
         AsyncStorage.getItem('app_language'),
         AsyncStorage.getItem('app_country'),
         AsyncStorage.getItem('app_primary_currency'),
         AsyncStorage.getItem('app_theme_mode'),
+        AsyncStorage.getItem('app_color_scheme'),
         AsyncStorage.getItem('app_month_start_day'),
         AsyncStorage.getItem('app_exchange_rates'),
         getPin(),
@@ -175,6 +187,14 @@ export const useAppStore = create<AppState>((set, get) => ({
         AsyncStorage.getItem('app_market_rate_100usd'),
         AsyncStorage.getItem('app_rates_updated_at')
       ]);
+
+      // A stored scheme id the app no longer ships (a removed option) falls
+      // back to the default rather than leaving the theme with a colour set
+      // that doesn't exist.
+      const selectedScheme: ColorSchemeId =
+        colorSchemeStored && colorSchemeStored in COLOR_SCHEMES
+          ? (colorSchemeStored as ColorSchemeId)
+          : DEFAULT_SCHEME;
 
       // Nothing stored means a first launch, so the device's own region and
       // language choose the defaults instead of Iraq and Kurdish. A stored
@@ -215,6 +235,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         displayCurrency: dispCurr || selectedCurrency,
         marketRate100USD: marketRate,
         themeMode: (theme as any) || 'system',
+        colorScheme: selectedScheme,
         monthStartDay: startDay ? parseInt(startDay, 10) : 1,
         exchangeRates: baseRates,
         ratesUpdatedAt: ratesAt || null,

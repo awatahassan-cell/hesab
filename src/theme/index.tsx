@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
-import { lightColors, darkColors, ColorTheme, CATEGORY_PALETTE } from './colors';
+import { lightColors, ColorTheme, CATEGORY_PALETTE, getThemeColors } from './colors';
 import { typography } from './typography';
 import { spacing, radius } from './spacing';
 import { useAppStore } from '../store/useAppStore';
@@ -26,13 +26,14 @@ export const ThemeContext = createContext<ThemeContextType>({
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const systemScheme = useColorScheme();
   const themeMode = useAppStore((state) => state.themeMode);
+  const colorScheme = useAppStore((state) => state.colorScheme);
 
   const isDark = useMemo(() => {
     if (themeMode === 'system') return systemScheme === 'dark';
     return themeMode === 'dark';
   }, [themeMode, systemScheme]);
 
-  const colors = useMemo(() => (isDark ? darkColors : lightColors), [isDark]);
+  const colors = useMemo(() => getThemeColors(colorScheme, isDark), [colorScheme, isDark]);
 
   const value = useMemo(
     () => ({

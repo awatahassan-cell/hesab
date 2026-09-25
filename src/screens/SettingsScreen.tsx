@@ -34,9 +34,17 @@ import {
 import { LANGUAGES } from '../i18n';
 import { formatLocalDate } from '../utils/dates';
 import { getCountryLanguages } from '../utils/currencyData';
+import { COLOR_SCHEMES, ColorSchemeId, getThemeColors } from '../theme/colors';
+
+const SCHEME_OPTIONS: { id: ColorSchemeId; nameKey: string; descKey: string }[] = [
+  { id: 'sefeq', nameKey: 'settings.scheme_sefeq', descKey: 'settings.scheme_sefeq_desc' },
+  { id: 'kani', nameKey: 'settings.scheme_kani', descKey: 'settings.scheme_kani_desc' },
+  { id: 'zumurrud', nameKey: 'settings.scheme_zumurrud', descKey: 'settings.scheme_zumurrud_desc' },
+  { id: 'mor', nameKey: 'settings.scheme_mor', descKey: 'settings.scheme_mor_desc' }
+];
 
 export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
-  const { colors, typography, isDark } = useTheme();
+  const { colors, typography, radius, isDark } = useTheme();
   const { t, i18n } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
   const {
@@ -47,6 +55,8 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
     setCountryAndCurrency,
     themeMode,
     setThemeMode,
+    colorScheme,
+    setColorScheme,
     isBiometricsEnabled,
     setBiometricsEnabled,
     pinCode,
@@ -405,6 +415,61 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
           ))}
         </Card>
 
+        {/* Colour scheme */}
+        <Text style={[typography.captionSmall, { color: colors.textMuted, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
+          {t('settings.color_scheme')}
+        </Text>
+        <Card style={{ backgroundColor: colors.surface, marginBottom: 16 }}>
+          <Text
+            style={[
+              typography.caption,
+              { color: colors.textMuted, marginBottom: 12, textAlign: isRTL ? 'right' : 'left' }
+            ]}
+          >
+            {t('settings.color_scheme_desc')}
+          </Text>
+          <View style={[styles.schemeGrid, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            {SCHEME_OPTIONS.map((opt) => {
+              const preview = getThemeColors(opt.id, isDark);
+              const selected = colorScheme === opt.id;
+              return (
+                <TouchableOpacity
+                  key={opt.id}
+                  activeOpacity={0.8}
+                  onPress={() => setColorScheme(opt.id)}
+                  style={[
+                    styles.schemeCard,
+                    {
+                      borderColor: selected ? preview.accent : colors.cardBorder,
+                      borderWidth: selected ? 2 : 1,
+                      backgroundColor: colors.surfaceSecondary,
+                      borderRadius: radius.md
+                    }
+                  ]}
+                >
+                  <View style={[styles.schemeSwatchRow, { borderRadius: radius.sm }]}>
+                    {preview.heroGradientRich.map((c, idx) => (
+                      <View key={idx} style={[styles.schemeSwatchStop, { backgroundColor: c }]} />
+                    ))}
+                  </View>
+                  <View style={[styles.schemeLabelRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <Text style={[typography.caption, { color: colors.textPrimary, fontWeight: '700' }]}>
+                      {t(opt.nameKey)}
+                    </Text>
+                    {selected && <Ionicons name="checkmark-circle" size={15} color={preview.accent} />}
+                  </View>
+                  <Text
+                    style={[typography.captionSmall, { color: colors.textMuted, textAlign: isRTL ? 'right' : 'left' }]}
+                    numberOfLines={1}
+                  >
+                    {t(opt.descKey)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </Card>
+
         {/* Security Section */}
         <Text style={[typography.captionSmall, { color: colors.textMuted, marginBottom: 6, textAlign: isRTL ? 'right' : 'left' }]}>
           {t('settings.security')}
@@ -610,5 +675,27 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     marginRight: 8
+  },
+  schemeGrid: {
+    flexWrap: 'wrap',
+    gap: 10
+  },
+  schemeCard: {
+    width: '47%',
+    padding: 10
+  },
+  schemeSwatchRow: {
+    flexDirection: 'row',
+    height: 36,
+    overflow: 'hidden',
+    marginBottom: 8
+  },
+  schemeSwatchStop: {
+    flex: 1
+  },
+  schemeLabelRow: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 2
   }
 });
