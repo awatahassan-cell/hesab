@@ -25,6 +25,7 @@ import { LANGUAGES } from '../i18n';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { Icon, IconName } from '../components/icons/Icon';
 import { elevation } from '../theme/spacing';
+import { FONT_FAMILY, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_BOLD } from '../theme/typography';
 
 interface OnboardingModalProps {
   visible: boolean;
@@ -512,7 +513,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ visible, onCom
 const styles = StyleSheet.create({
   groupLabel: {
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY_BOLD,
     marginTop: 14,
     marginBottom: 6,
     marginHorizontal: 4,
@@ -529,7 +530,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8
   },
   backBtn: { minWidth: 74 },
-  backTxt: { fontSize: 13.5, fontWeight: '600' },
+  backTxt: { fontSize: 13.5, fontFamily: FONT_FAMILY_SEMIBOLD },
   dots: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   dot: { height: 6, borderRadius: 99 },
 
@@ -553,20 +554,21 @@ const styles = StyleSheet.create({
     fontSize: 52,
     lineHeight: 72,
     color: '#FFFFFF',
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY_BOLD,
     includeFontPadding: false
   },
 
-  h1: { fontSize: 25, fontWeight: '700', textAlign: 'center' },
-  h2: { fontSize: 21, fontWeight: '700', marginBottom: 6 },
+  h1: { fontSize: 25, fontFamily: FONT_FAMILY_BOLD, textAlign: 'center' },
+  h2: { fontSize: 21, fontFamily: FONT_FAMILY_BOLD, marginBottom: 6 },
   sub: {
     fontSize: 14,
     lineHeight: 22,
     textAlign: 'center',
     marginTop: 8,
-    paddingHorizontal: 12
+    paddingHorizontal: 12,
+    fontFamily: FONT_FAMILY
   },
-  sub2: { fontSize: 13, lineHeight: 20, marginBottom: 16 },
+  sub2: { fontSize: 13, lineHeight: 20, marginBottom: 16, fontFamily: FONT_FAMILY },
 
   features: { alignSelf: 'stretch', marginTop: 28, gap: 10 },
   feature: {
@@ -578,8 +580,8 @@ const styles = StyleSheet.create({
   },
   featureIcon: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center' },
   featureText: { flex: 1 },
-  featureTitle: { fontSize: 14, fontWeight: '700' },
-  featureBody: { fontSize: 12, lineHeight: 18, marginTop: 3 },
+  featureTitle: { fontSize: 14, fontFamily: FONT_FAMILY_BOLD },
+  featureBody: { fontSize: 12, lineHeight: 18, marginTop: 3, fontFamily: FONT_FAMILY },
 
   countryRow: {
     flexDirection: 'row',
@@ -590,10 +592,10 @@ const styles = StyleSheet.create({
     borderWidth: 1
   },
   flag: { fontSize: 24 },
-  countryName: { fontSize: 14.5, fontWeight: '600' },
-  countryCurr: { fontSize: 11.5, marginTop: 2 },
+  countryName: { fontSize: 14.5, fontFamily: FONT_FAMILY_SEMIBOLD },
+  countryCurr: { fontSize: 11.5, marginTop: 2, fontFamily: FONT_FAMILY },
   check: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
-  checkTxt: { color: '#FFFFFF', fontSize: 12, fontWeight: '700' },
+  checkTxt: { color: '#FFFFFF', fontSize: 12, fontFamily: FONT_FAMILY_BOLD },
 
   rateBox: {
     flexDirection: 'row',
@@ -605,18 +607,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginTop: 6
   },
-  rateLabel: { fontSize: 15, fontWeight: '600', flexShrink: 0 },
+  rateLabel: { fontSize: 15, fontFamily: FONT_FAMILY_SEMIBOLD, flexShrink: 0 },
   rateInput: {
     flex: 1,
     // Without this a long number sets the row's minimum width and pushes the
     // currency symbol off the screen.
     minWidth: 0,
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY_BOLD,
     textAlign: 'center',
     padding: 0
   },
-  err: { fontSize: 12, marginTop: 10 },
+  err: { fontSize: 12, marginTop: 10, fontFamily: FONT_FAMILY },
 
   tick: {
     width: 76,
@@ -626,7 +628,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 18
   },
-  tickTxt: { fontSize: 36, fontWeight: '700' },
+  tickTxt: { fontSize: 36, fontFamily: FONT_FAMILY_BOLD },
 
   summary: { alignSelf: 'stretch', marginTop: 26, borderWidth: 1, paddingHorizontal: 16 },
   summaryRow: {
@@ -635,8 +637,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 13
   },
-  summaryKey: { fontSize: 13 },
-  summaryVal: { fontSize: 13.5, fontWeight: '600' },
+  summaryKey: { fontSize: 13, fontFamily: FONT_FAMILY },
+  summaryVal: { fontSize: 13.5, fontFamily: FONT_FAMILY_SEMIBOLD },
   divider: { height: 1 },
 
   footer: { paddingHorizontal: 20, paddingTop: 10 },
@@ -648,5 +650,5 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 8
   },
-  ctaTxt: { color: '#FFFFFF', fontSize: 15.5, fontWeight: '700' }
+  ctaTxt: { color: '#FFFFFF', fontSize: 15.5, fontFamily: FONT_FAMILY_BOLD }
 });

@@ -478,6 +478,19 @@ class WebDatabase implements IDatabase {
       return (acc || null) as any;
     }
 
+    // Checked before the generic transactions SUM(amount) branch below: that
+    // branch's condition also matches this query's text (both contain
+    // "SUM(amount)"), and it returns unconditionally — so with the debts
+    // check after it, a debt total silently came back as the sum of every
+    // transaction instead, regardless of type or is_settled.
+    if (trimmed.includes('FROM debts WHERE type =')) {
+      const type = trimmed.includes("'lent'") ? 'lent' : 'borrowed';
+      const sum = (state.debts || [])
+        .filter((d) => d && d.type === type && !d.is_settled)
+        .reduce((acc, d) => acc + (d.amount || 0), 0);
+      return { sum } as any;
+    }
+
     if (trimmed.includes('SUM(amount)')) {
       let txs = [...(state.transactions?.filter(Boolean) || [])];
       if (trimmed.includes("type = 'income'")) txs = txs.filter((t) => t.type === 'income');
@@ -493,14 +506,6 @@ class WebDatabase implements IDatabase {
       if (to !== undefined) txs = txs.filter((t) => t.date_time <= to);
 
       const sum = txs.reduce((acc, t) => acc + (t.amount || 0), 0);
-      return { sum } as any;
-    }
-
-    if (trimmed.includes('FROM debts WHERE type =')) {
-      const type = trimmed.includes("'lent'") ? 'lent' : 'borrowed';
-      const sum = (state.debts || [])
-        .filter((d) => d && d.type === type && !d.is_settled)
-        .reduce((acc, d) => acc + (d.amount || 0), 0);
       return { sum } as any;
     }
 

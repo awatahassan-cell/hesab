@@ -36,7 +36,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   const defaultIcon: keyof typeof Ionicons.glyphMap = isDanger ? 'trash-outline' : 'help-circle-outline';
   const iconName = icon || defaultIcon;
   const iconColor = isDanger ? colors.danger : colors.accent;
-  const iconBg = isDanger ? 'rgba(239, 68, 68, 0.12)' : 'rgba(0, 168, 150, 0.12)';
+  const iconBg = isDanger ? colors.expenseMuted : colors.accentMuted;
 
   return (
     <Modal
@@ -97,6 +97,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 styles.confirmBtn,
                 {
                   backgroundColor: isDanger ? colors.danger : colors.accent,
+                  shadowColor: isDanger ? colors.danger : colors.accent
                 }
               ]}
             >
@@ -175,7 +176,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   confirmBtn: {
-    shadowColor: '#EF4444',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 6,

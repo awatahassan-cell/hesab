@@ -19,6 +19,8 @@ import { exportTransactionsToCSV, generatePDFReport } from '../utils/export';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
+import { FONT_FAMILY, FONT_FAMILY_BOLD, FONT_FAMILY_SEMIBOLD } from '../theme/typography';
+import { elevation } from '../theme/spacing';
 
 interface MenuScreenProps {
   navigation: any;
@@ -70,13 +72,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
     }
   };
 
+  // One accent tint for every tile — icon and label carry the distinction,
+  // not seven unrelated hardcoded hues left over from an earlier palette.
   const services = [
     {
       id: 'shopping',
       title: t('menu.shopping_title'),
       desc: t('menu.shopping_desc'),
-      icon: 'cart-outline',
-      color: '#FB8500',
+      icon: 'bag-handle-outline',
       action: () => navigation.navigate('ShoppingScreen')
     },
     {
@@ -84,7 +87,6 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       title: t('menu.accounts_title'),
       desc: t('menu.accounts_desc'),
       icon: 'card-outline',
-      color: '#00A896',
       action: () => navigation.navigate('AccountsScreen')
     },
     {
@@ -92,7 +94,6 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       title: t('menu.categories_title'),
       desc: t('menu.categories_desc'),
       icon: 'pricetags-outline',
-      color: '#8B5CF6',
       action: () => navigation.navigate('CategoriesScreen')
     },
     {
@@ -100,15 +101,13 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       title: t('menu.debts_title'),
       desc: t('menu.debts_desc'),
       icon: 'swap-horizontal-outline',
-      color: '#3B82F6',
       action: () => navigation.navigate('DebtsScreen')
     },
     {
       id: 'reminders',
       title: t('menu.reminders_title'),
       desc: t('menu.reminders_desc'),
-      icon: 'time-outline',
-      color: '#F59E0B',
+      icon: 'calendar-outline',
       action: () => navigation.navigate('RemindersScreen')
     },
     {
@@ -116,7 +115,6 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       title: t('recurring.title'),
       desc: t('menu.recurring_desc'),
       icon: 'repeat-outline',
-      color: '#8B5CF6',
       action: () => navigation.navigate('RecurringScreen')
     },
     {
@@ -124,7 +122,6 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
       title: t('menu.savings_title'),
       desc: t('menu.savings_desc'),
       icon: 'flag-outline',
-      color: '#10B981',
       action: () => navigation.navigate('SavingsGoalsScreen')
     }
   ];
@@ -150,8 +147,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Profile Card Header (Sekkeh Style) */}
-        <View style={[styles.profileCard, { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }]}>
+        {/* Profile Card Header */}
+        <View
+          style={[
+            styles.profileCard,
+            { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+            elevation.sm(colors.shadowColor)
+          ]}
+        >
           <View style={[styles.profileRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
             <View style={[styles.avatarWrap, { backgroundColor: colors.accentMuted }]}>
               <Ionicons name="person" size={24} color={colors.accent} />
@@ -184,15 +187,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
               onPress={item.action}
               style={[
                 styles.serviceCard,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.cardBorder,
-                  borderRadius: 10
-                }
+                { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                elevation.sm(colors.shadowColor)
               ]}
             >
-              <View style={[styles.serviceIconWrap, { backgroundColor: item.color + '15' }]}>
-                <Ionicons name={item.icon as any} size={22} color={item.color} />
+              <View style={[styles.serviceIconWrap, { backgroundColor: colors.accentMuted }]}>
+                <Ionicons name={item.icon as any} size={22} color={colors.accent} />
               </View>
               <Text style={[styles.serviceTitle, { color: colors.textPrimary }]}>
                 {item.title}
@@ -216,18 +216,15 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
             disabled={exporting}
             style={[
               styles.exportBtn,
-              {
-                backgroundColor: colors.surface,
-                borderColor: colors.cardBorder,
-                borderRadius: 8
-              }
+              { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.md },
+              elevation.sm(colors.shadowColor)
             ]}
           >
             {exporting ? (
               <ActivityIndicator size="small" color={colors.accent} />
             ) : (
               <>
-                <Ionicons name="document-text" size={20} color="#EF4444" />
+                <Ionicons name="document-text-outline" size={20} color={colors.danger} />
                 <Text style={[styles.exportBtnText, { color: colors.textPrimary }]}>
                   {t('menu.pdf_report')}
                 </Text>
@@ -241,18 +238,15 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
             disabled={exporting}
             style={[
               styles.exportBtn,
-              {
-                backgroundColor: colors.surface,
-                borderColor: colors.cardBorder,
-                borderRadius: 8
-              }
+              { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.md },
+              elevation.sm(colors.shadowColor)
             ]}
           >
             {exporting ? (
               <ActivityIndicator size="small" color={colors.accent} />
             ) : (
               <>
-                <Ionicons name="grid" size={20} color="#10B981" />
+                <Ionicons name="grid-outline" size={20} color={colors.income} />
                 <Text style={[styles.exportBtnText, { color: colors.textPrimary }]}>
                   {t('menu.excel_file')}
                 </Text>
@@ -270,9 +264,10 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
             {
               backgroundColor: colors.surface,
               borderColor: colors.cardBorder,
-              borderRadius: 10,
+              borderRadius: radius.lg,
               flexDirection: isRTL ? 'row-reverse' : 'row'
-            }
+            },
+            elevation.sm(colors.shadowColor)
           ]}
         >
           <View style={[styles.serviceIconWrap, { backgroundColor: colors.accentMuted }]}>
@@ -310,12 +305,7 @@ const styles = StyleSheet.create({
   profileCard: {
     padding: 14,
     borderWidth: 1,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 5,
-    elevation: 2
+    marginBottom: 16
   },
   profileRow: {
     alignItems: 'center',
@@ -330,11 +320,11 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 14,
-    fontWeight: '700'
+    fontFamily: FONT_FAMILY_BOLD
   },
   userBadge: {
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: FONT_FAMILY_SEMIBOLD,
     marginTop: 2
   },
   settingsIconBtn: {
@@ -346,7 +336,7 @@ const styles = StyleSheet.create({
   },
   sectionHeading: {
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY_BOLD,
     marginBottom: 10
   },
   gridContainer: {
@@ -359,12 +349,7 @@ const styles = StyleSheet.create({
     width: '48%',
     padding: 14,
     borderWidth: 1,
-    marginBottom: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1.5 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1.5
+    marginBottom: 4
   },
   serviceIconWrap: {
     width: 38,
@@ -376,12 +361,13 @@ const styles = StyleSheet.create({
   },
   serviceTitle: {
     fontSize: 13,
-    fontWeight: '700'
+    fontFamily: FONT_FAMILY_BOLD
   },
   serviceDesc: {
     fontSize: 10,
     lineHeight: 14,
-    marginTop: 3
+    marginTop: 3,
+    fontFamily: FONT_FAMILY
   },
   exportRow: {
     flexDirection: 'row',
@@ -395,32 +381,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     borderWidth: 1,
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1.5 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1.5
+    gap: 8
   },
   exportBtnText: {
     fontSize: 12,
-    fontWeight: '700'
+    fontFamily: FONT_FAMILY_BOLD
   },
   settingsRowCard: {
     padding: 12,
     borderWidth: 1,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1.5 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1.5
+    alignItems: 'center'
   },
   footerInfo: {
     alignItems: 'center',
     marginTop: 20
   },
   footerText: {
-    fontSize: 11
+    fontSize: 11,
+    fontFamily: FONT_FAMILY
   }
 });

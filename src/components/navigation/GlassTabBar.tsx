@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   label: {
-    fontSize: 10.5,
+    fontSize: 11,
     letterSpacing: 0.1
   },
   indicator: {

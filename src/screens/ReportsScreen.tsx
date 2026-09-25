@@ -266,13 +266,13 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
               {
                 backgroundColor: colors.surface,
                 borderColor: colors.cardBorder,
-                borderRadius: 8,
+                borderRadius: radius.md,
                 flexDirection: isRTL ? 'row-reverse' : 'row'
               }
             ]}
           >
-            <View style={[styles.exportIconBadge, { backgroundColor: '#EF444415' }]}>
-              <Ionicons name="document-text" size={16} color="#EF4444" />
+            <View style={[styles.exportIconBadge, { backgroundColor: colors.expenseMuted }]}>
+              <Ionicons name="document-text-outline" size={16} color={colors.danger} />
             </View>
             <Text style={[styles.exportBtnText, { color: colors.textPrimary }]}>
               {t('menu.pdf_report')}
@@ -287,13 +287,13 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
               {
                 backgroundColor: colors.surface,
                 borderColor: colors.cardBorder,
-                borderRadius: 8,
+                borderRadius: radius.md,
                 flexDirection: isRTL ? 'row-reverse' : 'row'
               }
             ]}
           >
-            <View style={[styles.exportIconBadge, { backgroundColor: '#10B98115' }]}>
-              <Ionicons name="stats-chart" size={16} color="#10B981" />
+            <View style={[styles.exportIconBadge, { backgroundColor: colors.incomeMuted }]}>
+              <Ionicons name="stats-chart-outline" size={16} color={colors.income} />
             </View>
             <Text style={[styles.exportBtnText, { color: colors.textPrimary }]}>
               {t('menu.excel_file')}

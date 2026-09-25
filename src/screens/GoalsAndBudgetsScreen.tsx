@@ -24,6 +24,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
+import { FONT_FAMILY, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_BOLD } from '../theme/typography';
+import { elevation } from '../theme/spacing';
 
 export const GoalsAndBudgetsScreen: React.FC = () => {
   const { colors, typography, radius } = useTheme();
@@ -102,7 +104,7 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
       current_amount: current,
       currency: primaryCurrency,
       icon: goalIcon,
-      color: '#00A896'
+      color: colors.income
     });
 
     setGoalTitle('');
@@ -262,7 +264,8 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                     key={item.budget.id}
                     style={[
                       styles.budgetCard,
-                      { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }
+                      { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                      elevation.sm(colors.shadowColor)
                     ]}
                   >
                     <View style={[styles.cardTopRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
@@ -364,7 +367,8 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                     key={g.id}
                     style={[
                       styles.budgetCard,
-                      { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: 12 }
+                      { backgroundColor: colors.surface, borderColor: colors.cardBorder, borderRadius: radius.lg },
+                      elevation.sm(colors.shadowColor)
                     ]}
                   >
                     <View style={[styles.cardTopRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
@@ -484,8 +488,9 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
                     {
                       backgroundColor: colors.surface,
                       borderColor: r.is_paid ? colors.cardBorder : colors.warning + '50',
-                      borderRadius: 12
-                    }
+                      borderRadius: radius.lg
+                    },
+                    elevation.sm(colors.shadowColor)
                   ]}
                 >
                   <View style={[styles.cardTopRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
@@ -759,7 +764,7 @@ const styles = StyleSheet.create({
   },
   tabSelectorText: {
     fontSize: 12,
-    fontWeight: '700'
+    fontFamily: FONT_FAMILY_BOLD
   },
   content: {
     padding: 16,
@@ -772,11 +777,12 @@ const styles = StyleSheet.create({
   },
   subHeaderTitle: {
     fontSize: 14,
-    fontWeight: '700'
+    fontFamily: FONT_FAMILY_BOLD
   },
   subHeaderDesc: {
     fontSize: 11,
-    marginTop: 2
+    marginTop: 2,
+    fontFamily: FONT_FAMILY
   },
   addNewBtn: {
     flexDirection: 'row',
@@ -787,7 +793,7 @@ const styles = StyleSheet.create({
   addNewBtnText: {
     color: '#FFFFFF',
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY_BOLD,
     marginHorizontal: 4
   },
   emptyBox: {
@@ -799,24 +805,20 @@ const styles = StyleSheet.create({
   },
   emptyBoxTitle: {
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY_BOLD,
     marginTop: 10
   },
   emptyBoxDesc: {
     fontSize: 11,
     textAlign: 'center',
     marginTop: 4,
-    lineHeight: 16
+    lineHeight: 16,
+    fontFamily: FONT_FAMILY
   },
   budgetCard: {
     padding: 14,
     borderWidth: 1,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 5,
-    elevation: 2
+    marginBottom: 10
   },
   cardTopRow: {
     alignItems: 'center',
@@ -824,11 +826,12 @@ const styles = StyleSheet.create({
   },
   cardItemTitle: {
     fontSize: 13,
-    fontWeight: '700'
+    fontFamily: FONT_FAMILY_BOLD
   },
   cardItemSub: {
     fontSize: 11,
-    marginTop: 2
+    marginTop: 2,
+    fontFamily: FONT_FAMILY
   },
   pctTag: {
     paddingHorizontal: 8,
@@ -838,7 +841,7 @@ const styles = StyleSheet.create({
   },
   pctTagText: {
     fontSize: 11,
-    fontWeight: '800'
+    fontFamily: FONT_FAMILY_BOLD
   },
   progressTrack: {
     height: 7,
@@ -856,7 +859,7 @@ const styles = StyleSheet.create({
   },
   warningText: {
     fontSize: 11,
-    fontWeight: '600'
+    fontFamily: FONT_FAMILY_SEMIBOLD
   },
   goalIconWrap: {
     width: 36,
@@ -875,7 +878,7 @@ const styles = StyleSheet.create({
   },
   circularPctText: {
     fontSize: 11,
-    fontWeight: '800'
+    fontFamily: FONT_FAMILY_BOLD
   },
   goalActionsRow: {
     alignItems: 'center',
@@ -890,7 +893,7 @@ const styles = StyleSheet.create({
   },
   smallActionBtnText: {
     fontSize: 11,
-    fontWeight: '700'
+    fontFamily: FONT_FAMILY_BOLD
   },
   checkCircle: {
     width: 24,
