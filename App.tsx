@@ -62,9 +62,9 @@ function BottomTabs() {
         options={{ title: t('tabs.home', t('tabs.home')) }}
       />
       <Tab.Screen
-        name="GoalsAndBudgets"
-        component={GoalsAndBudgetsScreen}
-        options={{ title: t('tabs.goals_budgets') }}
+        name="Transactions"
+        component={TransactionsScreen}
+        options={{ title: t('tabs.transactions', t('tabs.transactions')) }}
       />
       <Tab.Screen
         name="Add"
@@ -77,37 +77,21 @@ function BottomTabs() {
         options={{ title: t('tabs.reports', t('tabs.reports')) }}
       />
       <Tab.Screen
-        name="Menu"
-        component={MenuScreen}
-        options={{ title: t('tabs.more') }}
+        name="Settings"
+        component={SettingsScreen}
+        options={{ title: t('tabs.settings', t('tabs.settings')) }}
       />
     </Tab.Navigator>
   );
 }
 
 function MainNavigation() {
-  const { colors, isDark } = useTheme();
-  const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <Stack.Navigator
       screenOptions={{
-        // Matches the wash the screens sit on, with no divider, so a pushed
-        // page reads as one surface. Not transparent: these screens lay out
-        // from y=0 and would slide under the header.
-        headerStyle: {
-          backgroundColor: colors.background
-        },
-        headerShadowVisible: false,
-        headerTitleStyle: {
-          color: colors.textPrimary,
-          fontFamily: Platform.select({
-            android: 'IBMPlexSansArabic-SemiBold',
-            ios: 'IBMPlexSansArabic-SemiBold',
-            default: '"IBM Plex Sans Arabic", Inter, sans-serif'
-          })
-        },
-        headerTintColor: colors.accent,
+        headerShown: false,
         contentStyle: {
           backgroundColor: colors.background
         }
@@ -116,62 +100,58 @@ function MainNavigation() {
       <Stack.Screen
         name="MainTabs"
         component={BottomTabs}
-        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="GoalsAndBudgets"
+        component={GoalsAndBudgetsScreen}
+      />
+      <Stack.Screen
+        name="Menu"
+        component={MenuScreen}
       />
       <Stack.Screen
         name="DebtsScreen"
         component={DebtsScreen}
-        options={{ title: t('debts.title') }}
       />
       <Stack.Screen
         name="ShoppingScreen"
         component={ShoppingScreen}
-        options={{ title: t('shopping.title') }}
       />
       <Stack.Screen
         name="BudgetsScreen"
         component={BudgetsScreen}
-        options={{ title: t('budgets.title') }}
       />
       <Stack.Screen
         name="AccountsScreen"
         component={AccountsScreen}
-        options={{ title: t('accounts.title') }}
       />
       <Stack.Screen
         name="CategoriesScreen"
         component={CategoriesScreen}
-        options={{ title: t('categories.title') }}
       />
       <Stack.Screen
         name="RemindersScreen"
         component={RemindersScreen}
-        options={{ title: t('reminders.screen_title') }}
       />
       <Stack.Screen
         name="RecurringScreen"
         component={RecurringScreen}
-        options={{ title: t('recurring.title') }}
       />
       <Stack.Screen
         name="SavingsGoalsScreen"
         component={SavingsGoalsScreen}
-        options={{ title: t('savings.screen_title') }}
       />
       <Stack.Screen
         name="Transactions"
         component={TransactionsScreen}
-        options={{ title: t('tabs.transactions') }}
       />
       <Stack.Screen
         name="ImportScreen"
         component={ImportScreen}
-        options={{ title: t('import.title') }}
       />
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: t('tabs.settings') }}
       />
     </Stack.Navigator>
   );
@@ -192,22 +172,12 @@ export default function App() {
   const { refreshAll } = useFinanceStore();
 
   useEffect(() => {
-    // The splash animation runs ~1.1s; finishing sooner than that reads as a
-    // flash rather than an intro.
-    const MIN_SPLASH_MS = 1200;
-    const startedAt = Date.now();
-
     async function finish() {
-      const elapsed = Date.now() - startedAt;
-      if (elapsed < MIN_SPLASH_MS) {
-        await new Promise((r) => setTimeout(r, MIN_SPLASH_MS - elapsed));
-      }
       setReady(true);
+      await NativeSplash.hideAsync().catch(() => {});
     }
 
     async function start() {
-      // Our own splash is already painted by the time this effect runs.
-      NativeSplash.hideAsync().catch(() => {});
       try {
         await loadInitialSettings();
 
@@ -302,7 +272,10 @@ export default function App() {
   }, []);
 
   if (!ready) {
-    return <SplashScreen />;
+    if (Platform.OS === 'web') {
+      return <SplashScreen />;
+    }
+    return null;
   }
 
   return (

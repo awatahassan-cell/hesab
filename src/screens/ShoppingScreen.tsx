@@ -37,8 +37,9 @@ import { ShoppingReminderSheet } from '../components/shopping/ShoppingReminderSh
 import { scheduleShoppingReminder, cancelShoppingReminder } from '../services/notifications';
 import { Icon } from '../components/icons/Icon';
 import { formatLocalDate, formatLocalTime } from '../utils/dates';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 
-export const ShoppingScreen: React.FC = () => {
+export const ShoppingScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, radius } = useTheme();
   const { t, i18n } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
@@ -252,8 +253,11 @@ export const ShoppingScreen: React.FC = () => {
       style={[styles.screen, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <AuroraBackground />
-      <View style={styles.topHeader}>
+      <CurvedHeader
+        title={t('shopping.title', 'لیستی بازاڕکردن')}
+        showBack={Boolean(navigation?.canGoBack && navigation.canGoBack())}
+        onBack={() => navigation?.goBack?.()}
+      >
         <SegmentedControl
           options={[
             { value: 'list', label: t('shopping.shopping_list') },
@@ -265,7 +269,8 @@ export const ShoppingScreen: React.FC = () => {
             setSelectedTrip(null);
           }}
         />
-      </View>
+      </CurvedHeader>
+      <AuroraBackground />
 
       {/* If No Trips Exist in Current Tab */}
       {trips.length === 0 ? (

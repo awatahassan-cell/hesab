@@ -19,6 +19,7 @@ import { exportTransactionsToCSV, generatePDFReport } from '../utils/export';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 import { FONT_FAMILY, FONT_FAMILY_BOLD, FONT_FAMILY_SEMIBOLD } from '../theme/typography';
 import { elevation } from '../theme/spacing';
 
@@ -135,13 +136,17 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({ navigation }) => {
     : Math.max(insets.bottom, 16) + 70;
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: topSafeInset }]}>
-      <AuroraBackground />
+    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <CurvedHeader
+        title={t('tabs.more', 'خزمەتگوزارییەکان')}
+        showBack={Boolean(navigation?.canGoBack && navigation.canGoBack())}
+        onBack={() => navigation?.goBack?.()}
+      />
       <ScrollView
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: 4,
+            paddingTop: 12,
             paddingBottom: bottomSafePadding
           }
         ]}

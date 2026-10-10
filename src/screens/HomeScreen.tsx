@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   ScrollView,
   RefreshControl,
@@ -12,6 +13,7 @@ import {
   StatusBar as RNStatusBar
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
 import { useFinanceStore } from '../store/useFinanceStore';
@@ -67,7 +69,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   const [refreshing, setRefreshing] = useState(false);
   const [showRateModal, setShowRateModal] = useState(false);
+  const [showStoriesModal, setShowStoriesModal] = useState(false);
   const [tempRate, setTempRate] = useState(String(marketRate100USD || ''));
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     refreshAll();
@@ -166,6 +170,76 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
       <RNStatusBar barStyle={colors.heroIsDark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
+
+      {/* Pinned top bar that stays when user scrolls */}
+      {scrollY > 80 && (
+        <LinearGradient
+          colors={colors.heroGradientRich}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.65, y: 1 }}
+          style={[
+            styles.pinnedBar,
+            {
+              paddingTop: topSafeInset,
+              borderBottomLeftRadius: 22,
+              borderBottomRightRadius: 22
+            }
+          ]}
+        >
+          <View style={[styles.pinnedBarRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            {/* Title / Balance on the start side (Right in RTL, Left in LTR) */}
+            <View style={[styles.pinnedTitleWrap, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+              <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: 'center', gap: 7 }}>
+                <Image
+                  source={require('../../assets/icon.png')}
+                  style={{ width: 22, height: 22, borderRadius: 6 }}
+                />
+                <Text numberOfLines={1} style={styles.pinnedAppTitle}>
+                  {t('app_name', 'دینارۆ')}
+                </Text>
+              </View>
+              <Text numberOfLines={1} style={styles.pinnedBalanceText}>
+                {t('home.net_balance_month')}: {formatCurrency(displayMonthBalance, activeCurrency, { isRTL })}
+              </Text>
+            </View>
+
+            {/* Quick Actions on the opposite side */}
+            <View style={[styles.pinnedActionsRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+              <TouchableOpacity
+                activeOpacity={0.75}
+                onPress={toggleDisplayCurrency}
+                style={styles.pinnedChipBtn}
+              >
+                <Text style={styles.pinnedChipText}>
+                  {activeCurrency}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.75}
+                onPress={() => navigation.navigate('RemindersScreen')}
+                style={styles.pinnedIconBtn}
+              >
+                <Ionicons name="notifications-outline" size={17} color="#FFFFFF" />
+                {unpaidReminders.length > 0 && (
+                  <View style={[styles.pinnedBadge, { backgroundColor: colors.warning }]}>
+                    <Text style={styles.pinnedBadgeText}>{unpaidReminders.length}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.75}
+                onPress={() => navigation.navigate('Settings')}
+                style={styles.pinnedIconBtn}
+              >
+                <Ionicons name="person-outline" size={17} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </LinearGradient>
+      )}
+
       <ScrollView
         contentContainerStyle={[
           styles.content,
@@ -174,6 +248,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           }
         ]}
         showsVerticalScrollIndicator={false}
+        onScroll={(e) => setScrollY(e.nativeEvent.contentOffset.y)}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -203,12 +279,35 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           }}
           onOpenProfile={() => navigation.navigate('Settings')}
           onOpenNotifications={() => navigation.navigate('RemindersScreen')}
+          onOpenStories={() => setShowStoriesModal(true)}
         />
 
-        <View style={styles.bodyWrapper}>
-          {/* This week at a glance — tap through like stories */}
-          <InsightStories stories={stories} currency={activeCurrency} isRTL={isRTL} />
+        {/* Two big action buttons — the key interaction */}
+        <View style={[styles.actionDuo, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('Add', { type: 'expense' })}
+            style={[styles.actionBig, { backgroundColor: colors.expenseMuted, borderRadius: radius.lg }]}
+          >
+            <View style={[styles.actionIcon, { backgroundColor: colors.expense }]}>
+              <Ionicons name="remove" size={22} color="#FFFFFF" />
+            </View>
+            <Text style={[styles.actionText, { color: colors.expense }]}>{t('types.expense')}</Text>
+          </TouchableOpacity>
 
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('Add', { type: 'income' })}
+            style={[styles.actionBig, { backgroundColor: colors.incomeMuted, borderRadius: radius.lg }]}
+          >
+            <View style={[styles.actionIcon, { backgroundColor: colors.income }]}>
+              <Ionicons name="add" size={22} color="#FFFFFF" />
+            </View>
+            <Text style={[styles.actionText, { color: colors.income }]}>{t('types.income')}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.bodyWrapper}>
           {/* Upcoming bill / instalment warning */}
           <UpcomingBillBanner
             reminders={reminders}
@@ -562,11 +661,119 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           </View>
         </View>
       </Modal>
+
+      {/* Modal: Insight Stories (Instagram style full screen) */}
+      <Modal
+        visible={showStoriesModal}
+        transparent
+        animationType="slide"
+        statusBarTranslucent
+        onRequestClose={() => setShowStoriesModal(false)}
+      >
+        <View style={styles.storiesModalFullScreen}>
+          {stories.length > 0 ? (
+            <InsightStories
+              stories={stories}
+              currency={activeCurrency}
+              isRTL={isRTL}
+              fullScreen
+              onClose={() => setShowStoriesModal(false)}
+            />
+          ) : (
+            <View style={styles.storiesEmptyWrap}>
+              <TouchableOpacity
+                style={styles.storiesCloseBtnFloating}
+                onPress={() => setShowStoriesModal(false)}
+              >
+                <Ionicons name="close" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+              <View style={[styles.storiesEmptyCard, { backgroundColor: colors.surface, borderRadius: radius.xl }]}>
+                <Ionicons name="sparkles-outline" size={42} color={colors.accent} />
+                <Text style={[styles.storiesEmptyTitle, { color: colors.textPrimary }]}>
+                  {t('home.empty_title')}
+                </Text>
+                <Text style={[styles.storiesEmptyDesc, { color: colors.textMuted }]}>
+                  {t('home.empty_body')}
+                </Text>
+              </View>
+            </View>
+          )}
+        </View>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  storiesModalFullScreen: {
+    flex: 1,
+    backgroundColor: '#000000',
+    paddingHorizontal: 6,
+    paddingTop: Platform.OS === 'android' ? 12 : 24,
+    paddingBottom: Platform.OS === 'android' ? 16 : 24
+  },
+  storiesEmptyWrap: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16
+  },
+  storiesCloseBtnFloating: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10
+  },
+  storiesEmptyCard: {
+    padding: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10
+  },
+  storiesEmptyTitle: {
+    fontSize: 16,
+    fontFamily: FONT_FAMILY_BOLD
+  },
+  storiesEmptyDesc: {
+    fontSize: 13,
+    fontFamily: FONT_FAMILY,
+    textAlign: 'center',
+    lineHeight: 20
+  },
+  actionDuo: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 6
+  },
+  actionBig: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 16
+  },
+  actionIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  actionText: {
+    fontSize: 16,
+    fontFamily: FONT_FAMILY_BOLD,
+    fontWeight: '700'
+  },
   screen: {
     flex: 1
   },
@@ -775,5 +982,82 @@ const styles = StyleSheet.create({
   },
   modalActions: {
     gap: 10
+  },
+  pinnedBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    shadowColor: '#000000',
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 8
+  },
+  pinnedBarRow: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    minHeight: 42
+  },
+  pinnedTitleWrap: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  pinnedAppTitle: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontFamily: FONT_FAMILY_BOLD,
+    letterSpacing: 0
+  },
+  pinnedBalanceText: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 12,
+    fontFamily: FONT_FAMILY_SEMIBOLD,
+    marginTop: 2,
+    fontVariant: ['tabular-nums']
+  },
+  pinnedActionsRow: {
+    alignItems: 'center',
+    gap: 8
+  },
+  pinnedChipBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.20)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  pinnedChipText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontFamily: FONT_FAMILY_BOLD
+  },
+  pinnedIconBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(255, 255, 255, 0.20)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  pinnedBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    minWidth: 15,
+    height: 15,
+    borderRadius: 7.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3
+  },
+  pinnedBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 8.5,
+    fontFamily: FONT_FAMILY_BOLD
   }
 });

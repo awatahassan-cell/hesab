@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../theme';
@@ -19,7 +19,7 @@ export const QuickInputKeypad: React.FC<QuickInputKeypadProps> = ({
   onQuickAdd,
   onClear
 }) => {
-  const { colors, radius } = useTheme();
+  const { colors } = useTheme();
   const [altMode, setAltMode] = useState(false);
 
   const isUSD = currency === 'USD';
@@ -79,35 +79,37 @@ export const QuickInputKeypad: React.FC<QuickInputKeypadProps> = ({
 
   return (
     <View style={styles.container}>
+      {/* Quick Increment Pills — 100% Borderless */}
       <View style={styles.quickAddRow}>
         {!isUSD ? (
           <>
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => handleQuickIncrement(1000)}
-              style={[styles.chip, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder }]}
+              style={[styles.chip, { backgroundColor: colors.surfaceSecondary }]}
             >
               <Text style={[styles.chipText, { color: colors.textSecondary }]}>+1,000</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => handleQuickIncrement(5000)}
-              style={[styles.chip, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder }]}
+              style={[styles.chip, { backgroundColor: colors.surfaceSecondary }]}
             >
               <Text style={[styles.chipText, { color: colors.textSecondary }]}>+5,000</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => handleQuickIncrement(25000)}
-              style={[styles.chip, { backgroundColor: colors.accentMuted, borderColor: colors.accent + '30' }]}
+              style={[styles.chip, { backgroundColor: colors.accentMuted }]}
             >
-              <Text style={[styles.chipText, { color: colors.accent }]}>+25,000</Text>
+              <Text style={[styles.chipText, { color: colors.accent, fontWeight: '700' }]}>+25,000</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => setAltMode(!altMode)}
-              style={[styles.chip, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder, minWidth: 44 }]}
+              style={[styles.chip, styles.chipToggle, { backgroundColor: colors.surfaceSecondary }]}
             >
+              <Ionicons name="swap-horizontal" size={14} color={colors.textMuted} style={{ marginHorizontal: 2 }} />
               <Text style={[styles.chipText, { color: colors.textMuted }]}>{altMode ? '000' : '.'}</Text>
             </TouchableOpacity>
           </>
@@ -116,35 +118,37 @@ export const QuickInputKeypad: React.FC<QuickInputKeypadProps> = ({
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => handleQuickIncrement(5)}
-              style={[styles.chip, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder }]}
+              style={[styles.chip, { backgroundColor: colors.surfaceSecondary }]}
             >
-              <Text style={[styles.chipText, { color: colors.textSecondary }]}>+</Text>
+              <Text style={[styles.chipText, { color: colors.textSecondary }]}>+$5</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => handleQuickIncrement(10)}
-              style={[styles.chip, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder }]}
+              style={[styles.chip, { backgroundColor: colors.surfaceSecondary }]}
             >
-              <Text style={[styles.chipText, { color: colors.textSecondary }]}>+</Text>
+              <Text style={[styles.chipText, { color: colors.textSecondary }]}>+$10</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => handleQuickIncrement(50)}
-              style={[styles.chip, { backgroundColor: colors.accentMuted, borderColor: colors.accent + '30' }]}
+              style={[styles.chip, { backgroundColor: colors.accentMuted }]}
             >
-              <Text style={[styles.chipText, { color: colors.accent }]}>+</Text>
+              <Text style={[styles.chipText, { color: colors.accent, fontWeight: '700' }]}>+$50</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => setAltMode(!altMode)}
-              style={[styles.chip, { backgroundColor: colors.surfaceSecondary, borderColor: colors.cardBorder, minWidth: 44 }]}
+              style={[styles.chip, styles.chipToggle, { backgroundColor: colors.surfaceSecondary }]}
             >
+              <Ionicons name="swap-horizontal" size={14} color={colors.textMuted} style={{ marginHorizontal: 2 }} />
               <Text style={[styles.chipText, { color: colors.textMuted }]}>{altMode ? '.' : '000'}</Text>
             </TouchableOpacity>
           </>
         )}
       </View>
 
+      {/* Modern Borderless Keypad Grid */}
       <View style={styles.grid}>
         {keys.map((row, rowIndex) => (
           <View key={rowIndex} style={styles.row}>
@@ -156,7 +160,7 @@ export const QuickInputKeypad: React.FC<QuickInputKeypadProps> = ({
               return (
                 <TouchableOpacity
                   key={k}
-                  activeOpacity={0.5}
+                  activeOpacity={0.55}
                   onPress={() => handlePress(k)}
                   onLongPress={isBackspace && onClear ? onClear : undefined}
                   style={[
@@ -166,9 +170,9 @@ export const QuickInputKeypad: React.FC<QuickInputKeypadProps> = ({
                         ? colors.surfaceSecondary
                         : isThousand
                         ? colors.accentMuted
-                        : colors.surface,
-                      borderColor: colors.cardBorder,
-                      borderRadius: radius.lg
+                        : isDot
+                        ? colors.surfaceSecondary
+                        : colors.surface
                     }
                   ]}
                 >
@@ -184,7 +188,7 @@ export const QuickInputKeypad: React.FC<QuickInputKeypadProps> = ({
                             : isDot
                             ? colors.textSecondary
                             : colors.textPrimary,
-                          fontSize: isThousand ? 19 : 24
+                          fontSize: isThousand ? 19 : isDot ? 28 : 25
                         }
                       ]}
                     >
@@ -204,8 +208,9 @@ export const QuickInputKeypad: React.FC<QuickInputKeypadProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingHorizontal: 4,
-    paddingTop: 4
+    paddingHorizontal: 2,
+    flex: 1,
+    justifyContent: 'center'
   },
   quickAddRow: {
     flexDirection: 'row',
@@ -216,44 +221,71 @@ const styles = StyleSheet.create({
   },
   chip: {
     flex: 1,
-    height: 32,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth
-  },
-  chipText: {
-    fontFamily: FONT_FAMILY_SEMIBOLD,
-    fontSize: 12,
-    fontWeight: '600'
-  },
-  grid: {
-    gap: 8
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 8
-  },
-  key: {
-    flex: 1,
-    height: 54,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
+    borderRadius: 18,
+    borderWidth: 0,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
+        shadowOpacity: 0.04,
         shadowRadius: 2
       },
       android: {
-        elevation: 1
+        elevation: 0
+      }
+    })
+  },
+  chipToggle: {
+    minWidth: 46,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  chipText: {
+    fontFamily: FONT_FAMILY_SEMIBOLD,
+    fontSize: 12,
+    fontWeight: '600',
+    fontVariant: ['tabular-nums']
+  },
+  grid: {
+    gap: 9,
+    flex: 1,
+    justifyContent: 'space-between'
+  },
+  row: {
+    flexDirection: 'row',
+    gap: 9,
+    flex: 1,
+    minHeight: 52,
+    maxHeight: 64
+  },
+  key: {
+    flex: 1,
+    height: '100%',
+    minHeight: 52,
+    maxHeight: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    borderWidth: 0,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4
+      },
+      android: {
+        elevation: 0
       }
     })
   },
   keyText: {
     fontFamily: FONT_FAMILY_BOLD,
-    fontWeight: '700'
+    fontWeight: '700',
+    fontVariant: ['tabular-nums']
   }
 });

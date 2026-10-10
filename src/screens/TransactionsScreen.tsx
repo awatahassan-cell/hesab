@@ -15,6 +15,7 @@ import { ConfirmModal } from '../components/common/ConfirmModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
 import { ReceiptViewer } from '../components/transactions/ReceiptViewer';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 
 interface TransactionsScreenProps {
   navigation: any;
@@ -108,36 +109,41 @@ export const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ navigati
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <AuroraBackground />
-      {/* Top Search & Filter Bar */}
-      <View style={[styles.searchBarContainer, { backgroundColor: colors.surface, borderBottomColor: colors.cardBorder }]}>
+      <CurvedHeader
+        title={t('tabs.transactions', 'مامەڵەکان')}
+      >
         <View
           style={[
             styles.searchBox,
             {
-              backgroundColor: colors.surfaceSecondary,
-              borderColor: colors.cardBorder,
-              flexDirection: isRTL ? 'row-reverse' : 'row'
+              backgroundColor: 'rgba(255, 255, 255, 0.22)',
+              borderColor: 'transparent',
+              flexDirection: isRTL ? 'row-reverse' : 'row',
+              borderRadius: 14,
+              paddingHorizontal: 12,
+              height: 44
             }
           ]}
         >
-          <Ionicons name="search-outline" size={18} color={colors.textMuted} />
+          <Ionicons name="search-outline" size={18} color="rgba(255, 255, 255, 0.85)" />
           <TextInput
             placeholder={t('transactions.search_placeholder')}
-            placeholderTextColor={colors.textMuted}
+            placeholderTextColor="rgba(255, 255, 255, 0.70)"
             value={search}
             onChangeText={setSearch}
             textAlign={isRTL ? 'right' : 'left'}
-            style={[styles.searchInput, { color: colors.textPrimary }]}
+            style={[styles.searchInput, { color: '#FFFFFF' }]}
           />
           {search ? (
             <TouchableOpacity onPress={() => setSearch('')}>
-              <Ionicons name="close-circle" size={18} color={colors.textMuted} />
+              <Ionicons name="close-circle" size={18} color="rgba(255, 255, 255, 0.90)" />
             </TouchableOpacity>
           ) : null}
         </View>
+      </CurvedHeader>
 
-        {/* Type filter chips & CSV Export */}
+      {/* Type filter chips & CSV Export */}
+      <View style={[styles.chipsContainer, { backgroundColor: colors.background }]}>
         <View style={[styles.chipsRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
           {(['all', 'expense', 'income', 'transfer'] as const).map((tp) => {
             const isSelected = selectedType === tp;
@@ -251,8 +257,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     minWidth: 0
   },
+  chipsContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 6
+  },
   chipsRow: {
-    marginTop: 10,
     alignItems: 'center'
   },
   filterChip: {

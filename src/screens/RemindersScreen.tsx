@@ -25,6 +25,7 @@ import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 import { AppDialog } from '../components/common/AppDialog';
 import { scheduleReminder, cancelReminder } from '../services/notifications';
 
@@ -149,6 +150,11 @@ export const RemindersScreen: React.FC<{ navigation: any }> = ({ navigation }) =
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <CurvedHeader
+        title={t('reminders.title', 'وەبیرهێنانەوەکان')}
+        showBack={Boolean(navigation?.canGoBack && navigation.canGoBack())}
+        onBack={() => navigation?.goBack?.()}
+      />
       <AuroraBackground />
       <FlatList
         data={reminders}

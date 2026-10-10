@@ -64,12 +64,25 @@ export function getNumberLocale(): string {
  * and mixing digit systems between a keypad, a chart and a list is worse than
  * one consistent set.
  */
+import i18n, { isRTLLanguage } from '../i18n';
+
 export function formatCurrency(
   amount: number,
   currencyCode: string = 'IQD',
-  options?: { showSymbol?: boolean; isRTL?: boolean; locale?: string }
+  options?: { showSymbol?: boolean; isRTL?: boolean; locale?: string; language?: string }
 ): string {
-  const symbol = getCurrencySymbol(currencyCode);
+  const isRTL =
+    options?.isRTL ??
+    (options?.language
+      ? isRTLLanguage(options.language)
+      : i18n?.isInitialized
+      ? isRTLLanguage(i18n.language)
+      : false);
+
+  const symbol = getCurrencySymbol(
+    currencyCode,
+    options?.language ?? isRTL
+  );
   const decimals = currencyDecimals(currencyCode);
   const value = roundMoney(amount, currencyCode);
 
@@ -86,10 +99,19 @@ export function formatCurrency(
 
   if (!showSymbol) return `${sign}${formattedNumber}`;
 
-  // Right-to-left scripts put the symbol after the figure.
-  return options?.isRTL
-    ? `${sign}${formattedNumber} ${symbol}`
-    : `${sign}${symbol}${formattedNumber}`;
+  // Right-to-left scripts put the symbol after the figure with space
+  if (isRTL) {
+    return `${sign}${formattedNumber} ${symbol}`;
+  }
+
+  // Left-to-right (English, etc.):
+  // If symbol is single-character non-letter currency sign ($, €, £, etc.), place before number without space
+  if (symbol.length === 1 && !/[a-zA-Z]/.test(symbol)) {
+    return `${sign}${symbol}${formattedNumber}`;
+  }
+
+  // Multi-character code or letters (e.g. IQD, CHF, SEK, kr): place after number with a space
+  return `${sign}${formattedNumber} ${symbol}`;
 }
 
 /** Plain number formatting, for anything that is not money. */

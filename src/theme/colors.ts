@@ -79,13 +79,16 @@ type TileSet = [SchemeTile, SchemeTile, SchemeTile, SchemeTile];
 export type WalletStyle = 'plain' | 'filled' | 'pastel';
 
 export type ColorSchemeId =
+  | 'berry'
+  | 'sunset'
+  | 'ocean'
+  | 'lemon'
   | 'sefeq'
   | 'kani'
   | 'zumurrud'
   | 'mor'
   | 'dureng'
-  | 'bento'
-  | 'sunset';
+  | 'bento';
 
 /**
  * A palette is one shared neutral/semantic base (near-black ink on an
@@ -101,26 +104,26 @@ type BaseLayer = Omit<
 >;
 
 const baseLight: BaseLayer = {
-  background: '#FBF5EE',
+  background: '#F9F8FD',
   surface: '#FFFFFF',
-  surfaceSecondary: '#F5E9DC',
-  surfaceSubtle: '#EFDDC9',
-  cardBorder: '#EDDBC4',
-  divider: '#F2E6D6',
-  textPrimary: '#2A1D1A',
-  textSecondary: '#6E5B4E',
-  textMuted: '#A6907C',
+  surfaceSecondary: '#F0EEF8',
+  surfaceSubtle: '#E6E4F0',
+  cardBorder: '#E2E0ED',
+  divider: '#EDECF4',
+  textPrimary: '#1A1A2E',
+  textSecondary: '#5E5C72',
+  textMuted: '#9896A8',
   textInverse: '#FFFFFF',
-  glass: 'rgba(255, 255, 255, 0.72)',
-  glassStrong: 'rgba(255, 255, 255, 0.88)',
+  glass: 'rgba(255, 255, 255, 0.78)',
+  glassStrong: 'rgba(255, 255, 255, 0.92)',
   glassEdge: 'rgba(255, 255, 255, 0.95)',
-  hairline: 'rgba(42, 29, 26, 0.07)',
-  shadowColor: '#2A1D1A',
+  hairline: 'rgba(26, 26, 46, 0.06)',
+  shadowColor: '#1A1A2E',
 
-  expense: '#B8362B',
-  expenseMuted: '#F8E2DE',
+  expense: '#C23030',
+  expenseMuted: '#FDE8E8',
   income: '#0E8F6B',
-  incomeMuted: '#DFF3EA',
+  incomeMuted: '#DFFAEF',
   transfer: '#5C6B8A',
   transferMuted: '#E8ECF3',
   debtLent: '#3D7A5C',
@@ -129,32 +132,32 @@ const baseLight: BaseLayer = {
   debtBorrowedMuted: '#F7E4DA',
 
   warning: '#B87333',
-  warningMuted: '#F5E7D3',
-  danger: '#B8362B',
+  warningMuted: '#FDF2E4',
+  danger: '#C23030',
   success: '#0E8F6B'
 };
 
 const baseDark: BaseLayer = {
-  background: '#1C1220',
-  surface: '#241A2B',
-  surfaceSecondary: '#2E2233',
-  surfaceSubtle: '#3A2C40',
-  cardBorder: '#3A2C40',
-  divider: '#2E2233',
-  textPrimary: '#F7EEE4',
-  textSecondary: '#B7A3A8',
-  textMuted: '#7C6870',
+  background: '#0E0E16',
+  surface: '#17171F',
+  surfaceSecondary: '#1F1F2A',
+  surfaceSubtle: '#292938',
+  cardBorder: '#2E2E3E',
+  divider: '#1F1F2A',
+  textPrimary: '#F0EFF5',
+  textSecondary: '#A8A6B8',
+  textMuted: '#6E6C80',
   textInverse: '#FFFFFF',
-  glass: 'rgba(36, 26, 43, 0.75)',
-  glassStrong: 'rgba(46, 34, 51, 0.85)',
-  glassEdge: 'rgba(255, 255, 255, 0.10)',
-  hairline: 'rgba(255, 255, 255, 0.08)',
+  glass: 'rgba(23, 23, 31, 0.80)',
+  glassStrong: 'rgba(31, 31, 42, 0.88)',
+  glassEdge: 'rgba(255, 255, 255, 0.08)',
+  hairline: 'rgba(255, 255, 255, 0.06)',
   shadowColor: '#000000',
 
   expense: '#E8756A',
-  expenseMuted: '#3A1E1C',
+  expenseMuted: '#2E1A18',
   income: '#6FCBA4',
-  incomeMuted: '#1B332B',
+  incomeMuted: '#152E24',
   transfer: '#8CA0C4',
   transferMuted: '#232C3E',
   debtLent: '#6FCBA4',
@@ -163,7 +166,7 @@ const baseDark: BaseLayer = {
   debtBorrowedMuted: '#3A2B18',
 
   warning: '#F2C572',
-  warningMuted: '#3A2E18',
+  warningMuted: '#2E2610',
   danger: '#E8756A',
   success: '#6FCBA4'
 };
@@ -191,6 +194,57 @@ interface SchemeDef {
 }
 
 export const COLOR_SCHEMES: Record<ColorSchemeId, SchemeDef> = {
+  // "هەنار" — Berry / Pomegranate. Sabata signature brand palette.
+  berry: {
+    nameKey: 'berry',
+    light: {
+      accent: '#A626C9',
+      accentMuted: '#F5EAFD',
+      heroGradient: ['#FF3E8A', '#B033EA', '#7B2FF7'],
+      heroGradientRich: ['#FF3E8A', '#D932B8', '#A833E0', '#7B2FF7'],
+      heroOnGradient: '#FFFFFF',
+      cardGlow: 'rgba(166, 38, 201, 0.22)',
+      aurora: ['#F5EAFD', '#EBD4FB', '#DFBAF8'],
+      auroraOpacity: [0.5, 0.4, 0.3],
+      tiles: [
+        { bg: '#F5EAFD', fg: '#A626C9' },
+        { bg: '#FFEBF3', fg: '#FF3E8A' },
+        { bg: '#EDE6FD', fg: '#7B2FF7' },
+        { bg: '#F5EAFD', fg: '#A626C9' }
+      ],
+      walletStyle: 'filled',
+      walletCards: [
+        { bg: '#FF3E8A', bg2: '#B033EA', fg: '#FFFFFF' },
+        { bg: '#7B2FF7', bg2: '#A626C9', fg: '#FFFFFF' },
+        { bg: '#B033EA', bg2: '#FF3E8A', fg: '#FFFFFF' },
+        { bg: '#9122B0', bg2: '#7B2FF7', fg: '#FFFFFF' }
+      ]
+    },
+    dark: {
+      accent: '#D494FF',
+      accentMuted: '#26162E',
+      heroGradient: ['#F0367E', '#9E24D4', '#6E28E6'],
+      heroGradientRich: ['#2E1038', '#5E1B73', '#9E24D4', '#F0367E'],
+      heroOnGradient: '#FFFFFF',
+      cardGlow: 'rgba(212, 148, 255, 0.3)',
+      aurora: ['#5E1B73', '#9E24D4', '#2E1038'],
+      auroraOpacity: [0.55, 0.35, 0.4],
+      tiles: [
+        { bg: '#26162E', fg: '#D494FF' },
+        { bg: '#361524', fg: '#FF75AA' },
+        { bg: '#22163A', fg: '#A57BF5' },
+        { bg: '#26162E', fg: '#D494FF' }
+      ],
+      walletStyle: 'filled',
+      walletCards: [
+        { bg: '#A8255B', bg2: '#6E28E6', fg: '#FFFFFF' },
+        { bg: '#541FB3', bg2: '#9E24D4', fg: '#FFFFFF' },
+        { bg: '#7E1FB0', bg2: '#F0367E', fg: '#FFFFFF' },
+        { bg: '#6E28E6', bg2: '#541FB3', fg: '#FFFFFF' }
+      ]
+    }
+  },
+
   // "شەفەق" — Şefeq / Dawn. Terracotta through plum and gold. The default.
   sefeq: {
     nameKey: 'sefeq',
@@ -386,60 +440,161 @@ export const COLOR_SCHEMES: Record<ColorSchemeId, SchemeDef> = {
     }
   },
 
-  // "خۆرئاوای شار" — City sunset. Deep purple through magenta and pink into
-  // coral, on the header and on gradient wallet cards.
+  // "خۆرئاوا" — Sunset. Sabata warm sunset gradient: #FF8A00 -> #FF2E63.
   sunset: {
     nameKey: 'sunset',
     light: {
-      accent: '#C23A78',
-      accentMuted: '#FBE3EF',
-      heroGradient: ['#2B1B5E', '#A13F86', '#FF8A5C'],
-      heroGradientRich: ['#2B1B5E', '#7A2E86', '#D14E7A', '#FF8A5C'],
+      accent: '#E0264E',
+      accentMuted: '#FFECEE',
+      heroGradient: ['#FF8A00', '#FF5A36', '#FF2E63'],
+      heroGradientRich: ['#FF8A00', '#FF6622', '#FF4545', '#FF2E63'],
       heroOnGradient: '#FFFFFF',
-      cardGlow: 'rgba(194, 58, 120, 0.24)',
-      aurora: ['#F7C3D6', '#FFD6C2', '#E6D8F5'],
-      auroraOpacity: [0.45, 0.35, 0.3],
+      cardGlow: 'rgba(224, 38, 78, 0.22)',
+      aurora: ['#FFECEE', '#FFE5D9', '#FFD8DC'],
+      auroraOpacity: [0.5, 0.4, 0.3],
       tiles: [
-        { bg: '#ECE6F8', fg: '#4A2A8A' },
-        { bg: '#F6E2F3', fg: '#8A2E86' },
-        { bg: '#FBE3EF', fg: '#C23A78' },
-        { bg: '#FFE7DC', fg: '#D9562E' }
+        { bg: '#FFECEE', fg: '#E0264E' },
+        { bg: '#FFF0E5', fg: '#FF8A00' },
+        { bg: '#FFEBF0', fg: '#FF2E63' },
+        { bg: '#FFECEE', fg: '#E0264E' }
       ],
       walletStyle: 'filled',
       walletCards: [
-        { bg: '#2B1B5E', bg2: '#7A2E86', fg: '#FFFFFF' },
-        { bg: '#7A2E86', bg2: '#D14E7A', fg: '#FFFFFF' },
-        { bg: '#C23A78', bg2: '#FF8A5C', fg: '#FFFFFF' },
-        { bg: '#4A2A8A', bg2: '#C23A78', fg: '#FFFFFF' }
+        { bg: '#FF8A00', bg2: '#FF5A36', fg: '#FFFFFF' },
+        { bg: '#FF2E63', bg2: '#E0264E', fg: '#FFFFFF' },
+        { bg: '#FF5A36', bg2: '#FF2E63', fg: '#FFFFFF' },
+        { bg: '#D92045', bg2: '#FF8A00', fg: '#FFFFFF' }
       ]
     },
     dark: {
-      accent: '#FF8AB8',
-      accentMuted: '#3A1A33',
-      heroGradient: ['#1E1242', '#8A3478', '#F07A4E'],
-      heroGradientRich: ['#1E1242', '#5E2270', '#B8406C', '#F07A4E'],
+      accent: '#FF7A8F',
+      accentMuted: '#2E151A',
+      heroGradient: ['#FF7A00', '#D63B3B', '#F0265A'],
+      heroGradientRich: ['#3A1208', '#6E2215', '#B82835', '#F0265A'],
       heroOnGradient: '#FFFFFF',
-      cardGlow: 'rgba(255, 138, 184, 0.3)',
-      aurora: ['#5E2270', '#B8406C', '#1E1242'],
-      auroraOpacity: [0.5, 0.3, 0.4],
+      cardGlow: 'rgba(255, 122, 143, 0.3)',
+      aurora: ['#6E2215', '#B82835', '#2E151A'],
+      auroraOpacity: [0.55, 0.35, 0.4],
       tiles: [
-        { bg: '#2E2350', fg: '#B9A6F2' },
-        { bg: '#35204A', fg: '#D69BE8' },
-        { bg: '#3A1A33', fg: '#FF8AB8' },
-        { bg: '#3D2219', fg: '#FF9E7A' }
+        { bg: '#2E151A', fg: '#FF7A8F' },
+        { bg: '#361D12', fg: '#FFA64D' },
+        { bg: '#33121A', fg: '#FF6B8B' },
+        { bg: '#2E151A', fg: '#FF7A8F' }
       ],
       walletStyle: 'filled',
       walletCards: [
-        { bg: '#1E1242', bg2: '#5E2270', fg: '#FFFFFF' },
-        { bg: '#5E2270', bg2: '#B8406C', fg: '#FFFFFF' },
-        { bg: '#B8406C', bg2: '#F07A4E', fg: '#FFFFFF' },
-        { bg: '#3A2272', bg2: '#B8406C', fg: '#FFFFFF' }
+        { bg: '#B34A00', bg2: '#F0265A', fg: '#FFFFFF' },
+        { bg: '#B81D43', bg2: '#E04A15', fg: '#FFFFFF' },
+        { bg: '#C2352B', bg2: '#F0265A', fg: '#FFFFFF' },
+        { bg: '#8F1532', bg2: '#B34A00', fg: '#FFFFFF' }
+      ]
+    }
+  },
+
+  // "زەریا" — Ocean. Sabata turquoise & ocean blue: #00D2B4 -> #0A6CFF.
+  ocean: {
+    nameKey: 'ocean',
+    light: {
+      accent: '#0A5FE0',
+      accentMuted: '#E8F1FF',
+      heroGradient: ['#00D2B4', '#0099DD', '#0A6CFF'],
+      heroGradientRich: ['#00D2B4', '#00B8D4', '#0084FF', '#0A6CFF'],
+      heroOnGradient: '#FFFFFF',
+      cardGlow: 'rgba(10, 95, 224, 0.22)',
+      aurora: ['#E8F1FF', '#E0F8F5', '#D2EAFF'],
+      auroraOpacity: [0.5, 0.4, 0.3],
+      tiles: [
+        { bg: '#E8F1FF', fg: '#0A5FE0' },
+        { bg: '#E0F9F5', fg: '#00A891' },
+        { bg: '#E3F2FD', fg: '#0A6CFF' },
+        { bg: '#E8F1FF', fg: '#0A5FE0' }
+      ],
+      walletStyle: 'filled',
+      walletCards: [
+        { bg: '#00D2B4', bg2: '#0099DD', fg: '#FFFFFF' },
+        { bg: '#0A6CFF', bg2: '#0A5FE0', fg: '#FFFFFF' },
+        { bg: '#0099DD', bg2: '#0A6CFF', fg: '#FFFFFF' },
+        { bg: '#084AB3', bg2: '#00D2B4', fg: '#FFFFFF' }
+      ]
+    },
+    dark: {
+      accent: '#6FAEFF',
+      accentMuted: '#132033',
+      heroGradient: ['#00BFA3', '#007ACC', '#0A5FE6'],
+      heroGradientRich: ['#061A26', '#0E364A', '#0A5099', '#0A5FE6'],
+      heroOnGradient: '#FFFFFF',
+      cardGlow: 'rgba(111, 174, 255, 0.3)',
+      aurora: ['#0E364A', '#0A5099', '#132033'],
+      auroraOpacity: [0.55, 0.35, 0.4],
+      tiles: [
+        { bg: '#132033', fg: '#6FAEFF' },
+        { bg: '#0F2B28', fg: '#4DE6D1' },
+        { bg: '#13263E', fg: '#54A0FF' },
+        { bg: '#132033', fg: '#6FAEFF' }
+      ],
+      walletStyle: 'filled',
+      walletCards: [
+        { bg: '#008572', bg2: '#0A5FE6', fg: '#FFFFFF' },
+        { bg: '#074BB3', bg2: '#0099CC', fg: '#FFFFFF' },
+        { bg: '#006E99', bg2: '#0A5FE6', fg: '#FFFFFF' },
+        { bg: '#053785', bg2: '#008572', fg: '#FFFFFF' }
+      ]
+    }
+  },
+
+  // "لیمۆیی" — Lemon. Sabata bright yellow/gold: #FFE44D -> #FF9900.
+  lemon: {
+    nameKey: 'lemon',
+    light: {
+      accent: '#D48800',
+      accentMuted: '#FFF8D6',
+      heroGradient: ['#FFE44D', '#FFC400', '#FF9900'],
+      heroGradientRich: ['#FFF485', '#FFE44D', '#FFC400', '#FF9900'],
+      heroOnGradient: '#16130F',
+      cardGlow: 'rgba(212, 136, 0, 0.22)',
+      aurora: ['#FFF8D6', '#FFF2B8', '#FFE899'],
+      auroraOpacity: [0.5, 0.4, 0.3],
+      tiles: [
+        { bg: '#FFF8D6', fg: '#B37200' },
+        { bg: '#FFF3C2', fg: '#D48800' },
+        { bg: '#FFFDE8', fg: '#8C5B00' },
+        { bg: '#FFF8D6', fg: '#B37200' }
+      ],
+      walletStyle: 'filled',
+      walletCards: [
+        { bg: '#FFC400', bg2: '#FF9900', fg: '#16130F' },
+        { bg: '#FFE44D', bg2: '#FFC400', fg: '#16130F' },
+        { bg: '#FF9900', bg2: '#E68000', fg: '#FFFFFF' },
+        { bg: '#E68000', bg2: '#FFC400', fg: '#FFFFFF' }
+      ]
+    },
+    dark: {
+      accent: '#FFD84D',
+      accentMuted: '#2B2612',
+      heroGradient: ['#FFDD33', '#E6A800', '#CC7A00'],
+      heroGradientRich: ['#2B2308', '#544208', '#997300', '#FFDD33'],
+      heroOnGradient: '#16130F',
+      cardGlow: 'rgba(255, 216, 77, 0.3)',
+      aurora: ['#544208', '#997300', '#2B2612'],
+      auroraOpacity: [0.55, 0.35, 0.4],
+      tiles: [
+        { bg: '#2B2612', fg: '#FFD84D' },
+        { bg: '#362E12', fg: '#FFE27A' },
+        { bg: '#2B220B', fg: '#FFCC33' },
+        { bg: '#2B2612', fg: '#FFD84D' }
+      ],
+      walletStyle: 'filled',
+      walletCards: [
+        { bg: '#B38300', bg2: '#E6A800', fg: '#FFFFFF' },
+        { bg: '#995C00', bg2: '#CC7A00', fg: '#FFFFFF' },
+        { bg: '#CC8800', bg2: '#FFDD33', fg: '#16130F' },
+        { bg: '#804C00', bg2: '#B38300', fg: '#FFFFFF' }
       ]
     }
   }
 };
 
-export const DEFAULT_SCHEME: ColorSchemeId = 'sefeq';
+export const DEFAULT_SCHEME: ColorSchemeId = 'berry';
 
 /** Relative luminance (0–1) of a #RRGGBB colour. */
 export function luminance(hex: string): number {

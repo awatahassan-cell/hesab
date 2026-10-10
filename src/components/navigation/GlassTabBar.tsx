@@ -23,18 +23,22 @@ export const TAB_BAR_HEIGHT = 62;
 
 const ICONS: Record<string, IconName> = {
   Home: 'home',
+  Transactions: 'list',
   GoalsAndBudgets: 'target',
   Add: 'plus',
   Reports: 'chart',
+  Settings: 'settings',
   Menu: 'grid'
 };
 
 // Keys, not text: the map is module scope, so translation happens at render.
 const LABEL_KEYS: Record<string, string> = {
   Home: 'tabs.home',
+  Transactions: 'tabs.transactions',
   GoalsAndBudgets: 'tabs.goals_short',
   Add: '',
   Reports: 'tabs.reports_short',
+  Settings: 'tabs.settings',
   Menu: 'tabs.more'
 };
 
@@ -87,7 +91,7 @@ export const GlassTabBar: React.FC<BottomTabBarProps> = ({
         tint={colors.blurTint}
         // Android renders a plain translucent view unless a blur method is
         // named; this one falls back to 'none' below Android 12.
-        blurMethod="dimezisBlurViewSdk31Plus"
+        blurMethod={Platform.OS === 'android' ? 'none' : undefined}
         style={StyleSheet.absoluteFill}
       />
       <View
@@ -235,10 +239,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   addBtn: {
-    width: 46,
-    height: 40,
+    width: 50,
+    height: 46,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: -12,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.45,
     shadowRadius: 12,

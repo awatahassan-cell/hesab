@@ -21,12 +21,13 @@ import { MonthCalendar } from '../components/charts/MonthCalendar';
 import { TrendChart } from '../components/charts/TrendChart';
 import { fillMonths, recentMonthKeys, totalsByDay, totalsByMonth, PeriodTotal } from '../utils/aggregate';
 import { formatLocalDate } from '../utils/dates';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 
 interface ReportsScreenProps {
   navigation: any;
 }
 
-export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
+export const ReportsScreen: React.FC<ReportsScreenProps> = ({ navigation }) => {
   const { colors, typography, spacing, radius } = useTheme();
   const { t, i18n } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
@@ -166,17 +167,10 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
     : Math.max(insets.bottom, 16) + 70;
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: topSafeInset }]}>
-      <AuroraBackground />
-      <ScrollView
-        contentContainerStyle={{
-          padding: 16,
-          paddingTop: 4,
-          paddingBottom: bottomSafePadding
-        }}
-        showsVerticalScrollIndicator={false}
+    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <CurvedHeader
+        title={t('tabs.reports', 'ڕاپۆرتەکان')}
       >
-        {/* Period Selector */}
         <SegmentedControl
           options={[
             { value: 'day', label: t('reports.period_day') },
@@ -191,6 +185,16 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
             setSelectedCatId(undefined);
           }}
         />
+      </CurvedHeader>
+
+      <ScrollView
+        contentContainerStyle={{
+          padding: 16,
+          paddingTop: 10,
+          paddingBottom: bottomSafePadding
+        }}
+        showsVerticalScrollIndicator={false}
+      >
 
         {period === 'custom' && (
           <View style={[styles.rangeRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
@@ -304,11 +308,32 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = () => {
         {/* Report View Mode Tabs */}
         <View style={{ marginVertical: 8 }}>
           <SegmentedControl
+            iconOnly
             options={[
-              { value: 'category', label: t('reports.category_breakdown') },
-              { value: 'trend', label: t('reports.monthly_trends') },
-              { value: 'calendar', label: t('reports.calendar_view') },
-              { value: 'top', label: t('reports.top_expenses') }
+              {
+                value: 'category',
+                label: t('reports.category_breakdown'),
+                icon: 'pie-chart-outline',
+                selectedIcon: 'pie-chart'
+              },
+              {
+                value: 'trend',
+                label: t('reports.monthly_trends'),
+                icon: 'trending-up-outline',
+                selectedIcon: 'trending-up'
+              },
+              {
+                value: 'calendar',
+                label: t('reports.calendar_view'),
+                icon: 'calendar-outline',
+                selectedIcon: 'calendar'
+              },
+              {
+                value: 'top',
+                label: t('reports.top_expenses'),
+                icon: 'trophy-outline',
+                selectedIcon: 'trophy'
+              }
             ]}
             selected={activeTab}
             onSelect={(v: any) => setActiveTab(v)}

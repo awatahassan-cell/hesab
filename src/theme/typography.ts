@@ -28,18 +28,18 @@ export const typography = {
   // Hero balance display
   hero: {
     fontFamily: FONT_FAMILY_BOLD,
-    fontSize: 34,
+    fontSize: 38,
     fontWeight: '700' as const,
-    letterSpacing: -0.5,
+    letterSpacing: -0.8,
     fontVariant: ['tabular-nums']
   } as TextStyle,
 
   // Section titles
   titleLarge: {
     fontFamily: FONT_FAMILY_BOLD,
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '700' as const,
-    letterSpacing: -0.2
+    letterSpacing: -0.3
   } as TextStyle,
 
   titleMedium: {
@@ -72,23 +72,23 @@ export const typography = {
   // Body text
   body: {
     fontFamily: FONT_FAMILY,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '400' as const,
-    lineHeight: 22
+    lineHeight: 24
   } as TextStyle,
 
   bodySemibold: {
     fontFamily: FONT_FAMILY_SEMIBOLD,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600' as const,
-    lineHeight: 22
+    lineHeight: 24
   } as TextStyle,
 
   bodySmall: {
     fontFamily: FONT_FAMILY,
     fontSize: 13,
     fontWeight: '400' as const,
-    lineHeight: 18
+    lineHeight: 20
   } as TextStyle,
 
   // Metadata, dates, tags

@@ -3,6 +3,7 @@ import {
   AccessibilityInfo,
   Animated,
   Easing,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -21,6 +22,8 @@ interface InsightStoriesProps {
   stories: Story[];
   currency: string;
   isRTL: boolean;
+  fullScreen?: boolean;
+  onClose?: () => void;
 }
 
 const STORY_MS = 5000;
@@ -52,7 +55,13 @@ const ICONS: Record<Story['kind'], keyof typeof Ionicons.glyphMap> = {
  * a finance screen shouldn't loop at someone — and never auto-advances when
  * the system asks for reduced motion.
  */
-export const InsightStories: React.FC<InsightStoriesProps> = ({ stories, currency, isRTL }) => {
+export const InsightStories: React.FC<InsightStoriesProps> = ({
+  stories,
+  currency,
+  isRTL,
+  fullScreen = false,
+  onClose
+}) => {
   const { t } = useTranslation();
   const { radius } = useTheme();
   const count = stories.length;
@@ -283,7 +292,11 @@ export const InsightStories: React.FC<InsightStoriesProps> = ({ stories, currenc
 
   return (
     <View
-      style={[styles.card, { borderRadius: radius.xl }]}
+      style={[
+        styles.card,
+        fullScreen && styles.cardFullScreen,
+        { borderRadius: fullScreen ? 28 : radius.xl }
+      ]}
       accessible
       accessibilityRole="adjustable"
       accessibilityLabel={`${t('stories.a11y', { index: index + 1, count })}. ${tag}. ${title}. ${big}. ${body}`}
@@ -316,34 +329,46 @@ export const InsightStories: React.FC<InsightStoriesProps> = ({ stories, currenc
       )}
 
       <View style={[styles.eyebrow, { flexDirection: row }]}>
-        <View style={[styles.tagChip, { flexDirection: row }]}>
-          <Ionicons name={ICONS[story.kind]} size={12} color="#FFFFFF" />
-          <Text style={styles.tagText}>{tag}</Text>
+        <View style={{ flexDirection: row, alignItems: 'center', gap: 8 }}>
+          <View style={[styles.tagChip, { flexDirection: row }]}>
+            <Ionicons name={ICONS[story.kind]} size={fullScreen ? 14 : 12} color="#FFFFFF" />
+            <Text style={[styles.tagText, fullScreen && { fontSize: 13 }]}>{tag}</Text>
+          </View>
+          {count > 1 && (
+            <Text style={[styles.counter, fullScreen && { fontSize: 13 }]}>
+              {index + 1}/{count}
+            </Text>
+          )}
         </View>
-        {count > 1 && (
-          <Text style={styles.counter}>
-            {index + 1}/{count}
-          </Text>
+
+        {fullScreen && onClose && (
+          <Pressable
+            onPress={onClose}
+            style={styles.fullScreenCloseBtn}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
+            <Ionicons name="close" size={24} color="#FFFFFF" />
+          </Pressable>
         )}
       </View>
 
-      <Text style={[styles.title, { textAlign: align }]} numberOfLines={1}>
+      <Text style={[styles.title, fullScreen && styles.titleFullScreen, { textAlign: align }]} numberOfLines={1}>
         {title}
       </Text>
-      <Text style={[styles.big, { textAlign: align }]} numberOfLines={1} adjustsFontSizeToFit>
+      <Text style={[styles.big, fullScreen && styles.bigFullScreen, { textAlign: align }]} numberOfLines={1} adjustsFontSizeToFit>
         {big}
       </Text>
-      <Text style={[styles.body, { textAlign: align }]} numberOfLines={2}>
+      <Text style={[styles.body, fullScreen && styles.bodyFullScreen, { textAlign: align }]} numberOfLines={fullScreen ? 4 : 2}>
         {body}
       </Text>
 
-      <View style={styles.viz}>{viz}</View>
+      <View style={[styles.viz, fullScreen && styles.vizFullScreen]}>{viz}</View>
 
       {count > 1 && (
         <>
           {/* Leading half goes back, trailing half goes on — mirrored in RTL. */}
           <Pressable
-            style={[styles.zone, isRTL ? { right: 0 } : { left: 0 }]}
+            style={[styles.zone, fullScreen && { top: 90 }, isRTL ? { right: 0 } : { left: 0 }]}
             onPress={() => go(-1)}
             onLongPress={() => setPaused(true)}
             onPressOut={() => paused && setPaused(false)}
@@ -351,7 +376,7 @@ export const InsightStories: React.FC<InsightStoriesProps> = ({ stories, currenc
             importantForAccessibility="no"
           />
           <Pressable
-            style={[styles.zone, isRTL ? { left: 0 } : { right: 0 }]}
+            style={[styles.zone, fullScreen && { top: 90 }, isRTL ? { left: 0 } : { right: 0 }]}
             onPress={() => go(1)}
             onLongPress={() => setPaused(true)}
             onPressOut={() => paused && setPaused(false)}
@@ -375,6 +400,44 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 16,
     overflow: 'hidden'
+  },
+  cardFullScreen: {
+    minHeight: undefined,
+    flex: 1,
+    marginTop: 0,
+    marginBottom: 0,
+    paddingTop: Platform.OS === 'android' ? 44 : 52,
+    paddingBottom: Platform.OS === 'android' ? 36 : 44,
+    paddingHorizontal: 22,
+    overflow: 'hidden'
+  },
+  fullScreenCloseBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10
+  },
+  titleFullScreen: {
+    fontSize: 20,
+    marginTop: 20
+  },
+  bigFullScreen: {
+    fontSize: 44,
+    letterSpacing: -1,
+    marginTop: 6
+  },
+  bodyFullScreen: {
+    fontSize: 15,
+    lineHeight: 24,
+    marginTop: 8
+  },
+  vizFullScreen: {
+    marginTop: 'auto',
+    paddingTop: 24,
+    paddingBottom: 24
   },
   disc: {
     position: 'absolute',

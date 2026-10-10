@@ -26,8 +26,9 @@ import { AuroraBackground } from '../components/common/AuroraBackground';
 import { AppDialog } from '../components/common/AppDialog';
 import { FONT_FAMILY, FONT_FAMILY_SEMIBOLD, FONT_FAMILY_BOLD } from '../theme/typography';
 import { elevation } from '../theme/spacing';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 
-export const GoalsAndBudgetsScreen: React.FC = () => {
+export const GoalsAndBudgetsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, radius } = useTheme();
   const { t } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
@@ -153,64 +154,77 @@ export const GoalsAndBudgetsScreen: React.FC = () => {
   const safeCategories = (categories || []).filter((c) => c && c.id && c.type === 'expense');
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: topSafeInset }]}>
-      <AuroraBackground />
-      {/* Sekkeh Top Segmented Tabs: بودجەکان | ئامانجەکان | وەبیرهێنەرەوەکان */}
-      <View style={[styles.tabSelectorRow, { backgroundColor: colors.surface, borderColor: colors.cardBorder, marginTop: 6 }]}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => setActiveTab('budgets')}
-          style={[
-            styles.tabSelectorBtn,
-            activeTab === 'budgets' && { backgroundColor: colors.accent, borderRadius: 8 }
-          ]}
-        >
-          <Text
+    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <CurvedHeader
+        title={t('tabs.goals_budgets', 'بودجە و ئامانجەکان')}
+        showBack={Boolean(navigation?.canGoBack && navigation.canGoBack())}
+        onBack={() => navigation?.goBack?.()}
+      >
+        <View style={[styles.tabSelectorRow, { backgroundColor: 'rgba(255, 255, 255, 0.22)', borderColor: 'transparent', marginTop: 4 }]}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setActiveTab('budgets')}
             style={[
-              styles.tabSelectorText,
-              { color: activeTab === 'budgets' ? '#FFFFFF' : colors.textMuted }
+              styles.tabSelectorBtn,
+              activeTab === 'budgets' && { backgroundColor: '#FFFFFF', borderRadius: 10 }
             ]}
           >
-            {t('budgets.title')}
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.tabSelectorText,
+                {
+                  color: activeTab === 'budgets' ? colors.accent : '#FFFFFF',
+                  fontFamily: activeTab === 'budgets' ? FONT_FAMILY_BOLD : FONT_FAMILY_SEMIBOLD
+                }
+              ]}
+            >
+              {t('budgets.title')}
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => setActiveTab('goals')}
-          style={[
-            styles.tabSelectorBtn,
-            activeTab === 'goals' && { backgroundColor: colors.accent, borderRadius: 8 }
-          ]}
-        >
-          <Text
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setActiveTab('goals')}
             style={[
-              styles.tabSelectorText,
-              { color: activeTab === 'goals' ? '#FFFFFF' : colors.textMuted }
+              styles.tabSelectorBtn,
+              activeTab === 'goals' && { backgroundColor: '#FFFFFF', borderRadius: 10 }
             ]}
           >
-            {t('goals.savings_goal')}
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.tabSelectorText,
+                {
+                  color: activeTab === 'goals' ? colors.accent : '#FFFFFF',
+                  fontFamily: activeTab === 'goals' ? FONT_FAMILY_BOLD : FONT_FAMILY_SEMIBOLD
+                }
+              ]}
+            >
+              {t('goals.savings_goal')}
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => setActiveTab('reminders')}
-          style={[
-            styles.tabSelectorBtn,
-            activeTab === 'reminders' && { backgroundColor: colors.accent, borderRadius: 8 }
-          ]}
-        >
-          <Text
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setActiveTab('reminders')}
             style={[
-              styles.tabSelectorText,
-              { color: activeTab === 'reminders' ? '#FFFFFF' : colors.textMuted }
+              styles.tabSelectorBtn,
+              activeTab === 'reminders' && { backgroundColor: '#FFFFFF', borderRadius: 10 }
             ]}
           >
-            {t('reminders.instalments')}
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <Text
+              style={[
+                styles.tabSelectorText,
+                {
+                  color: activeTab === 'reminders' ? colors.accent : '#FFFFFF',
+                  fontFamily: activeTab === 'reminders' ? FONT_FAMILY_BOLD : FONT_FAMILY_SEMIBOLD
+                }
+              ]}
+            >
+              {t('reminders.instalments')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </CurvedHeader>
 
       <ScrollView
         contentContainerStyle={[

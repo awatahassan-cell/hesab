@@ -1,16 +1,18 @@
 {
   "expo": {
-    "name": "Hesab",
-    "slug": "hesab-finance",
+    "name": "Dinaro",
+    "slug": "dinaro",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
+    "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "package": "com.hesab.finance",
+      "jsEngine": "hermes",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -38,7 +40,8 @@
         }
       ],
       "expo-secure-store",
-      "expo-notifications"
+      "expo-notifications",
+      "expo-font"
     ],
     "backgroundColor": "#F5F3FC",
     "extra": {

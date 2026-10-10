@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   Animated,
   Easing,
@@ -94,14 +95,11 @@ export const SplashScreen: React.FC = () => {
             ]
           }}
         >
-          <LinearGradient
-            colors={[colors.heroGradient[0], colors.heroGradient[1], colors.heroGradient[2]]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={[styles.mark, { shadowColor: colors.accent }]}
-          >
-            <Text style={styles.markLetter}>{t('app_name').charAt(0)}</Text>
-          </LinearGradient>
+          <Image
+            source={require('../../assets/icon.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </Animated.View>
 
         <Animated.View
@@ -158,23 +156,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 26
   },
-  mark: {
-    width: 104,
-    height: 104,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.42,
-    shadowRadius: 26,
-    elevation: 14
-  },
-  markLetter: {
-    fontSize: 62,
-    lineHeight: 84,
-    color: '#FFFFFF',
-    fontWeight: '700',
-    includeFontPadding: false
+  logoImage: {
+    width: 112,
+    height: 112,
+    borderRadius: 26,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 12
   },
   name: {
     fontSize: 30,

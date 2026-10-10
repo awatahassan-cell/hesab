@@ -24,7 +24,8 @@ export type IconName =
   | 'cart'
   | 'flag'
   | 'search'
-  | 'settings';
+  | 'settings'
+  | 'list';
 
 interface IconProps {
   name: IconName;
@@ -142,6 +143,9 @@ const PATHS: Record<IconName, (sw: number, fill: string) => React.ReactNode> = {
       <Circle cx="9" cy="7.4" r="2.1" fill="currentColor" />
       <Circle cx="15.4" cy="16.6" r="2.1" fill="currentColor" />
     </>
+  ),
+  list: () => (
+    <Path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
   )
 };
 

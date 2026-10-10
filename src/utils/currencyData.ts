@@ -113,8 +113,79 @@ export function findByCountry(code: string): CountryCurrency | undefined {
   return BY_COUNTRY.get(code?.toUpperCase());
 }
 
-export function getCurrencySymbol(code: string): string {
-  return findByCurrency(code)?.currencySymbol ?? code;
+import i18n, { isRTLLanguage } from '../i18n';
+
+/** Arabic-script symbols for currencies when displayed in RTL languages (Kurdish, Arabic, Persian, Urdu) */
+export const ARABIC_SCRIPT_SYMBOLS: Record<string, string> = {
+  IQD: 'د.ع',
+  SYP: 'ل.س',
+  LBP: 'ل.ل',
+  JOD: 'د.ا',
+  SAR: 'ر.س',
+  AED: 'د.إ',
+  KWD: 'د.ك',
+  QAR: 'ر.ق',
+  BHD: 'د.ب',
+  OMR: 'ر.ع',
+  YER: '﷼',
+  EGP: 'ج.م',
+  SDG: 'ج.س',
+  DZD: 'د.ج',
+  MAD: 'د.م',
+  TND: 'د.ت',
+  LYD: 'ل.د',
+  IRR: '﷼',
+  AFN: '؋'
+};
+
+/** Latin / English representations for currencies whose local symbols are Arabic script */
+export const LATIN_SCRIPT_SYMBOLS: Record<string, string> = {
+  IQD: 'IQD',
+  SYP: 'SYP',
+  LBP: 'LBP',
+  JOD: 'JOD',
+  SAR: 'SAR',
+  AED: 'AED',
+  KWD: 'KWD',
+  QAR: 'QAR',
+  BHD: 'BHD',
+  OMR: 'OMR',
+  YER: 'YER',
+  EGP: 'EGP',
+  SDG: 'SDG',
+  DZD: 'DZD',
+  MAD: 'MAD',
+  TND: 'TND',
+  LYD: 'LYD',
+  IRR: 'IRR',
+  AFN: 'AFN'
+};
+
+export function getCurrencySymbol(code: string, languageOrRtl?: string | boolean): string {
+  if (!code) return '';
+  const upper = code.toUpperCase();
+
+  let isRTL: boolean;
+  if (typeof languageOrRtl === 'boolean') {
+    isRTL = languageOrRtl;
+  } else if (typeof languageOrRtl === 'string') {
+    isRTL = isRTLLanguage(languageOrRtl);
+  } else {
+    const currentLang = i18n?.isInitialized && i18n?.language ? i18n.language : 'ku';
+    isRTL = isRTLLanguage(currentLang);
+  }
+
+  if (isRTL) {
+    if (upper in ARABIC_SCRIPT_SYMBOLS) {
+      return ARABIC_SCRIPT_SYMBOLS[upper];
+    }
+  } else {
+    if (upper in LATIN_SCRIPT_SYMBOLS) {
+      return LATIN_SCRIPT_SYMBOLS[upper];
+    }
+  }
+
+  return findByCurrency(upper)?.currencySymbol ?? upper;
 }
 
 /** True where the app should offer a hand-set rate during onboarding. */

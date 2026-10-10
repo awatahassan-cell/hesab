@@ -14,8 +14,9 @@ import { SegmentedControl } from '../components/common/SegmentedControl';
 import { EmptyState } from '../components/common/EmptyState';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 
-export const DebtsScreen: React.FC = () => {
+export const DebtsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, radius } = useTheme();
   const { t } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
@@ -79,6 +80,11 @@ export const DebtsScreen: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <CurvedHeader
+        title={t('debts.title', 'قەرزەکان')}
+        showBack={Boolean(navigation?.canGoBack && navigation.canGoBack())}
+        onBack={() => navigation?.goBack?.()}
+      />
       <AuroraBackground />
       {/* Top Banner Totals */}
       <View style={[styles.banner, { backgroundColor: colors.surface, borderBottomColor: colors.cardBorder }]}>

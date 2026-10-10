@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle, G } from 'react-native-svg';
@@ -95,7 +95,7 @@ export const HeroDonutCard: React.FC<HeroDonutCardProps> = ({
                 numberOfLines={1}
                 style={[styles.currencyText, activeCurrency === code && styles.currencyTextActive]}
               >
-                {getCurrencySymbol(code)} {code}
+                {getCurrencySymbol(code) === code ? code : `${getCurrencySymbol(code)} ${code}`}
               </Text>
             </View>
           ))}

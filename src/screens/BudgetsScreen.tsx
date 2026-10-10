@@ -10,8 +10,9 @@ import { formatCurrency } from '../utils/currency';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 
-export const BudgetsScreen: React.FC = () => {
+export const BudgetsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, radius } = useTheme();
   const { t } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
@@ -40,6 +41,11 @@ export const BudgetsScreen: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <CurvedHeader
+        title={t('budgets.title', 'بودجەکان')}
+        showBack={Boolean(navigation?.canGoBack && navigation.canGoBack())}
+        onBack={() => navigation?.goBack?.()}
+      />
       <AuroraBackground />
       <FlatList
         data={budgetProgressList}

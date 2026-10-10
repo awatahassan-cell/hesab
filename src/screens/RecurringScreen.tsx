@@ -16,6 +16,7 @@ import { formatLocalDate } from '../utils/dates';
 import { Card } from '../components/common/Card';
 import { EmptyState } from '../components/common/EmptyState';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 import { AppDialog } from '../components/common/AppDialog';
 
 /**
@@ -25,7 +26,7 @@ import { AppDialog } from '../components/common/AppDialog';
  * app is opened rather than firing while the phone sits idle. The next date
  * shown here is when it will post, not a promise about the exact minute.
  */
-export const RecurringScreen: React.FC = () => {
+export const RecurringScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, radius } = useTheme();
   const { t, i18n } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
@@ -77,6 +78,11 @@ export const RecurringScreen: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <CurvedHeader
+        title={t('recurring.title', 'مامەڵە دووبارەبووەوەکان')}
+        showBack={Boolean(navigation?.canGoBack && navigation.canGoBack())}
+        onBack={() => navigation?.goBack?.()}
+      />
       <AuroraBackground />
       <FlatList
         data={rules}

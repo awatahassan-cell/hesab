@@ -220,3 +220,51 @@ export async function scheduleBackupReminder(title: string, body: string): Promi
     return false;
   }
 }
+
+/** Identifier for daily income/expense bookkeeping reminder. */
+const DAILY_REMINDER_ID = 'daily-finance-reminder';
+
+export async function cancelDailyReminder(): Promise<void> {
+  try {
+    await Notifications.cancelScheduledNotificationAsync(DAILY_REMINDER_ID);
+  } catch {
+    // Nothing scheduled or notifications unavailable.
+  }
+}
+
+/**
+ * Schedules a recurring daily reminder at a specific hour and minute
+ * to prompt the user to record daily expenses and incomes.
+ */
+export async function scheduleDailyReminder(
+  hour: number,
+  minute: number,
+  title: string,
+  body: string
+): Promise<boolean> {
+  const granted = await ensureNotificationPermission();
+  if (!granted) return false;
+
+  await cancelDailyReminder();
+
+  try {
+    await Notifications.scheduleNotificationAsync({
+      identifier: DAILY_REMINDER_ID,
+      content: {
+        title,
+        body,
+        sound: true
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour,
+        minute,
+        channelId: Platform.OS === 'android' ? ANDROID_CHANNEL : undefined
+      }
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+

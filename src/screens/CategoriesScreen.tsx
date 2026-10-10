@@ -13,8 +13,9 @@ import { Button } from '../components/common/Button';
 import { SegmentedControl } from '../components/common/SegmentedControl';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { AuroraBackground } from '../components/common/AuroraBackground';
+import { CurvedHeader } from '../components/navigation/CurvedHeader';
 
-export const CategoriesScreen: React.FC = () => {
+export const CategoriesScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   const { colors, typography, radius, categoryPalette } = useTheme();
   const { t } = useTranslation();
   const isRTL = useAppStore((state) => state.isRTL);
@@ -120,8 +121,11 @@ export const CategoriesScreen: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <AuroraBackground />
-      <View style={{ marginHorizontal: 16, marginTop: 12, marginBottom: 8 }}>
+      <CurvedHeader
+        title={t('categories.title', 'پۆلەکان')}
+        showBack={Boolean(navigation?.canGoBack && navigation.canGoBack())}
+        onBack={() => navigation?.goBack?.()}
+      >
         <SegmentedControl
           options={[
             { value: 'expense', label: t('categories.expense_categories') },
@@ -130,7 +134,8 @@ export const CategoriesScreen: React.FC = () => {
           selected={activeTab}
           onSelect={(v: any) => setActiveTab(v)}
         />
-      </View>
+      </CurvedHeader>
+      <AuroraBackground />
 
       <FlatList
         data={filteredCategories}
