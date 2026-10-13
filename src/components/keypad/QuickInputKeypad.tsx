@@ -210,7 +210,8 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 2,
     flex: 1,
-    justifyContent: 'center'
+    flexGrow: 1,
+    justifyContent: 'space-between'
   },
   quickAddRow: {
     flexDirection: 'row',
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
   },
   chip: {
     flex: 1,
-    height: 32,
+    height: 34,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 16,
@@ -246,27 +247,29 @@ const styles = StyleSheet.create({
   },
   chipText: {
     fontFamily: FONT_FAMILY_SEMIBOLD,
-    fontSize: 11.5,
+    fontSize: 12,
     fontWeight: '600',
     fontVariant: ['tabular-nums']
   },
   grid: {
     gap: 6,
     flex: 1,
+    flexGrow: 1,
     justifyContent: 'space-between'
   },
   row: {
     flexDirection: 'row',
     gap: 6,
     flex: 1,
-    minHeight: 44,
-    maxHeight: 52
+    flexGrow: 1,
+    minHeight: 46,
+    maxHeight: 74
   },
   key: {
     flex: 1,
     height: '100%',
-    minHeight: 44,
-    maxHeight: 52,
+    minHeight: 46,
+    maxHeight: 74,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 16,
