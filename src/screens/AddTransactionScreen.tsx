@@ -72,6 +72,18 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showCategoryPickerModal, setShowCategoryPickerModal] = useState(false);
   const catScrollRef = useRef<ScrollView>(null);
+  const subScrollRef = useRef<ScrollView>(null);
+
+  const scrollToRight = (ref: React.RefObject<ScrollView | null>, animated = false) => {
+    if (isRTL) {
+      ref.current?.scrollToEnd({ animated });
+      requestAnimationFrame(() => {
+        ref.current?.scrollToEnd({ animated });
+      });
+    } else {
+      ref.current?.scrollTo({ x: 0, animated });
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -79,7 +91,9 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
       if (p === 'income' || p === 'expense') {
         setType(p);
       }
-    }, [route?.params?.type])
+      scrollToRight(catScrollRef, false);
+      scrollToRight(subScrollRef, false);
+    }, [route?.params?.type, isRTL])
   );
 
   useEffect(() => {
@@ -87,7 +101,13 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
     if (p === 'income' || p === 'expense') {
       setType(p);
     }
-  }, [route?.params?.type]);
+    scrollToRight(catScrollRef, false);
+    scrollToRight(subScrollRef, false);
+  }, [route?.params?.type, isRTL]);
+
+  useEffect(() => {
+    scrollToRight(subScrollRef, false);
+  }, [selectedCategoryId]);
 
   // New Category modal state
   const [showAddCatModal, setShowAddCatModal] = useState(false);
@@ -389,7 +409,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
         ]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        scrollEnabled={showAdvanced}
+        scrollEnabled={true}
         bounces={false}
       >
         {/* Seamless Hero Amount Display — 100% Borderless */}
@@ -448,6 +468,10 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
             ref={catScrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
+            contentOffset={isRTL ? { x: 10000, y: 0 } : { x: 0, y: 0 }}
+            onContentSizeChange={() => {
+              scrollToRight(catScrollRef, false);
+            }}
             contentContainerStyle={[
               styles.quickCategoryRow,
               {
@@ -521,6 +545,168 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
               );
             })}
           </ScrollView>
+        </View>
+
+        {/* Quick Subcategory Capsules — Opens automatically when category has subcategories */}
+        {activeCategory && subcategories.length > 0 && (
+          <View style={styles.quickSubcategoryContainer}>
+            <ScrollView
+              ref={subScrollRef}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentOffset={isRTL ? { x: 10000, y: 0 } : { x: 0, y: 0 }}
+              onContentSizeChange={() => {
+                scrollToRight(subScrollRef, false);
+              }}
+              contentContainerStyle={[
+                styles.quickSubcategoryRow,
+                {
+                  alignItems: 'center',
+                  flexDirection: isRTL ? 'row-reverse' : 'row'
+                }
+              ]}
+              style={styles.subScrollView}
+            >
+              {/* "All / No subcategory" default option */}
+              <TouchableOpacity
+                activeOpacity={0.75}
+                onPress={() => setSelectedSubcategoryId('')}
+                style={[
+                  styles.quickSubChip,
+                  !selectedSubcategoryId
+                    ? {
+                        backgroundColor: activeCategory.color,
+                        borderColor: activeCategory.color
+                      }
+                    : {
+                        backgroundColor: colors.surfaceSecondary,
+                        borderColor: 'transparent'
+                      }
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.quickSubText,
+                    {
+                      color: !selectedSubcategoryId ? '#FFFFFF' : colors.textPrimary,
+                      fontWeight: !selectedSubcategoryId ? '700' : '500'
+                    }
+                  ]}
+                >
+                  {t('common.all')}
+                </Text>
+              </TouchableOpacity>
+
+              {subcategories.map((sub) => {
+                const isSelected = sub.id === selectedSubcategoryId;
+                const subName = sub.custom_name || t(`categories.subcategories.${sub.name_key}`, sub.name_key);
+
+                return (
+                  <TouchableOpacity
+                    key={sub.id}
+                    activeOpacity={0.75}
+                    onPress={() => setSelectedSubcategoryId(isSelected ? '' : sub.id)}
+                    style={[
+                      styles.quickSubChip,
+                      isSelected
+                        ? {
+                            backgroundColor: activeCategory.color,
+                            borderColor: activeCategory.color
+                          }
+                        : {
+                            backgroundColor: colors.surfaceSecondary,
+                            borderColor: 'transparent'
+                          }
+                    ]}
+                  >
+                    <Text
+                      numberOfLines={1}
+                      style={[
+                        styles.quickSubText,
+                        {
+                          color: isSelected ? '#FFFFFF' : colors.textPrimary,
+                          fontWeight: isSelected ? '700' : '500'
+                        }
+                      ]}
+                    >
+                      {subName}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+
+              {/* Add custom subcategory button */}
+              <TouchableOpacity
+                activeOpacity={0.75}
+                onPress={() => setShowAddSubModal(true)}
+                style={[
+                  styles.quickSubChip,
+                  styles.addSubChip,
+                  {
+                    backgroundColor: colors.surfaceSecondary,
+                    borderColor: 'transparent'
+                  }
+                ]}
+              >
+                <Ionicons name="add" size={13} color={colors.accent} />
+                <Text
+                  style={[
+                    styles.quickSubText,
+                    {
+                      color: colors.accent,
+                      fontWeight: '700'
+                    }
+                  ]}
+                >
+                  {t('categories.add_subcategory')}
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        )}
+
+        {/* Inline Quick Note / Description Input — Always Visible & Directly Editable */}
+        <View style={styles.quickNoteContainer}>
+          <View
+            style={[
+              styles.quickNoteCard,
+              {
+                backgroundColor: colors.surfaceSecondary,
+                flexDirection: isRTL ? 'row-reverse' : 'row'
+              }
+            ]}
+          >
+            <Ionicons
+              name="create-outline"
+              size={17}
+              color={note ? colors.accent : colors.textMuted}
+              style={{ marginHorizontal: 6 }}
+            />
+            <TextInput
+              placeholder={t('add.note_placeholder')}
+              placeholderTextColor={colors.textMuted}
+              value={note}
+              onChangeText={setNote}
+              textAlign={isRTL ? 'right' : 'left'}
+              returnKeyType="done"
+              style={[
+                styles.quickNoteInput,
+                {
+                  color: colors.textPrimary,
+                  textAlign: isRTL ? 'right' : 'left'
+                }
+              ]}
+            />
+            {note.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setNote('')}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                style={{ paddingHorizontal: 4 }}
+              >
+                <Ionicons name="close-circle" size={16} color={colors.textMuted} />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* In-App Number Pad */}
@@ -1133,6 +1319,56 @@ const styles = StyleSheet.create({
   quickCatText: {
     fontFamily: FONT_FAMILY_SEMIBOLD,
     fontSize: 12.5
+  },
+  quickSubcategoryContainer: {
+    marginHorizontal: 16,
+    marginTop: 0,
+    marginBottom: 6,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  subScrollView: {
+    width: '100%'
+  },
+  quickSubcategoryRow: {
+    gap: 6,
+    paddingVertical: 1,
+    alignItems: 'center'
+  },
+  quickSubChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  quickSubText: {
+    fontFamily: FONT_FAMILY_SEMIBOLD,
+    fontSize: 11.5
+  },
+  addSubChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3
+  },
+  quickNoteContainer: {
+    marginHorizontal: 16,
+    marginTop: 2,
+    marginBottom: 6
+  },
+  quickNoteCard: {
+    height: 42,
+    borderRadius: 14,
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    borderWidth: 0
+  },
+  quickNoteInput: {
+    flex: 1,
+    fontSize: 13,
+    paddingVertical: 0,
+    fontFamily: FONT_FAMILY_SEMIBOLD
   },
   keypadWrapper: {
     marginHorizontal: 16,
