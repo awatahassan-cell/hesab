@@ -21,6 +21,7 @@ interface CurvedHeaderProps {
   onBack?: () => void;
   rightElement?: React.ReactNode;
   children?: React.ReactNode;
+  compact?: boolean;
 }
 
 export const CurvedHeader: React.FC<CurvedHeaderProps> = ({
@@ -29,7 +30,8 @@ export const CurvedHeader: React.FC<CurvedHeaderProps> = ({
   showBack = false,
   onBack,
   rightElement,
-  children
+  children,
+  compact = false
 }) => {
   const { colors, radius } = useTheme();
   const insets = useSafeAreaInsets();
@@ -48,15 +50,17 @@ export const CurvedHeader: React.FC<CurvedHeaderProps> = ({
       style={[
         styles.container,
         {
-          paddingTop: topInset + 6,
-          borderBottomLeftRadius: 30,
-          borderBottomRightRadius: 30
+          paddingTop: topInset + (compact ? 2 : 6),
+          paddingBottom: compact ? 10 : 16,
+          borderBottomLeftRadius: compact ? 22 : 30,
+          borderBottomRightRadius: compact ? 22 : 30
         }
       ]}
     >
       <View
         style={[
           styles.barRow,
+          compact && { minHeight: 36 },
           { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
       >
@@ -91,6 +95,7 @@ export const CurvedHeader: React.FC<CurvedHeaderProps> = ({
             ellipsizeMode="tail"
             style={[
               styles.titleText,
+              compact && { fontSize: 18 },
               { textAlign: isRTL ? 'right' : 'left' }
             ]}
           >
@@ -124,7 +129,11 @@ export const CurvedHeader: React.FC<CurvedHeaderProps> = ({
       </View>
 
       {/* Optional sub-content (filters, tabs, search) */}
-      {children ? <View style={styles.subContent}>{children}</View> : null}
+      {children ? (
+        <View style={[styles.subContent, compact && { marginTop: 6 }]}>
+          {children}
+        </View>
+      ) : null}
     </LinearGradient>
   );
 };

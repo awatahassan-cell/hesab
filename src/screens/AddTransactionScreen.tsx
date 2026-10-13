@@ -308,6 +308,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
       <CurvedHeader
+        compact
         title={type === 'expense' ? t('types.expense') : t('types.income')}
       >
         <View style={styles.segmentWrapper}>
@@ -403,7 +404,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ navi
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: 8,
+            paddingTop: 2,
             paddingBottom: bottomSafePadding
           }
         ]}
@@ -1224,57 +1225,57 @@ const styles = StyleSheet.create({
   },
   segmentWrapper: {
     marginHorizontal: 20,
-    marginTop: 6,
-    marginBottom: 4,
+    marginTop: 4,
+    marginBottom: 2,
     alignItems: 'center'
   },
   typeSwitcher: {
-    padding: 4,
-    borderRadius: 20,
+    padding: 3,
+    borderRadius: 18,
     width: '100%',
-    maxWidth: 280
+    maxWidth: 270
   },
   typeOption: {
     flex: 1,
-    paddingVertical: 8,
-    borderRadius: 16,
+    paddingVertical: 5,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row'
   },
   typeOptionText: {
     fontFamily: FONT_FAMILY_BOLD,
-    fontSize: 13.5
+    fontSize: 12.5
   },
   amountHeroContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 20
+    paddingVertical: 3,
+    paddingHorizontal: 16
   },
   currencyPillFloating: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4
+    marginBottom: 2
   },
   currencyPillText: {
     fontFamily: FONT_FAMILY_BOLD,
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700'
   },
   amountDisplayRow: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    minHeight: 52,
+    minHeight: 38,
     position: 'relative'
   },
   amountDisplayText: {
     fontFamily: FONT_FAMILY_BOLD,
-    fontSize: 44,
+    fontSize: 34,
     fontWeight: '800',
     letterSpacing: -0.8,
     fontVariant: ['tabular-nums']
@@ -1285,45 +1286,45 @@ const styles = StyleSheet.create({
   },
   quickCategoryContainer: {
     marginHorizontal: 16,
-    marginTop: 4,
-    marginBottom: 8,
+    marginTop: 2,
+    marginBottom: 4,
     alignItems: 'center',
     justifyContent: 'center'
   },
   allCatChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 16,
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderRadius: 14,
     borderWidth: 0,
-    gap: 5
+    gap: 4
   },
   catScrollView: {
     width: '100%'
   },
   quickCategoryRow: {
-    gap: 8,
-    paddingVertical: 2,
+    gap: 6,
+    paddingVertical: 1,
     alignItems: 'center'
   },
   quickCatChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 13,
-    paddingVertical: 8,
-    borderRadius: 16,
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderRadius: 14,
     borderWidth: 0,
-    gap: 6
+    gap: 5
   },
   quickCatText: {
     fontFamily: FONT_FAMILY_SEMIBOLD,
-    fontSize: 12.5
+    fontSize: 12
   },
   quickSubcategoryContainer: {
     marginHorizontal: 16,
     marginTop: 0,
-    marginBottom: 6,
+    marginBottom: 4,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -1331,21 +1332,21 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   quickSubcategoryRow: {
-    gap: 6,
+    gap: 5,
     paddingVertical: 1,
     alignItems: 'center'
   },
   quickSubChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 3.5,
+    borderRadius: 12,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center'
   },
   quickSubText: {
     fontFamily: FONT_FAMILY_SEMIBOLD,
-    fontSize: 11.5
+    fontSize: 11
   },
   addSubChip: {
     flexDirection: 'row',
@@ -1354,19 +1355,19 @@ const styles = StyleSheet.create({
   },
   quickNoteContainer: {
     marginHorizontal: 16,
-    marginTop: 2,
-    marginBottom: 6
+    marginTop: 1,
+    marginBottom: 4
   },
   quickNoteCard: {
-    height: 42,
-    borderRadius: 14,
+    height: 36,
+    borderRadius: 12,
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     borderWidth: 0
   },
   quickNoteInput: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 12.5,
     paddingVertical: 0,
     fontFamily: FONT_FAMILY_SEMIBOLD
   },
@@ -1374,39 +1375,39 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     flex: 1,
     justifyContent: 'center',
-    marginVertical: 4
+    marginVertical: 2
   },
   saveActionWrapper: {
     marginHorizontal: 16,
-    marginTop: 8,
-    marginBottom: 4
+    marginTop: 4,
+    marginBottom: 2
   },
   saveBtn: {
-    height: 52,
-    borderRadius: 20,
+    height: 46,
+    borderRadius: 16,
     borderWidth: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.22,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
     elevation: 3
   },
   saveBtnText: {
     fontFamily: FONT_FAMILY_BOLD,
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
     fontVariant: ['tabular-nums']
   },
   advancedToggle: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 6
+    paddingVertical: 3
   },
   advancedToggleText: {
     fontFamily: FONT_FAMILY_SEMIBOLD,
-    fontSize: 12.5,
+    fontSize: 12,
     fontWeight: '600'
   },
   advancedSection: {

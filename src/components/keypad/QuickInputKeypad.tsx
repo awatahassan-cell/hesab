@@ -177,7 +177,7 @@ export const QuickInputKeypad: React.FC<QuickInputKeypadProps> = ({
                   ]}
                 >
                   {isBackspace ? (
-                    <Ionicons name="backspace-outline" size={24} color={colors.expense} />
+                    <Ionicons name="backspace-outline" size={21} color={colors.expense} />
                   ) : (
                     <Text
                       style={[
@@ -188,7 +188,7 @@ export const QuickInputKeypad: React.FC<QuickInputKeypadProps> = ({
                             : isDot
                             ? colors.textSecondary
                             : colors.textPrimary,
-                          fontSize: isThousand ? 19 : isDot ? 28 : 25
+                          fontSize: isThousand ? 17 : isDot ? 24 : 22
                         }
                       ]}
                     >
@@ -216,15 +216,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 10
+    gap: 6,
+    marginBottom: 6
   },
   chip: {
     flex: 1,
-    height: 36,
+    height: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 18,
+    borderRadius: 16,
     borderWidth: 0,
     ...Platform.select({
       ios: {
@@ -239,37 +239,37 @@ const styles = StyleSheet.create({
     })
   },
   chipToggle: {
-    minWidth: 46,
+    minWidth: 44,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
   },
   chipText: {
     fontFamily: FONT_FAMILY_SEMIBOLD,
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '600',
     fontVariant: ['tabular-nums']
   },
   grid: {
-    gap: 9,
+    gap: 6,
     flex: 1,
     justifyContent: 'space-between'
   },
   row: {
     flexDirection: 'row',
-    gap: 9,
+    gap: 6,
     flex: 1,
-    minHeight: 52,
-    maxHeight: 64
+    minHeight: 44,
+    maxHeight: 52
   },
   key: {
     flex: 1,
     height: '100%',
-    minHeight: 52,
-    maxHeight: 64,
+    minHeight: 44,
+    maxHeight: 52,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 0,
     ...Platform.select({
       ios: {
